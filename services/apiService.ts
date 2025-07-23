@@ -60,4 +60,25 @@ export const apiService = {
     const response = await axiosInstance.get('/test');
     return response.data;
   },
+
+  // User profile endpoints
+  getUserInfoById: async (id: string) => {
+    const response = await axiosInstance.get(`/Profile/GetUserInfoById?id=${id}`);
+    return response.data;
+  },
+
+  downloadPhotoById: async (photoId: number, extension: string, fileName: string) => {
+    const response = await axiosInstance.post(
+      '/Photo/DownloadPhotoById',
+      {
+        photoId: photoId,
+        extension: extension,
+        fileName: fileName,
+      },
+      {
+        responseType: 'arraybuffer',
+      }
+    );
+    return response.data;
+  },
 };

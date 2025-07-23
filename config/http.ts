@@ -49,7 +49,11 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     if (error.response && error.response.status === 401) {
       await removeToken();
-      router.replace('/');
+      // Kullanıcıya oturum süresi doldu bildirimi göster
+      const { Alert } = await import('react-native');
+      Alert.alert('Oturum Süresi Doldu', 'Oturum süreniz dolmuştur. Lütfen tekrar giriş yapın.', [{ text: 'Tamam' }]);
+      // Doğrudan login sayfasına yönlendir
+      router.replace('/login');
     }
     return Promise.reject(error);
   }
