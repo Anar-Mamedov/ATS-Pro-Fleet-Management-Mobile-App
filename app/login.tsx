@@ -84,6 +84,7 @@ export default function Login() {
 
       const loginData = await apiService.login(kullaniciKod.trim(), sifre.trim(), savedCompanyKey);
 
+      await AsyncStorage.setItem('loginResponse', JSON.stringify(loginData));
       await AsyncStorage.setItem('token', loginData.accessToken);
       await AsyncStorage.setItem('id', loginData.siraNo.toString());
 
