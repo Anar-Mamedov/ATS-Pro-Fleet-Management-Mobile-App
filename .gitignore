@@ -32,8 +32,12 @@ yarn-error.*
 
 # local env files
 .env*.local
+.cursorrules
+.env
+.cursor
 
 # typescript
 *.tsbuildinfo
 
 app-example
+knowledge-base.md
