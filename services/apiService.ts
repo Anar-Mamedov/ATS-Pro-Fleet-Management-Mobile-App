@@ -10,7 +10,7 @@ export const apiService = {
 
   // Auth endpoints
   login: async (kullaniciKod: string, sifre: string, firmaSifre: string) => {
-    const response = await axiosInstance.post('/Login', {
+    const response = await axiosInstance.post('/Login?isMobileClient=true', {
       KULLANICIKOD: kullaniciKod,
       SIFRE: sifre,
       firmaSifre: firmaSifre,

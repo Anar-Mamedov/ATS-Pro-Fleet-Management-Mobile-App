@@ -1,17 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Button } from '@tamagui/button';
 import { Stack, Text } from '@tamagui/core';
-import { YStack } from '@tamagui/stacks';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert } from 'react-native';
-import { apiService } from '../../services/apiService';
+import DriverMainPage from '../components/MainPage/DriverMainPage';
+import ManagerMainPage from '../components/MainPage/ManagerMainPage';
 
 export default function HomeTab() {
   const { t } = useTranslation();
-  const [loading, setLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isDriver, setIsDriver] = useState<boolean | null>(null);
 
   useEffect(() => {
     checkLoginStatus();
@@ -23,6 +21,7 @@ export default function HomeTab() {
       const id = await AsyncStorage.getItem('id');
       const companyInfo = await AsyncStorage.getItem('companyInfo');
       const companyKey = await AsyncStorage.getItem('companyKey');
+      const loginResponse = await AsyncStorage.getItem('loginResponse');
 
       if (!companyInfo || !companyKey) {
         router.replace('/welcome');
@@ -34,6 +33,22 @@ export default function HomeTab() {
         return;
       }
 
+      // loginResponse kontrolü ve isDriver değerini belirleme
+      if (loginResponse) {
+        try {
+          const parsedLoginResponse = JSON.parse(loginResponse);
+          const driverStatus = parsedLoginResponse.isDriver === true;
+          setIsDriver(driverStatus);
+        } catch (parseError) {
+          console.error('Error parsing loginResponse:', parseError);
+          // Eğer parse edilemezse varsayılan olarak false (manager) kabul et
+          setIsDriver(false);
+        }
+      } else {
+        // loginResponse yoksa varsayılan olarak false (manager) kabul et
+        setIsDriver(false);
+      }
+
       setIsLoggedIn(true);
     } catch (error) {
       console.error('Error checking login status:', error);
@@ -41,32 +56,7 @@ export default function HomeTab() {
     }
   };
 
-  const testApiCall = async () => {
-    setLoading(true);
-    try {
-      const data = await apiService.testApi();
-      Alert.alert(t('success'), 'API call successful!');
-      console.log('API Response:', data);
-    } catch (error: any) {
-      Alert.alert(t('error'), error.message || 'API call failed');
-      console.error('API Error:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await AsyncStorage.removeItem('token');
-      await AsyncStorage.removeItem('id');
-      router.replace('/login');
-    } catch (error) {
-      console.error('Error during logout:', error);
-      router.replace('/login');
-    }
-  };
-
-  if (!isLoggedIn) {
+  if (!isLoggedIn || isDriver === null) {
     return (
       <Stack flex={1} justifyContent="center" alignItems="center" padding="$4" backgroundColor="$background">
         <Text fontSize="$5">{t('loading')}</Text>
@@ -74,24 +64,6 @@ export default function HomeTab() {
     );
   }
 
-  return (
-    <Stack flex={1} backgroundColor="$background">
-      <YStack flex={1} justifyContent="center" alignItems="center" padding="$4">
-        <Text fontSize="$8" fontWeight="bold" marginBottom="$4">
-          ATS Pro Mobile
-        </Text>
-        <Text fontSize="$5" marginBottom="$6" textAlign="center">
-          {t('home')}
-        </Text>
-
-        <Button backgroundColor="#007AFF" color="white" size="$4" marginBottom="$4" onPress={testApiCall} disabled={loading}>
-          {loading ? t('loading') : 'API Test'}
-        </Button>
-
-        <Button backgroundColor="#FF3B30" color="white" size="$4" onPress={handleLogout}>
-          {t('logout')}
-        </Button>
-      </YStack>
-    </Stack>
-  );
+  // isDriver değerine göre uygun bileşeni render et
+  return isDriver ? <DriverMainPage /> : <ManagerMainPage />;
 }
