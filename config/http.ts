@@ -25,6 +25,7 @@ const removeToken = async () => {
   try {
     await AsyncStorage.removeItem('token');
     await AsyncStorage.removeItem('id');
+    await AsyncStorage.removeItem('loginResponse');
   } catch (error) {
     console.error('Error removing token:', error);
   }
