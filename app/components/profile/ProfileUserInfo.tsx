@@ -1,10 +1,12 @@
+import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Text, View } from '@tamagui/core';
 import { YStack } from '@tamagui/stacks';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Image } from 'react-native';
+import { Alert, Image, Modal, TouchableOpacity } from 'react-native';
 import { apiService } from '../../../services/apiService';
+import UploadPhoto from './UploadPhoto';
 
 interface UserInfo {
   siraNo: number;
@@ -39,6 +41,8 @@ export default function ProfileUserInfo() {
   const [loading, setLoading] = useState(true);
   const [photoLoading, setPhotoLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [isDriver, setIsDriver] = useState(false);
 
   useEffect(() => {
     fetchUserInfo();
@@ -56,6 +60,15 @@ export default function ProfileUserInfo() {
         setError(t('userIdNotFound'));
         return;
       }
+
+      // isDriver bilgisini AsyncStorage'dan al
+      const loginResponse = await AsyncStorage.getItem('loginResponse');
+      let driverStatus = false;
+      if (loginResponse) {
+        const parsedLoginResponse = JSON.parse(loginResponse);
+        driverStatus = parsedLoginResponse.isDriver === true;
+      }
+      setIsDriver(driverStatus);
 
       // API'den kullanıcı bilgilerini getir
       const userData = await apiService.getUserInfoById(userId);
@@ -103,6 +116,20 @@ export default function ProfileUserInfo() {
     return btoa(binary);
   };
 
+  // Resim yükleme başarılı olduğunda çağrılacak
+  const handleUploadSuccess = (photoUri: string) => {
+    setProfilePhoto(photoUri);
+    setShowUploadModal(false);
+    // Kullanıcı bilgilerini yenile
+    fetchUserInfo();
+  };
+
+  // Resim yükleme hatası olduğunda çağrılacak
+  const handleUploadError = (error: string) => {
+    console.error('Upload error:', error);
+    setShowUploadModal(false);
+  };
+
   if (loading) {
     return (
       <View padding="$4">
@@ -137,23 +164,45 @@ export default function ProfileUserInfo() {
     <View padding="$4">
       <YStack space="$4" alignItems="center">
         {/* Profil Fotoğrafı */}
-        <View width={80} height={80} borderRadius={40} backgroundColor="$gray5" alignItems="center" justifyContent="center" overflow="hidden">
-          {profilePhoto ? (
-            <Image
-              source={{ uri: profilePhoto }}
-              style={{
-                width: 80,
-                height: 80,
-                borderRadius: 40,
-              }}
-              resizeMode="cover"
-            />
-          ) : (
-            <Text fontSize="$6" fontWeight="600" color="$gray10">
-              {userInfo.isim?.charAt(0) || ''}
-              {userInfo.soyAd?.charAt(0) || ''}
-            </Text>
-          )}
+        <View position="relative">
+          <View width={80} height={80} borderRadius={40} backgroundColor="$gray5" alignItems="center" justifyContent="center" overflow="hidden">
+            {profilePhoto ? (
+              <Image
+                source={{ uri: profilePhoto }}
+                style={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: 40,
+                }}
+                resizeMode="cover"
+              />
+            ) : (
+              <Text fontSize="$6" fontWeight="600" color="$gray10">
+                {userInfo.isim?.charAt(0) || ''}
+                {userInfo.soyAd?.charAt(0) || ''}
+              </Text>
+            )}
+          </View>
+
+          {/* Edit Icon */}
+          <TouchableOpacity
+            onPress={() => setShowUploadModal(true)}
+            style={{
+              position: 'absolute',
+              bottom: -2,
+              right: -2,
+              backgroundColor: '#007AFF',
+              borderRadius: 12,
+              width: 24,
+              height: 24,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 2,
+              borderColor: 'white',
+            }}
+          >
+            <MaterialIcons name="edit" size={14} color="white" />
+          </TouchableOpacity>
         </View>
 
         {/* Kullanıcı Bilgileri */}
@@ -177,6 +226,62 @@ export default function ProfileUserInfo() {
           </YStack>
         </YStack>
       </YStack>
+
+      {/* Upload Photo Modal */}
+      <Modal visible={showUploadModal} transparent={true} animationType="slide" onRequestClose={() => setShowUploadModal(false)}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: 'white',
+              borderRadius: 20,
+              padding: 20,
+              width: '90%',
+              maxWidth: 400,
+            }}
+          >
+            {/* Modal Header */}
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 20,
+              }}
+            >
+              <Text fontSize="$6" fontWeight="600">
+                {t('upload_photo') || 'Fotoğraf Yükle'}
+              </Text>
+              <TouchableOpacity
+                onPress={() => setShowUploadModal(false)}
+                style={{
+                  padding: 5,
+                }}
+              >
+                <MaterialIcons name="close" size={24} color="#666" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Upload Photo Component */}
+            {userInfo && (
+              <UploadPhoto
+                refId={userInfo.siraNo}
+                refGroup={isDriver ? 'SURUCU' : 'USER'}
+                isForDefault={true}
+                currentPhotoUri={profilePhoto || undefined}
+                onUploadSuccess={handleUploadSuccess}
+                onUploadError={handleUploadError}
+              />
+            )}
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

@@ -68,5 +68,21 @@
   "operationSuccessful": "Operation completed successfully",
   "operationFailed": "Operation failed",
   "personalInfoUpdated": "Personal information updated",
-  "updateError": "Update error"
+  "updateError": "Update error",
+  "permission_denied": "Permission Denied",
+  "gallery_permission_required": "Gallery access permission required!",
+  "camera_permission_required": "Camera access permission required!",
+  "image_selection_error": "Error occurred while selecting image",
+  "camera_error": "Error occurred while taking photo",
+  "uploading": "Uploading...",
+  "image_upload_success": "Image uploaded successfully",
+  "image_upload_error": "Image upload error",
+  "select_image": "Select Image",
+  "choose_image_source": "Choose image source",
+  "camera": "Camera",
+  "gallery": "Gallery",
+  "no_photo": "No\nPhoto",
+  "change_photo": "Change Photo",
+  "upload_photo": "Upload Photo",
+  "photo_upload_info": "Click the button to upload your profile photo. Square format is recommended."
 }
