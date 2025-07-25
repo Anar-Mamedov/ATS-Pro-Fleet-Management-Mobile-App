@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { axiosInstance } from '../config/http';
 
 // API servis fonksiyonları
@@ -63,7 +64,19 @@ export const apiService = {
 
   // User profile endpoints
   getUserInfoById: async (id: string) => {
-    const response = await axiosInstance.get(`/Profile/GetUserInfoById?id=${id}`);
+    let isDriver = false;
+    try {
+      const loginResponse = await AsyncStorage.getItem('loginResponse');
+      if (loginResponse) {
+        const parsedLoginResponse = JSON.parse(loginResponse);
+        isDriver = parsedLoginResponse.isDriver === true;
+      }
+    } catch (error) {
+      console.error('Error parsing loginResponse:', error);
+      isDriver = false;
+    }
+
+    const response = await axiosInstance.get(`/User/GetUser?id=${id}&isDriver=${isDriver}`);
     return response.data;
   },
 
