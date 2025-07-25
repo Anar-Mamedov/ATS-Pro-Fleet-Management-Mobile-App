@@ -68,5 +68,21 @@
   "operationSuccessful": "İşlem başarıyla tamamlandı",
   "operationFailed": "İşlem başarısız oldu",
   "personalInfoUpdated": "Kişisel bilgiler güncellendi",
-  "updateError": "Güncelleme hatası"
+  "updateError": "Güncelleme hatası",
+  "permission_denied": "İzin Reddedildi",
+  "gallery_permission_required": "Galeri erişimi için izin gerekli!",
+  "camera_permission_required": "Kamera erişimi için izin gerekli!",
+  "image_selection_error": "Resim seçilirken hata oluştu",
+  "camera_error": "Fotoğraf çekilirken hata oluştu",
+  "uploading": "Yükleniyor...",
+  "image_upload_success": "Resim başarıyla yüklendi",
+  "image_upload_error": "Resim yükleme hatası",
+  "select_image": "Resim Seç",
+  "choose_image_source": "Resim kaynağını seçin",
+  "camera": "Kamera",
+  "gallery": "Galeri",
+  "no_photo": "Fotoğraf\nYok",
+  "change_photo": "Fotoğrafı Değiştir",
+  "upload_photo": "Fotoğraf Yükle",
+  "photo_upload_info": "Profil fotoğrafınızı yüklemek için butona tıklayın. Kare format önerilir."
 }
