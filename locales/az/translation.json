@@ -64,5 +64,9 @@
   "penalties": "Cərimələr",
   "renewals": "Yenilənmələr",
   "documents": "Sənədlər",
-  "photos": "Fotoşəkillər"
+  "photos": "Fotoşəkillər",
+  "operationSuccessful": "Əməliyyat uğurla tamamlandı",
+  "operationFailed": "Əməliyyat uğursuz oldu",
+  "personalInfoUpdated": "Şəxsi məlumatlar yeniləndi",
+  "updateError": "Yeniləmə xətası"
 }

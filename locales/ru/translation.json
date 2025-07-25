@@ -64,5 +64,9 @@
   "penalties": "Штрафы",
   "renewals": "Продления",
   "documents": "Документы",
-  "photos": "Фотографии"
+  "photos": "Фотографии",
+  "operationSuccessful": "Операция выполнена успешно",
+  "operationFailed": "Операция не удалась",
+  "personalInfoUpdated": "Личная информация обновлена",
+  "updateError": "Ошибка обновления"
 }
