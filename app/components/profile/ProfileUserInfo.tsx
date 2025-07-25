@@ -150,8 +150,8 @@ export default function ProfileUserInfo() {
             />
           ) : (
             <Text fontSize="$6" fontWeight="600" color="$gray10">
-              {userInfo.isim.charAt(0)}
-              {userInfo.soyAd.charAt(0)}
+              {userInfo.isim?.charAt(0) || ''}
+              {userInfo.soyAd?.charAt(0) || ''}
             </Text>
           )}
         </View>
@@ -163,7 +163,7 @@ export default function ProfileUserInfo() {
               {t('name')}
             </Text> */}
             <Text fontSize="$6" fontWeight="600" textAlign="center">
-              {userInfo.isim} {userInfo.soyAd}
+              {userInfo.isim || ''} {userInfo.soyAd || ''}
             </Text>
           </YStack>
 
@@ -172,7 +172,7 @@ export default function ProfileUserInfo() {
               {t('email')}
             </Text> */}
             <Text fontSize="$5" color="$blue10" textAlign="center">
-              {userInfo.email}
+              {userInfo.email || ''}
             </Text>
           </YStack>
         </YStack>
