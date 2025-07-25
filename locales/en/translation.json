@@ -64,5 +64,9 @@
   "penalties": "Penalties",
   "renewals": "Renewals",
   "documents": "Documents",
-  "photos": "Photos"
+  "photos": "Photos",
+  "operationSuccessful": "Operation completed successfully",
+  "operationFailed": "Operation failed",
+  "personalInfoUpdated": "Personal information updated",
+  "updateError": "Update error"
 }

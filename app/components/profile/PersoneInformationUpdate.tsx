@@ -2,12 +2,16 @@ import { apiService } from '@/services/apiService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button } from '@tamagui/button';
 import { Text, View } from '@tamagui/core';
-import { YStack } from '@tamagui/stacks';
+import { XStack, YStack } from '@tamagui/stacks';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, StyleSheet, TextInput } from 'react-native';
 
-export default function PersoneInformationUpdate() {
+interface PersoneInformationUpdateProps {
+  onSuccess?: () => void;
+}
+
+export default function PersoneInformationUpdate({ onSuccess }: PersoneInformationUpdateProps) {
   const { t } = useTranslation();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -15,6 +19,11 @@ export default function PersoneInformationUpdate() {
   const [phone, setPhone] = useState('');
   const [userCode, setUserCode] = useState('');
   const [loading, setLoading] = useState(false);
+  const [userInfo, setUserInfo] = useState<any>(null);
+  const [notification, setNotification] = useState<{
+    type: 'success' | 'error';
+    message: string;
+  } | null>(null);
 
   useEffect(() => {
     fetchUserInfo();
@@ -31,6 +40,7 @@ export default function PersoneInformationUpdate() {
       }
 
       const userData = await apiService.getUserInfoById(userId);
+      setUserInfo(userData);
 
       setFirstName(userData.isim || '');
       setLastName(userData.soyAd || '');
@@ -45,18 +55,101 @@ export default function PersoneInformationUpdate() {
     }
   };
 
-  const handleSave = () => {
-    console.log('Saving personal information:', { firstName, lastName, email, phone, userCode });
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+
+      const userData = {
+        isDriver: userInfo?.isDriver || false,
+        siraNo: userInfo?.siraNo || 0,
+        kullaniciKod: userCode,
+        isim: firstName,
+        aktif: userInfo?.aktif || true,
+        soyAd: lastName,
+        email: email,
+        telefon: phone,
+      };
+
+      // console.log('Saving personal information:', userData);
+
+      const response = await apiService.updateUserInfo(userData);
+
+      // API response'una göre bildirim göster
+      if ([200, 201, 202].includes(response.statusCode)) {
+        setNotification({
+          type: 'success',
+          message: t('operationSuccessful'),
+        });
+
+        // Başarılı güncelleme sonrası verileri yeniden yükle
+        await fetchUserInfo();
+
+        // 2 saniye sonra profil ekranına dön
+        setTimeout(() => {
+          setNotification(null);
+          onSuccess?.();
+        }, 2000);
+      } else {
+        setNotification({
+          type: 'error',
+          message: t('operationFailed'),
+        });
+
+        // 3 saniye sonra bildirimi gizle
+        setTimeout(() => setNotification(null), 3000);
+      }
+    } catch (error: any) {
+      console.error('Error updating user info:', error);
+      setNotification({
+        type: 'error',
+        message: t('operationFailed'),
+      });
+
+      // 3 saniye sonra bildirimi gizle
+      setTimeout(() => setNotification(null), 3000);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <View width="100%">
+      {/* Bildirim */}
+      {notification && (
+        <View
+          position="absolute"
+          top={-60}
+          left={0}
+          right={0}
+          zIndex={1000}
+          backgroundColor={notification.type === 'success' ? '$green10' : '$red10'}
+          padding="$3"
+          borderRadius="$4"
+          marginHorizontal="$4"
+        >
+          <XStack alignItems="center" justifyContent="space-between">
+            <Text color="white" fontSize="$4" fontWeight="600" flex={1}>
+              {notification.message}
+            </Text>
+            <Button size="$2" backgroundColor="transparent" color="white" onPress={() => setNotification(null)} padding="$1">
+              ✕
+            </Button>
+          </XStack>
+        </View>
+      )}
+
       <YStack space="$4" width="100%">
         <YStack space="$2">
           <Text fontSize="$3" color="$gray10" fontWeight="500">
             {t('userCode')}
           </Text>
-          <TextInput placeholder={t('enterUserCode')} value={userCode} onChangeText={setUserCode} style={styles.input} />
+          <TextInput
+            placeholder={t('enterUserCode')}
+            value={userCode}
+            onChangeText={setUserCode}
+            style={[styles.input, userInfo?.isDriver && { backgroundColor: '#f5f5f5', color: '#999' }]}
+            editable={!userInfo?.isDriver}
+          />
         </YStack>
 
         <YStack space="$2">

@@ -64,5 +64,9 @@
   "penalties": "Cezalar",
   "renewals": "Yenilemeler",
   "documents": "Dokümanlar",
-  "photos": "Fotoğraflar"
+  "photos": "Fotoğraflar",
+  "operationSuccessful": "İşlem başarıyla tamamlandı",
+  "operationFailed": "İşlem başarısız oldu",
+  "personalInfoUpdated": "Kişisel bilgiler güncellendi",
+  "updateError": "Güncelleme hatası"
 }

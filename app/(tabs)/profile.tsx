@@ -44,7 +44,7 @@ export default function ProfileTab() {
               </Text>
             </YStack>
 
-            <PersoneInformationUpdate />
+            <PersoneInformationUpdate onSuccess={() => setShowPersonalInfo(false)} />
           </YStack>
         </Stack>
       </SafeAreaView>

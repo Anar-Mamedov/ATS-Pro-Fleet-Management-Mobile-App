@@ -94,4 +94,9 @@ export const apiService = {
     );
     return response.data;
   },
+
+  updateUserInfo: async (userData: { isDriver: boolean; siraNo: number; kullaniciKod: string; isim: string; aktif: boolean; soyAd: string; email: string; telefon: string }) => {
+    const response = await axiosInstance.post('/User/UpdateUserInfo', userData);
+    return response.data;
+  },
 };
