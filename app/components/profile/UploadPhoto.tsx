@@ -95,6 +95,7 @@ export default function UploadPhoto({ refId, refGroup, isForDefault = true, curr
 
     try {
       const formData = new FormData();
+      let logData: any;
 
       // Platform'a göre farklı yaklaşımlar
       if (Platform.OS === 'web') {
@@ -102,15 +103,32 @@ export default function UploadPhoto({ refId, refGroup, isForDefault = true, curr
         const response = await fetch(imageUri);
         const blob = await response.blob();
         formData.append('images', blob, fileName);
+        logData = { name: fileName, type: blob.type, size: blob.size, uri: imageUri };
       } else {
         // Android/iOS için URI kullan - güncel Expo önerisi
         const fileExtension = imageUri.split('.').pop() || 'jpg';
-        formData.append('images', {
+
+        // Dosya adının uzantısının, URI'den alınan gerçek uzantıyla eşleştiğinden emin olalım.
+        // Bu, "Invalid photo format !" hatasını önlemeye yardımcı olur.
+        const baseName = fileName.substring(0, fileName.lastIndexOf('.')) || fileName;
+        const finalFileName = `${baseName}.${fileExtension}`;
+        const mimeType = `image/${fileExtension === 'jpg' ? 'jpeg' : fileExtension}`;
+
+        const fileDetails = {
           uri: imageUri,
-          type: `image/${fileExtension}`,
-          name: fileName,
-        } as any);
+          type: mimeType,
+          name: finalFileName,
+        };
+
+        formData.append('images', fileDetails as any);
+        logData = fileDetails;
       }
+
+      console.log('--- Photo Upload Data ---');
+      console.log('Request to /Photo/UploadPhoto');
+      console.log('URL Parameters:', { refId, refGroup, isForDefault });
+      console.log('File Data:', logData);
+      console.log('--------------------------');
 
       // API endpoint'e yükleme
       await apiService.uploadPhoto(formData, refId, refGroup, isForDefault);
