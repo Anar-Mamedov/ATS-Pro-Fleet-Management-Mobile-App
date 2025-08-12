@@ -131,7 +131,7 @@ export default function DriverMainPage() {
                 <MaterialIcons name="speed" size={24} color="#007AFF" />
                 <YStack>
                   <Text fontSize="$5" fontWeight="600">
-                    {firstVehicle?.ortalamaTuketim} lt/100 km
+                    {firstVehicle?.ortalamaTuketim} {t('fuelConsumptionUnit')}
                   </Text>
                   <Text color="$gray11">{t('yakitTuketimi')}</Text>
                 </YStack>

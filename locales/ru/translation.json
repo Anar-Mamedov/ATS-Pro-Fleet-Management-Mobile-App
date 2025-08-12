@@ -68,5 +68,6 @@
   "operationSuccessful": "Операция выполнена успешно",
   "operationFailed": "Операция не удалась",
   "personalInfoUpdated": "Личная информация обновлена",
-  "updateError": "Ошибка обновления"
+  "updateError": "Ошибка обновления",
+  "fuelConsumptionUnit": "л/100 км"
 }

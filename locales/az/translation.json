@@ -68,5 +68,6 @@
   "operationSuccessful": "Əməliyyat uğurla tamamlandı",
   "operationFailed": "Əməliyyat uğursuz oldu",
   "personalInfoUpdated": "Şəxsi məlumatlar yeniləndi",
-  "updateError": "Yeniləmə xətası"
+  "updateError": "Yeniləmə xətası",
+  "fuelConsumptionUnit": "lt/100 km"
 }

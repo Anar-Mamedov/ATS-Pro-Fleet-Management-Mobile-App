@@ -84,5 +84,6 @@
   "no_photo": "No\nPhoto",
   "change_photo": "Change Photo",
   "upload_photo": "Upload Photo",
-  "photo_upload_info": "Click the button to upload your profile photo. Square format is recommended."
+  "photo_upload_info": "Click the button to upload your profile photo. Square format is recommended.",
+  "fuelConsumptionUnit": "L/100 km"
 }
