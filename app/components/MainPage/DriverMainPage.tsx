@@ -1,5 +1,5 @@
-import { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { MaterialIcons } from '@expo/vector-icons';
+import { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Stack, Text } from '@tamagui/core';
 import { XStack, YStack } from '@tamagui/stacks';
@@ -67,7 +67,9 @@ export default function DriverMainPage() {
               <XStack alignItems="center" space="$3">
                 <MaterialIcons name="speed" size={24} color="#007AFF" />
                 <YStack>
-                  <Text fontSize="$5" fontWeight="600">{firstVehicle?.guncelKm} km</Text>
+                  <Text fontSize="$5" fontWeight="600">
+                    {firstVehicle?.guncelKm} km
+                  </Text>
                   <Text color="$gray11">{t('guncelKm')}</Text>
                 </YStack>
               </XStack>
