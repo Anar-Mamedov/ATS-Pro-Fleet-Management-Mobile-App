@@ -62,18 +62,58 @@ export default function DriverMainPage() {
               </>
             )}
           </YStack>
-          <YStack justifyContent="flex-start" alignItems="flex-start" padding="$4" gap="$2">
-            <YStack borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
-              <XStack alignItems="center" space="$3">
-                <MaterialIcons name="speed" size={24} color="#007AFF" />
-                <YStack>
-                  <Text fontSize="$5" fontWeight="600">
-                    {firstVehicle?.guncelKm} km
-                  </Text>
-                  <Text color="$gray11">{t('guncelKm')}</Text>
-                </YStack>
-              </XStack>
-            </YStack>
+          <YStack justifyContent="flex-start" alignItems="flex-start" padding="$4" gap="$3">
+            <XStack gap="$3">
+              <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
+                <XStack alignItems="center" space="$3">
+                  <MaterialIcons name="speed" size={24} color="#007AFF" />
+                  <YStack>
+                    <Text fontSize="$5" fontWeight="600">
+                      {firstVehicle?.guncelKm} km
+                    </Text>
+                    <Text color="$gray11">{t('guncelKm')}</Text>
+                  </YStack>
+                </XStack>
+              </YStack>
+              <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
+                <XStack alignItems="center" space="$3">
+                  <MaterialIcons name="speed" size={24} color="#007AFF" />
+                  <YStack>
+                    <Text fontSize="$5" fontWeight="600">
+                      {firstVehicle?.hedefKm} km
+                    </Text>
+                    <Text fontSize="$5" fontWeight="600">
+                      {firstVehicle?.hedefTarih}
+                    </Text>
+                    <Text color="$gray11">{t('bakimZamani')}</Text>
+                  </YStack>
+                </XStack>
+              </YStack>
+            </XStack>
+            <XStack gap="$3">
+              <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
+                <XStack alignItems="center" space="$3">
+                  <MaterialIcons name="speed" size={24} color="#007AFF" />
+                  <YStack>
+                    <Text fontSize="$5" fontWeight="600">
+                      {firstVehicle?.sonSigortaTarih}
+                    </Text>
+                    <Text color="$gray11">{t('sigortaBitis')}</Text>
+                  </YStack>
+                </XStack>
+              </YStack>
+              <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
+                <XStack alignItems="center" space="$3">
+                  <MaterialIcons name="speed" size={24} color="#007AFF" />
+                  <YStack>
+                    <Text fontSize="$5" fontWeight="600">
+                      {firstVehicle?.ortalamaTuketim} lt/100km
+                    </Text>
+                    <Text color="$gray11">{t('yakitTuketimi')}</Text>
+                  </YStack>
+                </XStack>
+              </YStack>
+            </XStack>
           </YStack>
         </Pressable>
 
