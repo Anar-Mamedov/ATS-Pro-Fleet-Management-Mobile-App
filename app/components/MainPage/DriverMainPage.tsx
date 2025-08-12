@@ -5,7 +5,7 @@ import { Stack, Text } from '@tamagui/core';
 import { XStack, YStack } from '@tamagui/stacks';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable } from 'react-native';
+import { Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { apiService } from '../../../services/apiService';
 
@@ -15,6 +15,8 @@ export default function DriverMainPage() {
   const [aracIds, setAracIds] = useState<number[]>([]);
   const [vehicleData, setVehicleData] = useState<any>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [maintenanceCardWidth, setMaintenanceCardWidth] = useState<number>(0);
+  const [maintenancePage, setMaintenancePage] = useState<number>(0);
 
   const getUserInfo = async () => {
     const id = await AsyncStorage.getItem('id');
@@ -62,60 +64,85 @@ export default function DriverMainPage() {
               </>
             )}
           </YStack>
-          <YStack justifyContent="flex-start" alignItems="flex-start" padding="$4" gap="$3">
-            <XStack gap="$3">
-              <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
-                <XStack alignItems="center" space="$3">
-                  <MaterialIcons name="speed" size={24} color="#007AFF" />
-                  <YStack>
-                    <Text fontSize="$5" fontWeight="600">
-                      {firstVehicle?.guncelKm} km
-                    </Text>
-                    <Text color="$gray11">{t('guncelKm')}</Text>
-                  </YStack>
-                </XStack>
-              </YStack>
-              <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
-                <XStack alignItems="center" space="$3">
+        </Pressable>
+
+        <YStack justifyContent="flex-start" alignItems="flex-start" padding="$4" gap="$3">
+          <XStack gap="$3">
+            <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
+              <XStack alignItems="center" space="$3">
+                <MaterialIcons name="speed" size={24} color="#007AFF" />
+                <YStack>
+                  <Text fontSize="$5" fontWeight="600">
+                    {firstVehicle?.guncelKm} km
+                  </Text>
+                  <Text color="$gray11">{t('guncelKm')}</Text>
+                </YStack>
+              </XStack>
+            </YStack>
+            <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2" onLayout={(e) => setMaintenanceCardWidth(e.nativeEvent.layout.width)}>
+              <ScrollView
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                scrollEventThrottle={16}
+                onMomentumScrollEnd={(e) => {
+                  const width = maintenanceCardWidth || 1;
+                  const page = Math.round(e.nativeEvent.contentOffset.x / width);
+                  setMaintenancePage(page);
+                }}
+              >
+                <XStack alignItems="center" space="$3" style={{ width: maintenanceCardWidth || 1 }}>
                   <MaterialIcons name="speed" size={24} color="#007AFF" />
                   <YStack>
                     <Text fontSize="$5" fontWeight="600">
                       {firstVehicle?.hedefKm} km
                     </Text>
+                    <Text color="$gray11">{t('bakimZamani')}</Text>
+                  </YStack>
+                </XStack>
+
+                <XStack alignItems="center" space="$3" style={{ width: maintenanceCardWidth || 1 }}>
+                  <MaterialIcons name="event" size={24} color="#007AFF" />
+                  <YStack>
                     <Text fontSize="$5" fontWeight="600">
                       {firstVehicle?.hedefTarih}
                     </Text>
                     <Text color="$gray11">{t('bakimZamani')}</Text>
                   </YStack>
                 </XStack>
-              </YStack>
-            </XStack>
-            <XStack gap="$3">
-              <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
-                <XStack alignItems="center" space="$3">
-                  <MaterialIcons name="speed" size={24} color="#007AFF" />
-                  <YStack>
-                    <Text fontSize="$5" fontWeight="600">
-                      {firstVehicle?.sonSigortaTarih}
-                    </Text>
-                    <Text color="$gray11">{t('sigortaBitis')}</Text>
-                  </YStack>
-                </XStack>
-              </YStack>
-              <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
-                <XStack alignItems="center" space="$3">
-                  <MaterialIcons name="speed" size={24} color="#007AFF" />
-                  <YStack>
-                    <Text fontSize="$5" fontWeight="600">
-                      {firstVehicle?.ortalamaTuketim} lt/100km
-                    </Text>
-                    <Text color="$gray11">{t('yakitTuketimi')}</Text>
-                  </YStack>
-                </XStack>
-              </YStack>
-            </XStack>
-          </YStack>
-        </Pressable>
+              </ScrollView>
+
+              <XStack justifyContent="center" gap="$1">
+                <Stack width={6} height={6} borderRadius={3} backgroundColor={maintenancePage === 0 ? '$blue10' : '$gray6'} />
+                <Stack width={6} height={6} borderRadius={3} backgroundColor={maintenancePage === 1 ? '$blue10' : '$gray6'} />
+              </XStack>
+            </YStack>
+          </XStack>
+          <XStack gap="$3">
+            <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
+              <XStack alignItems="center" space="$3">
+                <MaterialIcons name="speed" size={24} color="#007AFF" />
+                <YStack>
+                  <Text fontSize="$5" fontWeight="600">
+                    {firstVehicle?.sonSigortaTarih}
+                  </Text>
+                  <Text color="$gray11">{t('sigortaBitis')}</Text>
+                </YStack>
+              </XStack>
+            </YStack>
+            <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
+              <XStack alignItems="center" space="$3">
+                <MaterialIcons name="speed" size={24} color="#007AFF" />
+                <YStack>
+                  <Text fontSize="$5" fontWeight="600">
+                    {firstVehicle?.ortalamaTuketim} lt/100km
+                  </Text>
+                  <Text color="$gray11">{t('yakitTuketimi')}</Text>
+                </YStack>
+              </XStack>
+            </YStack>
+          </XStack>
+        </YStack>
 
         <BottomSheetModal
           ref={bottomSheetModalRef}
