@@ -51,8 +51,8 @@ export default function DriverMainPage() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top', 'left', 'right']}>
       <Stack flex={1} backgroundColor="$background">
-        <Pressable onPress={openSheet} style={{ width: '100%' }}>
-          <YStack justifyContent="flex-start" alignItems="flex-start" padding="$4" gap="$2">
+        <Pressable onPress={openSheet} style={{ alignSelf: 'flex-start' }}>
+          <YStack justifyContent="flex-start" alignItems="flex-start" padding="$4" gap="$2" alignSelf="flex-start">
             {firstVehicle && (
               <>
                 <Text fontSize="$8" fontWeight="bold">
@@ -79,15 +79,19 @@ export default function DriverMainPage() {
                 </YStack>
               </XStack>
             </YStack>
-            <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2" onLayout={(e) => setMaintenanceCardWidth(e.nativeEvent.layout.width)}>
+            <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2">
               <ScrollView
                 horizontal
                 pagingEnabled
                 showsHorizontalScrollIndicator={false}
                 scrollEventThrottle={16}
+                // ScrollView genişliği kolona eşitlensin
+                style={{ width: '100%' }}
+                // Genişliği doğrudan ScrollView'dan ölç
+                onLayout={(e) => setMaintenanceCardWidth(e.nativeEvent.layout.width)}
                 onMomentumScrollEnd={(e) => {
-                  const width = maintenanceCardWidth || 1;
-                  const page = Math.round(e.nativeEvent.contentOffset.x / width);
+                  const w = maintenanceCardWidth || 1;
+                  const page = Math.round(e.nativeEvent.contentOffset.x / w);
                   setMaintenancePage(page);
                 }}
               >
@@ -111,11 +115,6 @@ export default function DriverMainPage() {
                   </YStack>
                 </XStack>
               </ScrollView>
-
-              <XStack justifyContent="center" gap="$1">
-                <Stack width={6} height={6} borderRadius={3} backgroundColor={maintenancePage === 0 ? '$blue10' : '$gray6'} />
-                <Stack width={6} height={6} borderRadius={3} backgroundColor={maintenancePage === 1 ? '$blue10' : '$gray6'} />
-              </XStack>
             </YStack>
           </XStack>
           <XStack gap="$3">
