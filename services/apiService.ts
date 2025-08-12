@@ -110,4 +110,10 @@ export const apiService = {
     });
     return response.data;
   },
+
+  // Driver Dashboard endpoints
+  getDriverDashboardCardSection: async (vehicleIds: number[]) => {
+    const response = await axiosInstance.post('/DriverDashboard/GetDriverDashboardCardSection', vehicleIds);
+    return response.data;
+  },
 };

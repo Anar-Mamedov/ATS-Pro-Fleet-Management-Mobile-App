@@ -84,5 +84,7 @@
   "no_photo": "Fotoğraf\nYok",
   "change_photo": "Fotoğrafı Değiştir",
   "upload_photo": "Fotoğraf Yükle",
-  "photo_upload_info": "Profil fotoğrafınızı yüklemek için butona tıklayın. Kare format önerilir."
+  "photo_upload_info": "Profil fotoğrafınızı yüklemek için butona tıklayın. Kare format önerilir.",
+  "active": "Aktif",
+  "passive": "Pasif"
 }
