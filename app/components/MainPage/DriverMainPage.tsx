@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { apiService } from '../../../services/apiService';
+import { FormattedDate } from '../FormattedDate';
 
 export default function DriverMainPage() {
   const { t } = useTranslation();
@@ -108,9 +109,7 @@ export default function DriverMainPage() {
                 <XStack alignItems="center" space="$3" style={{ width: maintenanceCardWidth || 1 }}>
                   <MaterialIcons name="event" size={24} color="#007AFF" />
                   <YStack>
-                    <Text fontSize="$5" fontWeight="600">
-                      {firstVehicle?.hedefTarih}
-                    </Text>
+                    <FormattedDate value={firstVehicle?.hedefTarih ?? ''} format="L" textProps={{ fontSize: '$5', fontWeight: '600' }} />
                     <Text color="$gray11">{t('bakimZamani')}</Text>
                   </YStack>
                 </XStack>
@@ -122,9 +121,7 @@ export default function DriverMainPage() {
               <XStack alignItems="center" space="$3">
                 <MaterialIcons name="speed" size={24} color="#007AFF" />
                 <YStack>
-                  <Text fontSize="$5" fontWeight="600">
-                    {firstVehicle?.sonSigortaTarih}
-                  </Text>
+                  <FormattedDate value={firstVehicle?.sonSigortaTarih ?? ''} format="L" textProps={{ fontSize: '$5', fontWeight: '600' }} />
                   <Text color="$gray11">{t('sigortaBitis')}</Text>
                 </YStack>
               </XStack>
@@ -134,7 +131,7 @@ export default function DriverMainPage() {
                 <MaterialIcons name="speed" size={24} color="#007AFF" />
                 <YStack>
                   <Text fontSize="$5" fontWeight="600">
-                    {firstVehicle?.ortalamaTuketim} lt/100km
+                    {firstVehicle?.ortalamaTuketim} lt/100 km
                   </Text>
                   <Text color="$gray11">{t('yakitTuketimi')}</Text>
                 </YStack>
