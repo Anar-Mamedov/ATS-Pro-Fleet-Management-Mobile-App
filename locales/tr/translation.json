@@ -86,5 +86,7 @@
   "upload_photo": "Fotoğraf Yükle",
   "photo_upload_info": "Profil fotoğrafınızı yüklemek için butona tıklayın. Kare format önerilir.",
   "active": "Aktif",
-  "passive": "Pasif"
+  "passive": "Pasif",
+  "araclar": "Araçlar",
+  "guncelKm": "Güncel Km"
 }
