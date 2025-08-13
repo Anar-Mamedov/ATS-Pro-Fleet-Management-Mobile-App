@@ -6,7 +6,7 @@ import { Stack, Text } from '@tamagui/core';
 import { XStack, YStack } from '@tamagui/stacks';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView } from 'react-native';
+import { Pressable, RefreshControl, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { apiService } from '../../../services/apiService';
 import { FormattedDate } from '../../../ui/components/FormattedDate';
@@ -18,16 +18,17 @@ export default function DriverMainPage() {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [maintenanceCardWidth, setMaintenanceCardWidth] = useState<number>(0);
   const [reminderData, setReminderData] = useState<any>(null);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const firstVehicle = Array.isArray(vehicleData) && vehicleData.length > 0 ? vehicleData[selectedIndex] : null;
 
-  const getUserInfo = async () => {
+  const getUserInfo = useCallback(async () => {
     const id = await AsyncStorage.getItem('id');
     if (id) {
       const data = await apiService.getUserInfoById(id);
       setAracIds(Array.isArray(data?.aracIds) ? data.aracIds : []);
     }
-  };
+  }, []);
 
   const getDriverDashboardCardSection = useCallback(async () => {
     const data = await apiService.getDriverDashboardCardSection(aracIds);
@@ -41,7 +42,7 @@ export default function DriverMainPage() {
 
   useEffect(() => {
     getUserInfo();
-  }, []);
+  }, [getUserInfo]);
 
   useEffect(() => {
     if (aracIds.length > 0) {
@@ -60,10 +61,20 @@ export default function DriverMainPage() {
     }
   }, [firstVehicle, getDashboardReminder]);
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await getUserInfo();
+      await Promise.all([getDriverDashboardCardSection(), getDashboardReminder()]);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [getUserInfo, getDriverDashboardCardSection, getDashboardReminder]);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top', 'left', 'right']}>
       <Stack flex={1} backgroundColor="$background">
-        <ScrollView contentContainerStyle={{ paddingBottom: 16 }} nestedScrollEnabled>
+        <ScrollView contentContainerStyle={{ paddingBottom: 16 }} nestedScrollEnabled refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
           <Pressable onPress={openSheet} style={{ alignSelf: 'flex-start' }}>
             <YStack justifyContent="flex-start" alignItems="flex-start" padding="$4" gap="$2" alignSelf="flex-start">
               {firstVehicle && (
