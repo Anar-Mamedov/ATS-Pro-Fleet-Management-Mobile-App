@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios, { AxiosInstance } from 'axios';
 import { router } from 'expo-router';
+import { Alert } from 'react-native';
 
 // Environment variables için constants
 const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL || 'http://localhost:3000/api';
@@ -31,6 +32,9 @@ const removeToken = async () => {
   }
 };
 
+// Aynı anda birden fazla 401 yanıtı gelirse tekrar tekrar yönlendirme/alerti tetiklememek için kilit
+let isHandlingUnauthorized = false;
+
 // Request interceptor - token ekle
 axiosInstance.interceptors.request.use(async (config) => {
   const token = await getToken();
@@ -49,12 +53,19 @@ axiosInstance.interceptors.response.use(
   },
   async (error) => {
     if (error.response && error.response.status === 401) {
-      await removeToken();
-      // Kullanıcıya oturum süresi doldu bildirimi göster
-      const { Alert } = await import('react-native');
-      Alert.alert('Oturum Süresi Doldu', 'Oturum süreniz dolmuştur. Lütfen tekrar giriş yapın.', [{ text: 'Tamam' }]);
-      // Doğrudan login sayfasına yönlendir
-      router.replace('/login');
+      if (!isHandlingUnauthorized) {
+        isHandlingUnauthorized = true;
+        try {
+          await removeToken();
+          Alert.alert('Oturum Süresi Doldu', 'Oturum süreniz dolmuştur. Lütfen tekrar giriş yapın.', [{ text: 'Tamam' }]);
+          router.replace('/login');
+        } finally {
+          // Küçük bir gecikmeden sonra kilidi kaldır (ardışık 401'lerde üst üste bindirmeyi önlemek için)
+          setTimeout(() => {
+            isHandlingUnauthorized = false;
+          }, 500);
+        }
+      }
     }
     return Promise.reject(error);
   }
