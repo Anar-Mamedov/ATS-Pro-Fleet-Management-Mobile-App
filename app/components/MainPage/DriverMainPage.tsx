@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button } from '@tamagui/button';
 import { Stack, Text } from '@tamagui/core';
 import { XStack, YStack } from '@tamagui/stacks';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,13 +13,13 @@ import { FormattedDate } from '../../../ui/components/FormattedDate';
 
 export default function DriverMainPage() {
   const { t } = useTranslation();
-  const [loading, setLoading] = useState(false);
   const [aracIds, setAracIds] = useState<number[]>([]);
   const [vehicleData, setVehicleData] = useState<any>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [maintenanceCardWidth, setMaintenanceCardWidth] = useState<number>(0);
-  const [maintenancePage, setMaintenancePage] = useState<number>(0);
   const [reminderData, setReminderData] = useState<any>(null);
+
+  const firstVehicle = Array.isArray(vehicleData) && vehicleData.length > 0 ? vehicleData[selectedIndex] : null;
 
   const getUserInfo = async () => {
     const id = await AsyncStorage.getItem('id');
@@ -29,15 +29,15 @@ export default function DriverMainPage() {
     }
   };
 
-  const getDriverDashboardCardSection = async () => {
+  const getDriverDashboardCardSection = useCallback(async () => {
     const data = await apiService.getDriverDashboardCardSection(aracIds);
     setVehicleData(data);
-  };
+  }, [aracIds]);
 
-  const getDashboardReminder = async () => {
+  const getDashboardReminder = useCallback(async () => {
     const data = await apiService.getDashboardReminder(firstVehicle?.aracId);
     setReminderData(data);
-  };
+  }, [firstVehicle?.aracId]);
 
   useEffect(() => {
     getUserInfo();
@@ -47,9 +47,7 @@ export default function DriverMainPage() {
     if (aracIds.length > 0) {
       getDriverDashboardCardSection();
     }
-  }, [aracIds]);
-
-  const firstVehicle = Array.isArray(vehicleData) && vehicleData.length > 0 ? vehicleData[selectedIndex] : null;
+  }, [aracIds, getDriverDashboardCardSection]);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['30%', '50%'], []);
@@ -60,7 +58,7 @@ export default function DriverMainPage() {
     if (firstVehicle) {
       getDashboardReminder();
     }
-  }, [firstVehicle]);
+  }, [firstVehicle, getDashboardReminder]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top', 'left', 'right']}>
@@ -111,11 +109,6 @@ export default function DriverMainPage() {
                 style={{ width: '100%' }}
                 // Genişliği doğrudan ScrollView'dan ölç
                 onLayout={(e) => setMaintenanceCardWidth(e.nativeEvent.layout.width)}
-                onMomentumScrollEnd={(e) => {
-                  const w = maintenanceCardWidth || 1;
-                  const page = Math.round(e.nativeEvent.contentOffset.x / w);
-                  setMaintenancePage(page);
-                }}
               >
                 <XStack alignItems="center" space="$3" style={{ width: maintenanceCardWidth || 1 }}>
                   <MaterialIcons name="build" size={24} color="#007AFF" />
@@ -195,11 +188,50 @@ export default function DriverMainPage() {
           </Button>
         </XStack>
 
-        {reminderData && (
-          <YStack padding="$4" gap="$3">
-            <Text fontSize="$6" fontWeight="600">
-              {reminderData.title}
+        {Array.isArray(reminderData) && (
+          <YStack padding="$4" gap="$2">
+            <Text fontSize="$6" fontWeight="700">
+              {t('tasks')}
             </Text>
+            <YStack gap="$2">
+              {(reminderData as { category: string; count: number }[])
+                .filter((i) => i.count > 0)
+                .map((item) => {
+                  const iconMap: Record<string, { icon: any; color: string; subtitleKey?: string; rightText?: string }> = {
+                    vergi: { icon: 'request-quote', color: '#F59E0B' },
+                    egzoz: { icon: 'science', color: '#6B7280' },
+                    sigorta: { icon: 'policy', color: '#2563EB' },
+                    muayene: { icon: 'assignment', color: '#22C55E' },
+                    sozlesme: { icon: 'description', color: '#A855F7' },
+                    ceza: { icon: 'gavel', color: '#EF4444' },
+                    kiralama: { icon: 'directions-car', color: '#14B8A6' },
+                    tasitKarti: { icon: 'credit-card', color: '#0EA5E9' },
+                    periyodikBakim: { icon: 'event', color: '#F59E0B', subtitleKey: 'reminders.subtitles.periyodikBakim' },
+                  };
+                  const cfg = iconMap[item.category] || { icon: 'notifications', color: '#6B7280' };
+                  const label = t(`${item.category}`);
+                  const subtitle = cfg.subtitleKey ? t(cfg.subtitleKey) : undefined;
+                  return (
+                    <Pressable key={item.category} style={{ width: '100%' }}>
+                      <XStack alignItems="center" justifyContent="space-between" borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$3" backgroundColor="white">
+                        <XStack alignItems="center" gap="$3">
+                          <Stack width={28} height={28} borderRadius={6} alignItems="center" justifyContent="center">
+                            <MaterialIcons name={cfg.icon} size={18} color={cfg.color} />
+                          </Stack>
+                          <YStack gap="$1">
+                            <Text fontSize="$5" fontWeight="600">{`${item.count} ${label}`}</Text>
+                            {subtitle && <Text color="$gray11">{subtitle}</Text>}
+                          </YStack>
+                        </XStack>
+                        <XStack alignItems="center" gap="$1">
+                          {cfg.rightText && <Text color="$gray11">{cfg.rightText}</Text>}
+                          <MaterialIcons name="chevron-right" size={20} color="#9BA1A6" />
+                        </XStack>
+                      </XStack>
+                    </Pressable>
+                  );
+                })}
+            </YStack>
           </YStack>
         )}
 

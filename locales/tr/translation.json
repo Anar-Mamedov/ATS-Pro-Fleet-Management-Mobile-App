@@ -94,5 +94,15 @@
   "bakimZamani": "Bakım Zamanı",
   "sigortaBitis": "Sigorta Bitiş",
   "cezaGirisi": "Ceza Girişi",
-  "yakitGirisi": "Yakıt Girişi"
+  "yakitGirisi": "Yakıt Girişi",
+  "vergi": "Vergi",
+  "egzoz": "Egzoz",
+  "sigorta": "Sigorta",
+  "muayene": "Muayene",
+  "sozlesme": "Sözleşme",
+  "ceza": "Ceza",
+  "kiralama": "Kiralama",
+  "tasitKarti": "Taşıt Kartı",
+  "periyodikBakim": "Planlı Bakım",
+  "tasks": "Görevler"
 }
