@@ -59,9 +59,17 @@ export default function DriverMainPage() {
                 <Text fontSize="$8" fontWeight="bold">
                   {firstVehicle.plaka}
                 </Text>
-                <Text fontSize="$5" color="$gray11">
-                  {firstVehicle.model} |<Text color={firstVehicle.aktif ? '$green10' : '$red10'}> {firstVehicle.aktif ? t('active') : t('passive')}</Text>
-                </Text>
+                <XStack alignItems="center" space="$1">
+                  <Text fontSize="$5" color="$gray11" numberOfLines={1} ellipsizeMode="tail" maxWidth={100}>
+                    {firstVehicle.model}
+                  </Text>
+                  <Text fontSize="$5" color="$gray11">
+                    |
+                  </Text>
+                  <Text fontSize="$5" color={firstVehicle.aktif ? '$green10' : '$red10'}>
+                    {firstVehicle.aktif ? t('active') : t('passive')}
+                  </Text>
+                </XStack>
               </>
             )}
           </YStack>
@@ -130,9 +138,14 @@ export default function DriverMainPage() {
               <XStack alignItems="center" space="$3">
                 <MaterialIcons name="local-gas-station" size={24} color="#007AFF" />
                 <YStack>
-                  <Text fontSize="$5" fontWeight="600">
-                    {firstVehicle?.ortalamaTuketim} {t('fuelConsumptionUnit')}
-                  </Text>
+                  <XStack>
+                    <Text fontSize="$5" fontWeight="600" numberOfLines={1} ellipsizeMode="tail" maxWidth={60}>
+                      {firstVehicle?.ortalamaTuketim}
+                    </Text>
+                    <Text fontSize="$5" color="$gray11">
+                      {t('fuelConsumptionUnit')}
+                    </Text>
+                  </XStack>
                   <Text color="$gray11">{t('yakitTuketimi')}</Text>
                 </YStack>
               </XStack>
