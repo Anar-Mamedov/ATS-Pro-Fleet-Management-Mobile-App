@@ -1,6 +1,7 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Button } from '@tamagui/button';
 import { Stack, Text } from '@tamagui/core';
 import { XStack, YStack } from '@tamagui/stacks';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -152,6 +153,19 @@ export default function DriverMainPage() {
             </YStack>
           </XStack>
         </YStack>
+
+        <XStack padding="$4" gap="$3" width="100%">
+          <Button backgroundColor="$blue10" flex={1} onPress={() => {}} pressStyle={{ opacity: 0.85 }} icon={<MaterialIcons name="gavel" size={20} color="white" />}>
+            <Button.Text color="white" fontSize="$5">
+              {t('cezaGirisi')}
+            </Button.Text>
+          </Button>
+          <Button backgroundColor="$green10" flex={1} onPress={() => {}} pressStyle={{ opacity: 0.85 }} icon={<MaterialIcons name="local-gas-station" size={20} color="white" />}>
+            <Button.Text color="white" fontSize="$5">
+              {t('yakitGirisi')}
+            </Button.Text>
+          </Button>
+        </XStack>
 
         <BottomSheetModal
           ref={bottomSheetModalRef}

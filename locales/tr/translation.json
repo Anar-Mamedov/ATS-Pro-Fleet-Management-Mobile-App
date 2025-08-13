@@ -92,5 +92,7 @@
   "fuelConsumptionUnit": "lt/100 km",
   "yakitTuketimi": "Yakıt Tüketimi",
   "bakimZamani": "Bakım Zamanı",
-  "sigortaBitis": "Sigorta Bitiş"
+  "sigortaBitis": "Sigorta Bitiş",
+  "cezaGirisi": "Ceza Girişi",
+  "yakitGirisi": "Yakıt Girişi"
 }
