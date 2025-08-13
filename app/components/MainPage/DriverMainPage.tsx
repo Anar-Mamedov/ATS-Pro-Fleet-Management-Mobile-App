@@ -19,6 +19,7 @@ export default function DriverMainPage() {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [maintenanceCardWidth, setMaintenanceCardWidth] = useState<number>(0);
   const [maintenancePage, setMaintenancePage] = useState<number>(0);
+  const [reminderData, setReminderData] = useState<any>(null);
 
   const getUserInfo = async () => {
     const id = await AsyncStorage.getItem('id');
@@ -31,6 +32,11 @@ export default function DriverMainPage() {
   const getDriverDashboardCardSection = async () => {
     const data = await apiService.getDriverDashboardCardSection(aracIds);
     setVehicleData(data);
+  };
+
+  const getDashboardReminder = async () => {
+    const data = await apiService.getDashboardReminder(firstVehicle?.aracId);
+    setReminderData(data);
   };
 
   useEffect(() => {
@@ -49,6 +55,12 @@ export default function DriverMainPage() {
   const snapPoints = useMemo(() => ['30%', '50%'], []);
   const openSheet = () => bottomSheetModalRef.current?.present();
   const closeSheet = () => bottomSheetModalRef.current?.dismiss();
+
+  useEffect(() => {
+    if (firstVehicle) {
+      getDashboardReminder();
+    }
+  }, [firstVehicle]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top', 'left', 'right']}>
@@ -155,17 +167,41 @@ export default function DriverMainPage() {
         </YStack>
 
         <XStack padding="$4" gap="$3" width="100%">
-          <Button backgroundColor="$blue10" flex={1} onPress={() => {}} pressStyle={{ opacity: 0.85 }} icon={<MaterialIcons name="gavel" size={20} color="white" />}>
+          <Button
+            backgroundColor="$blue10"
+            flex={1}
+            onPress={() => {}}
+            pressTheme={false}
+            hoverTheme={false}
+            pressStyle={{ backgroundColor: '$blue10', opacity: 0.85 }}
+            icon={<MaterialIcons name="gavel" size={20} color="white" />}
+          >
             <Button.Text color="white" fontSize="$5">
               {t('cezaGirisi')}
             </Button.Text>
           </Button>
-          <Button backgroundColor="$green10" flex={1} onPress={() => {}} pressStyle={{ opacity: 0.85 }} icon={<MaterialIcons name="local-gas-station" size={20} color="white" />}>
+          <Button
+            backgroundColor="$green10"
+            flex={1}
+            onPress={() => {}}
+            pressTheme={false}
+            hoverTheme={false}
+            pressStyle={{ backgroundColor: '$green10', opacity: 0.85 }}
+            icon={<MaterialIcons name="local-gas-station" size={20} color="white" />}
+          >
             <Button.Text color="white" fontSize="$5">
               {t('yakitGirisi')}
             </Button.Text>
           </Button>
         </XStack>
+
+        {reminderData && (
+          <YStack padding="$4" gap="$3">
+            <Text fontSize="$6" fontWeight="600">
+              {reminderData.title}
+            </Text>
+          </YStack>
+        )}
 
         <BottomSheetModal
           ref={bottomSheetModalRef}
