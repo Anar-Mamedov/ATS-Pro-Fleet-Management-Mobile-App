@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { apiService } from '../../../services/apiService';
-import { FormattedDate } from '../FormattedDate';
+import { FormattedDate } from '../../../ui/components/FormattedDate';
 
 export default function DriverMainPage() {
   const { t } = useTranslation();
@@ -97,7 +97,7 @@ export default function DriverMainPage() {
                 }}
               >
                 <XStack alignItems="center" space="$3" style={{ width: maintenanceCardWidth || 1 }}>
-                  <MaterialIcons name="speed" size={24} color="#007AFF" />
+                  <MaterialIcons name="build" size={24} color="#007AFF" />
                   <YStack>
                     <Text fontSize="$5" fontWeight="600">
                       {firstVehicle?.hedefKm} km
@@ -119,7 +119,7 @@ export default function DriverMainPage() {
           <XStack gap="$3">
             <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
               <XStack alignItems="center" space="$3">
-                <MaterialIcons name="speed" size={24} color="#007AFF" />
+                <MaterialIcons name="policy" size={24} color="#007AFF" />
                 <YStack>
                   <FormattedDate value={firstVehicle?.sonSigortaTarih ?? ''} format="L" textProps={{ fontSize: '$5', fontWeight: '600' }} />
                   <Text color="$gray11">{t('sigortaBitis')}</Text>
@@ -128,7 +128,7 @@ export default function DriverMainPage() {
             </YStack>
             <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
               <XStack alignItems="center" space="$3">
-                <MaterialIcons name="speed" size={24} color="#007AFF" />
+                <MaterialIcons name="local-gas-station" size={24} color="#007AFF" />
                 <YStack>
                   <Text fontSize="$5" fontWeight="600">
                     {firstVehicle?.ortalamaTuketim} {t('fuelConsumptionUnit')}
