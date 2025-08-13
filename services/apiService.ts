@@ -116,4 +116,10 @@ export const apiService = {
     const response = await axiosInstance.post('/DriverDashboard/GetDriverDashboardCardSection', vehicleIds);
     return response.data;
   },
+
+  // Driver Reminder endpoints
+  getDashboardReminder: async (vId: number) => {
+    const response = await axiosInstance.get(`/MobileDashboard/GetDashboardReminder?vId=${vId}`);
+    return response.data;
+  },
 };
