@@ -1,3 +1,4 @@
+import { useThemeController } from '@/config/theme';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Text, View } from '@tamagui/core';
@@ -36,6 +37,7 @@ interface UserInfo {
 
 export default function ProfileUserInfo() {
   const { t } = useTranslation();
+  const { themeName } = useThemeController();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -165,7 +167,7 @@ export default function ProfileUserInfo() {
       <YStack space="$4" alignItems="center">
         {/* Profil Fotoğrafı */}
         <View position="relative">
-          <View width={80} height={80} borderRadius={40} backgroundColor="$gray5" alignItems="center" justifyContent="center" overflow="hidden">
+          <View width={80} height={80} borderRadius={40} backgroundColor="$backgroundStrong" alignItems="center" justifyContent="center" overflow="hidden">
             {profilePhoto ? (
               <Image
                 source={{ uri: profilePhoto }}
@@ -177,7 +179,7 @@ export default function ProfileUserInfo() {
                 resizeMode="cover"
               />
             ) : (
-              <Text fontSize="$6" fontWeight="600" color="$gray10">
+              <Text fontSize="$6" fontWeight="600" color="$color">
                 {userInfo.isim?.charAt(0) || ''}
                 {userInfo.soyAd?.charAt(0) || ''}
               </Text>
@@ -191,14 +193,14 @@ export default function ProfileUserInfo() {
               position: 'absolute',
               bottom: -2,
               right: -2,
-              backgroundColor: '#007AFF',
+              backgroundColor: '#0A84FF',
               borderRadius: 12,
               width: 24,
               height: 24,
               alignItems: 'center',
               justifyContent: 'center',
               borderWidth: 2,
-              borderColor: 'white',
+              borderColor: '#FFFFFF',
             }}
           >
             <MaterialIcons name="edit" size={14} color="white" />
@@ -211,7 +213,7 @@ export default function ProfileUserInfo() {
             {/* <Text fontSize="$3" color="$gray10" fontWeight="500">
               {t('name')}
             </Text> */}
-            <Text fontSize="$6" fontWeight="600" textAlign="center">
+            <Text fontSize="$6" fontWeight="600" textAlign="center" color="$color">
               {userInfo.isim || ''} {userInfo.soyAd || ''}
             </Text>
           </YStack>
@@ -239,7 +241,7 @@ export default function ProfileUserInfo() {
         >
           <View
             style={{
-              backgroundColor: 'white',
+              backgroundColor: themeName === 'dark' ? '#1C1C1E' : '#FFFFFF',
               borderRadius: 20,
               padding: 20,
               width: '90%',
@@ -255,7 +257,7 @@ export default function ProfileUserInfo() {
                 marginBottom: 20,
               }}
             >
-              <Text fontSize="$6" fontWeight="600">
+              <Text fontSize="$6" fontWeight="600" color="$color">
                 {t('upload_photo') || 'Fotoğraf Yükle'}
               </Text>
               <TouchableOpacity
@@ -264,7 +266,7 @@ export default function ProfileUserInfo() {
                   padding: 5,
                 }}
               >
-                <MaterialIcons name="close" size={24} color="#666" />
+                <MaterialIcons name="close" size={24} color={themeName === 'dark' ? '#A1A1AA' : '#666'} />
               </TouchableOpacity>
             </View>
 

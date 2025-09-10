@@ -8,48 +8,61 @@ import { Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import '../config/i18n';
+import { ThemeProvider, useThemeController } from '../config/theme';
 import config from '../tamagui.config';
 
-export default function RootLayout() {
+function ThemeBars() {
+  const { themeName } = useThemeController();
   useEffect(() => {
     if (Platform.OS === 'android') {
-      NavigationBar.setStyle('dark');
+      NavigationBar.setStyle(themeName === 'dark' ? 'light' : 'dark');
+      // Make Android gesture/navigation bar transparent so content shows behind it
+      // (iOS home indicator color can't be changed in Expo)
+      try {
+        // @ts-ignore - setBackgroundColor works with color names like 'transparent'
+        NavigationBar.setBackgroundColorAsync('transparent');
+      } catch {}
     }
-  }, []);
+  }, [themeName]);
+  return <StatusBar style={themeName === 'dark' ? 'light' : 'dark'} />;
+}
 
+export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <StatusBar style="dark" />
         <TamaguiProvider config={config}>
-          <BottomSheetModalProvider>
-            <Stack>
-              <Stack.Screen
-                name="index"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="welcome"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="login"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="(tabs)"
-                options={{
-                  headerShown: false,
-                }}
-              />
-            </Stack>
-          </BottomSheetModalProvider>
+          <ThemeProvider>
+            <ThemeBars />
+            <BottomSheetModalProvider>
+              <Stack>
+                <Stack.Screen
+                  name="index"
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+                <Stack.Screen
+                  name="welcome"
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+                <Stack.Screen
+                  name="login"
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+                <Stack.Screen
+                  name="(tabs)"
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+              </Stack>
+            </BottomSheetModalProvider>
+          </ThemeProvider>
         </TamaguiProvider>
       </GestureHandlerRootView>
     </SafeAreaProvider>

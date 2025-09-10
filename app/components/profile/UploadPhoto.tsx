@@ -48,7 +48,7 @@ export default function UploadPhoto({ refId, refGroup, isForDefault = true, curr
 
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: 'images',
         allowsEditing: true,
         aspect: [1, 1],
         quality: 0.8,
@@ -72,7 +72,7 @@ export default function UploadPhoto({ refId, refGroup, isForDefault = true, curr
 
     try {
       const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: 'images',
         allowsEditing: true,
         aspect: [1, 1],
         quality: 0.8,
@@ -152,11 +152,15 @@ export default function UploadPhoto({ refId, refGroup, isForDefault = true, curr
     Alert.alert(t('select_image') || 'Resim Seç', t('choose_image_source') || 'Resim kaynağını seçin', [
       {
         text: t('camera') || 'Kamera',
-        onPress: takePhoto,
+        onPress: () => {
+          void takePhoto();
+        },
       },
       {
         text: t('gallery') || 'Galeri',
-        onPress: pickImageFromGallery,
+        onPress: () => {
+          void pickImageFromGallery();
+        },
       },
       {
         text: t('cancel') || 'İptal',
@@ -165,31 +169,51 @@ export default function UploadPhoto({ refId, refGroup, isForDefault = true, curr
     ]);
   };
 
+  const renderProfileContent = () => {
+    if (isUploading) {
+      return (
+        <YStack gap="$2" alignItems="center">
+          <ActivityIndicator size="large" color="#0A84FF" />
+          <Text fontSize="$3" color="$gray11">
+            {t('uploading') || 'Yükleniyor...'}
+          </Text>
+        </YStack>
+      );
+    }
+
+    if (selectedImageUri) {
+      return <Image source={{ uri: selectedImageUri }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />;
+    }
+
+    return (
+      <YStack gap="$2" alignItems="center">
+        <MaterialIcons name="camera-alt" size={40} color="#9BA1A6" />
+        <Text fontSize="$3" color="$gray10" textAlign="center">
+          {t('no_photo') || 'Fotoğraf\nYok'}
+        </Text>
+      </YStack>
+    );
+  };
+
   return (
-    <YStack space="$4" alignItems="center">
+    <YStack gap="$4" alignItems="center">
       {/* Profil Resmi Gösterimi */}
-      <View width={120} height={120} borderRadius={60} backgroundColor="$gray5" alignItems="center" justifyContent="center" borderWidth={2} borderColor="$gray8" overflow="hidden">
-        {isUploading ? (
-          <YStack space="$2" alignItems="center">
-            <ActivityIndicator size="large" color="#007AFF" />
-            <Text fontSize="$3" color="$gray11">
-              {t('uploading') || 'Yükleniyor...'}
-            </Text>
-          </YStack>
-        ) : selectedImageUri ? (
-          <Image source={{ uri: selectedImageUri }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
-        ) : (
-          <YStack space="$2" alignItems="center">
-            <MaterialIcons name="camera-alt" size={40} color="#999" />
-            <Text fontSize="$3" color="$gray10" textAlign="center">
-              {t('no_photo') || 'Fotoğraf\nYok'}
-            </Text>
-          </YStack>
-        )}
+      <View
+        width={120}
+        height={120}
+        borderRadius={60}
+        backgroundColor="$backgroundStrong"
+        alignItems="center"
+        justifyContent="center"
+        borderWidth={2}
+        borderColor="$gray8"
+        overflow="hidden"
+      >
+        {renderProfileContent()}
       </View>
 
       {/* Yükleme Butonları */}
-      <XStack space="$3">
+      <XStack gap="$3">
         <Button
           size="$4"
           theme="blue"

@@ -1,3 +1,4 @@
+import { useThemeController } from '@/config/theme';
 import { apiService } from '@/services/apiService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button } from '@tamagui/button';
@@ -13,6 +14,7 @@ interface PersoneInformationUpdateProps {
 
 export default function PersoneInformationUpdate({ onSuccess }: PersoneInformationUpdateProps) {
   const { t } = useTranslation();
+  const { themeName } = useThemeController();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -140,44 +142,75 @@ export default function PersoneInformationUpdate({ onSuccess }: PersoneInformati
 
       <YStack space="$4" width="100%">
         <YStack space="$2">
-          <Text fontSize="$3" color="$gray10" fontWeight="500">
+          <Text fontSize="$3" color="$color" opacity={0.7} fontWeight="500">
             {t('userCode')}
           </Text>
           <TextInput
             placeholder={t('enterUserCode')}
             value={userCode}
             onChangeText={setUserCode}
-            style={[styles.input, userInfo?.isDriver && { backgroundColor: '#f5f5f5', color: '#999' }]}
+            placeholderTextColor={themeName === 'dark' ? '#9BA1A6' : '#6B7280'}
+            style={[
+              styles.input,
+              { color: themeName === 'dark' ? '#FFFFFF' : '#111111', borderColor: themeName === 'dark' ? '#3A3A3C' : '#E5E7EB' },
+              userInfo?.isDriver && { color: '#9BA1A6' },
+            ]}
             editable={!userInfo?.isDriver}
           />
         </YStack>
 
         <YStack space="$2">
-          <Text fontSize="$3" color="$gray10" fontWeight="500">
+          <Text fontSize="$3" color="$color" opacity={0.7} fontWeight="500">
             {t('firstName')}
           </Text>
-          <TextInput placeholder={t('enterFirstName')} value={firstName} onChangeText={setFirstName} style={styles.input} />
+          <TextInput
+            placeholder={t('enterFirstName')}
+            value={firstName}
+            onChangeText={setFirstName}
+            placeholderTextColor={themeName === 'dark' ? '#9BA1A6' : '#6B7280'}
+            style={[styles.input, { color: themeName === 'dark' ? '#FFFFFF' : '#111111', borderColor: themeName === 'dark' ? '#3A3A3C' : '#E5E7EB' }]}
+          />
         </YStack>
 
         <YStack space="$2">
-          <Text fontSize="$3" color="$gray10" fontWeight="500">
+          <Text fontSize="$3" color="$color" opacity={0.7} fontWeight="500">
             {t('lastName')}
           </Text>
-          <TextInput placeholder={t('enterLastName')} value={lastName} onChangeText={setLastName} style={styles.input} />
+          <TextInput
+            placeholder={t('enterLastName')}
+            value={lastName}
+            onChangeText={setLastName}
+            placeholderTextColor={themeName === 'dark' ? '#9BA1A6' : '#6B7280'}
+            style={[styles.input, { color: themeName === 'dark' ? '#FFFFFF' : '#111111', borderColor: themeName === 'dark' ? '#3A3A3C' : '#E5E7EB' }]}
+          />
         </YStack>
 
         <YStack space="$2">
-          <Text fontSize="$3" color="$gray10" fontWeight="500">
+          <Text fontSize="$3" color="$color" opacity={0.7} fontWeight="500">
             {t('email')}
           </Text>
-          <TextInput placeholder={t('enterEmail')} value={email} onChangeText={setEmail} keyboardType="email-address" style={styles.input} />
+          <TextInput
+            placeholder={t('enterEmail')}
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            placeholderTextColor={themeName === 'dark' ? '#9BA1A6' : '#6B7280'}
+            style={[styles.input, { color: themeName === 'dark' ? '#FFFFFF' : '#111111', borderColor: themeName === 'dark' ? '#3A3A3C' : '#E5E7EB' }]}
+          />
         </YStack>
 
         <YStack space="$2">
-          <Text fontSize="$3" color="$gray10" fontWeight="500">
+          <Text fontSize="$3" color="$color" opacity={0.7} fontWeight="500">
             {t('phone')}
           </Text>
-          <TextInput placeholder={t('enterPhone')} value={phone} onChangeText={setPhone} keyboardType="phone-pad" style={styles.input} />
+          <TextInput
+            placeholder={t('enterPhone')}
+            value={phone}
+            onChangeText={setPhone}
+            keyboardType="phone-pad"
+            placeholderTextColor={themeName === 'dark' ? '#9BA1A6' : '#6B7280'}
+            style={[styles.input, { color: themeName === 'dark' ? '#FFFFFF' : '#111111', borderColor: themeName === 'dark' ? '#3A3A3C' : '#E5E7EB' }]}
+          />
         </YStack>
 
         <Button backgroundColor="$blue10" color="white" borderRadius="$4" marginTop="$4" onPress={handleSave} fontSize="$5" fontWeight="600" disabled={loading}>
@@ -190,11 +223,12 @@ export default function PersoneInformationUpdate({ onSuccess }: PersoneInformati
 
 const styles = StyleSheet.create({
   input: {
-    backgroundColor: '#ffffff',
+    backgroundColor: 'transparent',
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: '#3A3A3C',
+    color: '#FFFFFF',
   },
 });
