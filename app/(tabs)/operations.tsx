@@ -1,3 +1,4 @@
+import { useBottomBarPadding } from '@/ui/components/useBottomBarPadding';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, Text, View } from '@tamagui/core';
 import { XStack, YStack } from '@tamagui/stacks';
@@ -17,6 +18,7 @@ interface MenuItem {
 
 export default function OperationsTab() {
   const { t } = useTranslation();
+  const bottomPad = useBottomBarPadding();
 
   const menuItems: MenuItem[] = [
     {
@@ -102,7 +104,7 @@ export default function OperationsTab() {
   return (
     <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: '#ffffff' }}>
       <Stack flex={1} backgroundColor="$background">
-        <ScrollView style={{ flex: 1 }}>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: bottomPad }}>
           <YStack padding="$4" space="$3">
             <Text fontSize="$7" fontWeight="bold" marginBottom="$2">
               {t('operations')}

@@ -2,6 +2,7 @@ import LanguageSelector from '@/app/components/profile/LanguageSelector';
 import PasswordUpdate from '@/app/components/profile/PasswordUpdate';
 import PersoneInformationUpdate from '@/app/components/profile/PersoneInformationUpdate';
 import ProfileUserInfo from '@/app/components/profile/ProfileUserInfo';
+import { useBottomBarPadding } from '@/ui/components/useBottomBarPadding';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Stack, Text } from '@tamagui/core';
@@ -16,6 +17,7 @@ export default function ProfileTab() {
   const { t } = useTranslation();
   const [showPersonalInfo, setShowPersonalInfo] = useState(false);
   const [showPasswordUpdate, setShowPasswordUpdate] = useState(false);
+  const bottomPad = useBottomBarPadding();
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem('token');
@@ -82,7 +84,7 @@ export default function ProfileTab() {
 
   return (
     <Stack flex={1} backgroundColor="$background">
-      <YStack flex={1} justifyContent="center" alignItems="center" padding="$4" space="$4">
+      <YStack flex={1} justifyContent="center" alignItems="center" padding="$4" paddingBottom={bottomPad} space="$4">
         <ProfileUserInfo />
 
         <XStack justifyContent="space-between" alignItems="center" width="100%" onPress={() => setShowPersonalInfo(true)}>

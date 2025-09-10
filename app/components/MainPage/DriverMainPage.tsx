@@ -1,3 +1,4 @@
+import { useBottomBarPadding } from '@/ui/components/useBottomBarPadding';
 import { MaterialIcons } from '@expo/vector-icons';
 import { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,6 +14,7 @@ import { FormattedDate } from '../../../ui/components/FormattedDate';
 
 export default function DriverMainPage() {
   const { t } = useTranslation();
+  const bottomPad = useBottomBarPadding();
   const [aracIds, setAracIds] = useState<number[]>([]);
   const [vehicleData, setVehicleData] = useState<any>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
@@ -74,7 +76,7 @@ export default function DriverMainPage() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top', 'left', 'right']}>
       <Stack flex={1} backgroundColor="$background">
-        <ScrollView contentContainerStyle={{ paddingBottom: 16 }} nestedScrollEnabled refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        <ScrollView contentContainerStyle={{ paddingBottom: bottomPad }} nestedScrollEnabled refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
           <Pressable onPress={openSheet} style={{ alignSelf: 'flex-start' }}>
             <YStack justifyContent="flex-start" alignItems="flex-start" padding="$4" gap="$2" alignSelf="flex-start">
               {firstVehicle && (
