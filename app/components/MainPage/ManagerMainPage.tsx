@@ -41,32 +41,32 @@ export default function ManagerMainPage() {
   return (
     <Stack flex={1} backgroundColor="$background">
       <YStack flex={1} justifyContent="center" alignItems="center" padding="$4">
-        <Text fontSize="$8" fontWeight="bold" marginBottom="$4" color="$purple10">
+        <Text fontSize="$8" fontWeight="bold" marginBottom="$4" color="$color">
           👔 Yönetici Paneli
         </Text>
-        <Text fontSize="$5" marginBottom="$6" textAlign="center">
+        <Text fontSize="$5" marginBottom="$6" textAlign="center" color="$color">
           Hoş geldiniz! Yönetici ana sayfasındasınız.
         </Text>
 
         {/* Yönetici özel butonları */}
         <YStack space="$3" width="100%" maxWidth={300}>
-          <Button backgroundColor="#007AFF" color="white" size="$4" onPress={testApiCall} disabled={loading}>
+          <Button backgroundColor="$blue10" color="white" size="$4" onPress={testApiCall} disabled={loading}>
             {loading ? t('loading') : 'Tüm Görevler'}
           </Button>
 
-          <Button backgroundColor="#34C759" color="white" size="$4">
+          <Button backgroundColor="$green10" color="white" size="$4">
             Sürücü Yönetimi
           </Button>
 
-          <Button backgroundColor="#FF9500" color="white" size="$4">
+          <Button backgroundColor="$orange10" color="white" size="$4">
             Raporlar
           </Button>
 
-          <Button backgroundColor="#5856D6" color="white" size="$4">
+          <Button backgroundColor="$purple10" color="white" size="$4">
             Ayarlar
           </Button>
 
-          <Button backgroundColor="#FF3B30" color="white" size="$4" onPress={handleLogout}>
+          <Button backgroundColor="$red10" color="white" size="$4" onPress={handleLogout}>
             {t('logout')}
           </Button>
         </YStack>

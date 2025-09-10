@@ -173,7 +173,7 @@ export default function UploadPhoto({ refId, refGroup, isForDefault = true, curr
     if (isUploading) {
       return (
         <YStack gap="$2" alignItems="center">
-          <ActivityIndicator size="large" color="#007AFF" />
+          <ActivityIndicator size="large" color="#0A84FF" />
           <Text fontSize="$3" color="$gray11">
             {t('uploading') || 'Yükleniyor...'}
           </Text>
@@ -187,7 +187,7 @@ export default function UploadPhoto({ refId, refGroup, isForDefault = true, curr
 
     return (
       <YStack gap="$2" alignItems="center">
-        <MaterialIcons name="camera-alt" size={40} color="#999" />
+        <MaterialIcons name="camera-alt" size={40} color="#9BA1A6" />
         <Text fontSize="$3" color="$gray10" textAlign="center">
           {t('no_photo') || 'Fotoğraf\nYok'}
         </Text>
@@ -198,7 +198,17 @@ export default function UploadPhoto({ refId, refGroup, isForDefault = true, curr
   return (
     <YStack gap="$4" alignItems="center">
       {/* Profil Resmi Gösterimi */}
-      <View width={120} height={120} borderRadius={60} backgroundColor="$gray5" alignItems="center" justifyContent="center" borderWidth={2} borderColor="$gray8" overflow="hidden">
+      <View
+        width={120}
+        height={120}
+        borderRadius={60}
+        backgroundColor="$backgroundStrong"
+        alignItems="center"
+        justifyContent="center"
+        borderWidth={2}
+        borderColor="$gray8"
+        overflow="hidden"
+      >
         {renderProfileContent()}
       </View>
 

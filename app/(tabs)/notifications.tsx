@@ -10,10 +10,10 @@ export default function NotificationsTab() {
   return (
     <Stack flex={1} backgroundColor="$background">
       <YStack flex={1} justifyContent="center" alignItems="center" padding="$4" paddingBottom={bottomPad}>
-        <Text fontSize="$8" fontWeight="bold" marginBottom="$4">
+        <Text fontSize="$8" fontWeight="bold" marginBottom="$4" color="$color">
           {t('notifications')}
         </Text>
-        <Text fontSize="$5" textAlign="center">
+        <Text fontSize="$5" textAlign="center" color="$color">
           {t('notifications')} burada olacak
         </Text>
       </YStack>

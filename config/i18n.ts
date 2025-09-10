@@ -33,8 +33,17 @@ const getStoredLanguage = async (): Promise<string> => {
       return storedLanguage;
     }
 
-    // Cihaz dilini tespit et
-    const deviceLanguage = Localization.locale.split('-')[0];
+    // Expo SDK 49+ ile Localization.locale yerine getLocales() kullanılmalı
+    let deviceLanguage = 'en';
+    try {
+      const locales = (Localization as any).getLocales?.() || [];
+      const first = Array.isArray(locales) && locales.length > 0 ? locales[0] : undefined;
+      const code = first?.languageCode || first?.languageTag?.split('-')?.[0];
+      if (typeof code === 'string' && code.length > 0) {
+        deviceLanguage = code.toLowerCase();
+      }
+    } catch {}
+
     const selectedLanguage = supportedLanguages.includes(deviceLanguage) ? deviceLanguage : 'en';
 
     // AsyncStorage'a kaydet

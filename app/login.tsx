@@ -121,7 +121,7 @@ export default function Login() {
             padding: 8,
           }}
         >
-          <Ionicons name="arrow-back" size={24} color="#007AFF" />
+          <Ionicons name="arrow-back" size={24} color="#0A84FF" />
         </TouchableOpacity>
 
         <Stack flex={1} justifyContent="center" padding="$4">
@@ -137,7 +137,7 @@ export default function Login() {
               <StyledInput value={companyKey} onChangeText={setCompanyKeyInput} placeholder={t('enterCompanyKey')} autoCapitalize="none" />
             </YStack>
 
-            <Button size="$4" backgroundColor="#007AFF" width="100%" onPress={handleCompanySubmit} disabled={loading}>
+            <Button size="$4" backgroundColor="$blue10" width="100%" onPress={handleCompanySubmit} disabled={loading}>
               <Text color="white" fontWeight="400" fontSize="$4" fontFamily="SF Pro Text">
                 {loading ? t('checking') : t('continue')}
               </Text>
@@ -169,7 +169,7 @@ export default function Login() {
           <StyledInput value={sifre} onChangeText={setSifre} placeholder={t('enterPassword')} secureTextEntry />
         </YStack>
 
-        <Button size="$4" backgroundColor="#34C759" width="100%" onPress={handleLogin} disabled={loading}>
+        <Button size="$4" backgroundColor="$green10" width="100%" onPress={handleLogin} disabled={loading}>
           <Text color="white" fontWeight="400" fontSize="$4" fontFamily="SF Pro Text">
             {loading ? t('loggingIn') : t('login')}
           </Text>

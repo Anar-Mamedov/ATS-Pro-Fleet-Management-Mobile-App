@@ -1,3 +1,4 @@
+import { useThemeController } from '@/config/theme';
 import { useBottomBarPadding } from '@/ui/components/useBottomBarPadding';
 import { MaterialIcons } from '@expo/vector-icons';
 import { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
@@ -15,6 +16,7 @@ import { FormattedDate } from '../../../ui/components/FormattedDate';
 export default function DriverMainPage() {
   const { t } = useTranslation();
   const bottomPad = useBottomBarPadding();
+  const { themeName } = useThemeController();
   const [aracIds, setAracIds] = useState<number[]>([]);
   const [vehicleData, setVehicleData] = useState<any>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
@@ -74,21 +76,21 @@ export default function DriverMainPage() {
   }, [getUserInfo, getDriverDashboardCardSection, getDashboardReminder]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top', 'left', 'right']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: themeName === 'dark' ? '#000000' : '#FFFFFF' }} edges={['top', 'left', 'right', 'bottom']}>
       <Stack flex={1} backgroundColor="$background">
         <ScrollView contentContainerStyle={{ paddingBottom: bottomPad }} nestedScrollEnabled refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
           <Pressable onPress={openSheet} style={{ alignSelf: 'flex-start' }}>
             <YStack justifyContent="flex-start" alignItems="flex-start" padding="$4" gap="$2" alignSelf="flex-start">
               {firstVehicle && (
                 <>
-                  <Text fontSize="$8" fontWeight="bold">
+                  <Text fontSize="$8" fontWeight="bold" color="$color">
                     {firstVehicle.plaka}
                   </Text>
                   <XStack alignItems="center" space="$1">
-                    <Text fontSize="$5" color="$gray11" numberOfLines={1} ellipsizeMode="tail" maxWidth={100}>
+                    <Text fontSize="$5" color="$color" opacity={0.8} numberOfLines={1} ellipsizeMode="tail" maxWidth={100}>
                       {firstVehicle.model}
                     </Text>
-                    <Text fontSize="$5" color="$gray11">
+                    <Text fontSize="$5" color="$color" opacity={0.8}>
                       |
                     </Text>
                     <Text fontSize="$5" color={firstVehicle.aktif ? '$green10' : '$red10'}>
@@ -106,10 +108,12 @@ export default function DriverMainPage() {
                 <XStack alignItems="center" space="$3">
                   <MaterialIcons name="speed" size={24} color="#007AFF" />
                   <YStack>
-                    <Text fontSize="$5" fontWeight="600">
+                    <Text fontSize="$5" fontWeight="600" color="$color">
                       {firstVehicle?.guncelKm} km
                     </Text>
-                    <Text color="$gray11">{t('guncelKm')}</Text>
+                    <Text color="$color" opacity={0.7}>
+                      {t('guncelKm')}
+                    </Text>
                   </YStack>
                 </XStack>
               </YStack>
@@ -127,10 +131,12 @@ export default function DriverMainPage() {
                   <XStack alignItems="center" space="$3" style={{ width: maintenanceCardWidth || 1 }}>
                     <MaterialIcons name="build" size={24} color="#007AFF" />
                     <YStack>
-                      <Text fontSize="$5" fontWeight="600">
+                      <Text fontSize="$5" fontWeight="600" color="$color">
                         {firstVehicle?.hedefKm} km
                       </Text>
-                      <Text color="$gray11">{t('bakimZamani')}</Text>
+                      <Text color="$color" opacity={0.7}>
+                        {t('bakimZamani')}
+                      </Text>
                     </YStack>
                   </XStack>
 
@@ -138,7 +144,9 @@ export default function DriverMainPage() {
                     <MaterialIcons name="event" size={24} color="#007AFF" />
                     <YStack>
                       <FormattedDate value={firstVehicle?.hedefTarih ?? ''} format="L" textProps={{ fontSize: '$5', fontWeight: '600' }} />
-                      <Text color="$gray11">{t('bakimZamani')}</Text>
+                      <Text color="$color" opacity={0.7}>
+                        {t('bakimZamani')}
+                      </Text>
                     </YStack>
                   </XStack>
                 </ScrollView>
@@ -150,7 +158,9 @@ export default function DriverMainPage() {
                   <MaterialIcons name="policy" size={24} color="#007AFF" />
                   <YStack>
                     <FormattedDate value={firstVehicle?.sonSigortaTarih ?? ''} format="L" textProps={{ fontSize: '$5', fontWeight: '600' }} />
-                    <Text color="$gray11">{t('sigortaBitis')}</Text>
+                    <Text color="$color" opacity={0.7}>
+                      {t('sigortaBitis')}
+                    </Text>
                   </YStack>
                 </XStack>
               </YStack>
@@ -159,14 +169,16 @@ export default function DriverMainPage() {
                   <MaterialIcons name="local-gas-station" size={24} color="#007AFF" />
                   <YStack>
                     <XStack>
-                      <Text fontSize="$5" fontWeight="600" numberOfLines={1} ellipsizeMode="tail" maxWidth={60}>
+                      <Text fontSize="$5" fontWeight="600" color="$color" numberOfLines={1} ellipsizeMode="tail" maxWidth={60}>
                         {firstVehicle?.ortalamaTuketim}
                       </Text>
-                      <Text fontSize="$5" color="$gray11">
+                      <Text fontSize="$5" color="$color" opacity={0.7}>
                         {t('fuelConsumptionUnit')}
                       </Text>
                     </XStack>
-                    <Text color="$gray11">{t('yakitTuketimi')}</Text>
+                    <Text color="$color" opacity={0.7}>
+                      {t('yakitTuketimi')}
+                    </Text>
                   </YStack>
                 </XStack>
               </YStack>
@@ -204,7 +216,7 @@ export default function DriverMainPage() {
 
           {Array.isArray(reminderData) && (
             <YStack padding="$4" gap="$2">
-              <Text fontSize="$6" fontWeight="700">
+              <Text fontSize="$6" fontWeight="700" color="$color">
                 {t('tasks')}
               </Text>
               <YStack gap="$2">
@@ -227,14 +239,26 @@ export default function DriverMainPage() {
                     const subtitle = cfg.subtitleKey ? t(cfg.subtitleKey) : undefined;
                     return (
                       <Pressable key={item.category} style={{ width: '100%' }}>
-                        <XStack alignItems="center" justifyContent="space-between" borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$3" backgroundColor="white">
+                        <XStack
+                          alignItems="center"
+                          justifyContent="space-between"
+                          borderWidth={1}
+                          borderColor="$gray4"
+                          borderRadius="$3"
+                          padding="$3"
+                          backgroundColor="$backgroundStrong"
+                        >
                           <XStack alignItems="center" gap="$3">
                             <Stack width={28} height={28} borderRadius={6} alignItems="center" justifyContent="center">
                               <MaterialIcons name={cfg.icon} size={18} color={cfg.color} />
                             </Stack>
                             <YStack gap="$1">
-                              <Text fontSize="$5" fontWeight="600">{`${item.count} ${label}`}</Text>
-                              {subtitle && <Text color="$gray11">{subtitle}</Text>}
+                              <Text fontSize="$5" fontWeight="600" color="$color">{`${item.count} ${label}`}</Text>
+                              {subtitle && (
+                                <Text color="$color" opacity={0.7}>
+                                  {subtitle}
+                                </Text>
+                              )}
                             </YStack>
                           </XStack>
                           <XStack alignItems="center" gap="$1">
@@ -255,11 +279,13 @@ export default function DriverMainPage() {
           index={1}
           snapPoints={snapPoints}
           enablePanDownToClose
+          handleIndicatorStyle={{ backgroundColor: themeName === 'dark' ? '#9BA1A6' : '#A1A1AA' }}
           backdropComponent={(backdropProps) => <BottomSheetBackdrop {...backdropProps} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.4} pressBehavior="close" />}
+          backgroundStyle={{ backgroundColor: themeName === 'dark' ? '#1C1C1E' : '#FFFFFF' }}
         >
           <BottomSheetView style={{ flex: 1, paddingTop: 20 }}>
             <YStack space="$1">
-              <Text fontSize="$6" fontWeight="600" textAlign="center" marginBottom="$4">
+              <Text fontSize="$6" fontWeight="600" textAlign="center" marginBottom="$4" color="$color">
                 {t('araclar')}
               </Text>
               <BottomSheetFlatList
@@ -288,7 +314,7 @@ export default function DriverMainPage() {
                         position="relative"
                       >
                         <XStack alignItems="center" justifyContent="space-between">
-                          <Text fontSize="$6" fontWeight="600">
+                          <Text fontSize="$6" fontWeight="600" color="$color">
                             {item.plaka} <Text color={item.aktif ? '$green10' : '$red10'}>{item.aktif ? `(${t('active')})` : `(${t('passive')})`}</Text>
                           </Text>
                         </XStack>

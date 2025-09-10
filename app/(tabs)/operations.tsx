@@ -1,3 +1,4 @@
+import { useThemeController } from '@/config/theme';
 import { useBottomBarPadding } from '@/ui/components/useBottomBarPadding';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, Text, View } from '@tamagui/core';
@@ -19,6 +20,7 @@ interface MenuItem {
 export default function OperationsTab() {
   const { t } = useTranslation();
   const bottomPad = useBottomBarPadding();
+  const { themeName } = useThemeController();
 
   const menuItems: MenuItem[] = [
     {
@@ -102,22 +104,22 @@ export default function OperationsTab() {
   };
 
   return (
-    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: '#ffffff' }}>
+    <SafeAreaView edges={['top', 'left', 'right', 'bottom']} style={{ flex: 1, backgroundColor: themeName === 'dark' ? '#000000' : '#FFFFFF' }}>
       <Stack flex={1} backgroundColor="$background">
         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: bottomPad }}>
           <YStack padding="$4" space="$3">
-            <Text fontSize="$7" fontWeight="bold" marginBottom="$2">
+            <Text fontSize="$7" fontWeight="bold" marginBottom="$2" color="$color">
               {t('operations')}
             </Text>
 
-            <Text fontSize="$4" color="$gray10" marginBottom="$4">
+            <Text fontSize="$4" color="$color" opacity={0.7} marginBottom="$4">
               Tümü
             </Text>
 
             {menuItems.map((item) => (
               <TouchableOpacity key={item.id} onPress={() => handleMenuPress(item.id)}>
                 <XStack
-                  backgroundColor="white"
+                  backgroundColor="$backgroundStrong"
                   padding="$4"
                   borderRadius="$3"
                   alignItems="center"
@@ -132,18 +134,18 @@ export default function OperationsTab() {
                     </View>
 
                     <YStack flex={1}>
-                      <Text fontSize="$4" fontWeight="500">
+                      <Text fontSize="$4" fontWeight="500" color="$color">
                         {t(item.titleKey)}
                       </Text>
                       {item.subtitle && (
-                        <Text fontSize="$3" color="$gray10">
+                        <Text fontSize="$3" color="$color" opacity={0.7}>
                           {item.subtitle}
                         </Text>
                       )}
                     </YStack>
                   </XStack>
 
-                  <Text fontSize="$5" fontWeight="600" color="$gray10">
+                  <Text fontSize="$5" fontWeight="600" color="$color" opacity={0.8}>
                     {item.count}
                   </Text>
                 </XStack>

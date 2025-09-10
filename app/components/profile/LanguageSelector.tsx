@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { TouchableOpacity } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { changeLanguage } from '../../../config/i18n';
+import { useThemeController } from '../../../config/theme';
 
 // Flag SVG imports - we'll use require for SVG files
 const flagSvgs = {
@@ -31,6 +32,7 @@ const languages: Language[] = [
 export default function LanguageSelector() {
   const { t, i18n } = useTranslation();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const { themeName } = useThemeController();
 
   // Bottom sheet snap points
   const snapPoints = useMemo(() => [440], []);
@@ -79,10 +81,10 @@ export default function LanguageSelector() {
       <TouchableOpacity onPress={handleOpenBottomSheet}>
         <XStack alignItems="center" space="$2" padding="$3" borderRadius="$4" borderWidth={1} borderColor="$borderColor" backgroundColor="$background">
           <SvgXml xml={getFlagSvg(currentLanguage.code)} width={24} height={16} />
-          <Text fontSize="$4" numberOfLines={1} flexShrink={1}>
+          <Text fontSize="$4" numberOfLines={1} flexShrink={1} color="$color">
             {currentLanguage.nativeName}
           </Text>
-          <Text fontSize="$3" color="$gray10">
+          <Text fontSize="$3" color="$color" opacity={0.7}>
             ▼
           </Text>
         </XStack>
@@ -95,12 +97,12 @@ export default function LanguageSelector() {
         enablePanDownToClose={true}
         backdropComponent={renderBackdrop}
         backgroundStyle={{
-          backgroundColor: '#ffffff',
+          backgroundColor: themeName === 'dark' ? '#1C1C1E' : '#FFFFFF',
         }}
       >
         <BottomSheetView style={{ flex: 1, padding: 20 }}>
           <YStack space="$3">
-            <Text fontSize="$6" fontWeight="600" textAlign="center" marginBottom="$4">
+            <Text fontSize="$6" fontWeight="600" textAlign="center" marginBottom="$4" color="$color">
               {t('language')}
             </Text>
 
@@ -117,10 +119,10 @@ export default function LanguageSelector() {
                 >
                   <SvgXml xml={getFlagSvg(language.code)} width={32} height={21} />
                   <YStack flex={1}>
-                    <Text fontSize="$5" fontWeight="500">
+                    <Text fontSize="$5" fontWeight="500" color="$color">
                       {language.nativeName}
                     </Text>
-                    <Text fontSize="$3" color="$gray10">
+                    <Text fontSize="$3" color="$color" opacity={0.7}>
                       {language.name}
                     </Text>
                   </YStack>
