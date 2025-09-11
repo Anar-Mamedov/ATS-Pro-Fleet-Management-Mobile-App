@@ -126,19 +126,19 @@ export default function Login() {
 
         <Stack flex={1} justifyContent="center" padding="$4">
           <YStack space="$4" alignItems="center">
-            <Text fontSize="$8" fontWeight="bold" marginBottom="$6" fontFamily="SF Pro Text">
+            <Text fontSize="$8" color="$color" fontWeight="bold" marginBottom="$6" fontFamily="SF Pro Text">
               {t('companyLogin')}
             </Text>
 
             <YStack width="100%" space="$3">
-              <Text fontSize="$5" fontWeight="500" fontFamily="SF Pro Text">
+              <Text fontSize="$5" color="$color" fontWeight="500" fontFamily="SF Pro Text">
                 {t('companyKey')}
               </Text>
               <StyledInput value={companyKey} onChangeText={setCompanyKeyInput} placeholder={t('enterCompanyKey')} autoCapitalize="none" />
             </YStack>
 
             <Button size="$4" backgroundColor="$blue10" width="100%" onPress={handleCompanySubmit} disabled={loading}>
-              <Text color="white" fontWeight="400" fontSize="$4" fontFamily="SF Pro Text">
+              <Text color="$color" fontWeight="400" fontSize="$4" fontFamily="SF Pro Text">
                 {loading ? t('checking') : t('continue')}
               </Text>
             </Button>
@@ -151,26 +151,26 @@ export default function Login() {
   return (
     <Stack flex={1} justifyContent="center" padding="$4" backgroundColor="$background">
       <YStack space="$4" alignItems="center">
-        <Text fontSize="$8" fontWeight="bold" marginBottom="$6" fontFamily="SF Pro Text">
+        <Text fontSize="$8" color="$color" fontWeight="bold" marginBottom="$6" fontFamily="SF Pro Text">
           {t('login')}
         </Text>
 
         <YStack width="100%" space="$3">
-          <Text fontSize="$5" fontWeight="500" fontFamily="SF Pro Text">
+          <Text fontSize="$5" color="$color" fontWeight="500" fontFamily="SF Pro Text">
             {t('userCode')}
           </Text>
           <StyledInput value={kullaniciKod} onChangeText={setKullaniciKod} placeholder={t('enterUserCode')} autoCapitalize="none" />
         </YStack>
 
         <YStack width="100%" space="$3">
-          <Text fontSize="$5" fontWeight="500" fontFamily="SF Pro Text">
+          <Text fontSize="$5" color="$color" fontWeight="500" fontFamily="SF Pro Text">
             {t('password')}
           </Text>
           <StyledInput value={sifre} onChangeText={setSifre} placeholder={t('enterPassword')} secureTextEntry />
         </YStack>
 
         <Button size="$4" backgroundColor="$green10" width="100%" onPress={handleLogin} disabled={loading}>
-          <Text color="white" fontWeight="400" fontSize="$4" fontFamily="SF Pro Text">
+          <Text color="$color" fontWeight="400" fontSize="$4" fontFamily="SF Pro Text">
             {loading ? t('loggingIn') : t('login')}
           </Text>
         </Button>

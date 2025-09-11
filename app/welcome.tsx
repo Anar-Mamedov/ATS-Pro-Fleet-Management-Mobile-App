@@ -29,17 +29,17 @@ export default function Welcome() {
 
       <YStack flex={1} justifyContent="center" alignItems="flex-start" padding="$4" space="$6">
         <YStack alignItems="flex-start" space="$4" width="100%">
-          <Text fontSize="$10" fontWeight="600" textAlign="left" fontFamily="SF Pro Display">
+          <Text fontSize="$10" color="$color" fontWeight="600" textAlign="left" fontFamily="SF Pro Display">
             {t('welcomeToATS')}
           </Text>
 
-          <Text fontSize="$5" color="$gray10" textAlign="left" lineHeight="$2" fontFamily="SF Pro Text">
+          <Text fontSize="$5" color="$color" textAlign="left" lineHeight="$2" fontFamily="SF Pro Text">
             {t('welcomeDescription')}
           </Text>
         </YStack>
 
         <Button backgroundColor="$blue10" borderRadius="$6" width="100%" paddingVertical="$2" onPress={handleGetStarted} pressStyle={{ opacity: 0.8 }}>
-          <Button.Text color="white" fontSize="$5" fontWeight="400" fontFamily="SF Pro Text">
+          <Button.Text color="$color" fontSize="$5" fontWeight="400" fontFamily="SF Pro Text">
             {t('login')}
           </Button.Text>
         </Button>
