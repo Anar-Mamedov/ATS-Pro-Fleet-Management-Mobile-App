@@ -76,7 +76,7 @@ export default function DriverMainPage() {
   }, [getUserInfo, getDriverDashboardCardSection, getDashboardReminder]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: themeName === 'dark' ? '#000000' : '#FFFFFF' }} edges={['top', 'left', 'right', 'bottom']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: themeName === 'dark' ? '#111111' : 'hsl(0, 0%, 94.1%)' }} edges={['top', 'left', 'right', 'bottom']}>
       <Stack flex={1} backgroundColor="$background">
         <ScrollView contentContainerStyle={{ paddingBottom: bottomPad }} nestedScrollEnabled refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
           <Pressable onPress={openSheet} style={{ alignSelf: 'flex-start' }}>
@@ -103,86 +103,90 @@ export default function DriverMainPage() {
           </Pressable>
 
           <YStack justifyContent="flex-start" alignItems="flex-start" padding="$4" gap="$3">
-            <XStack gap="$3">
-              <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
-                <XStack alignItems="center" space="$3">
-                  <MaterialIcons name="speed" size={24} color="#007AFF" />
-                  <YStack>
-                    <Text fontSize="$5" fontWeight="600" color="$color">
-                      {firstVehicle?.guncelKm} km
-                    </Text>
-                    <Text color="$color" opacity={0.7}>
-                      {t('guncelKm')}
-                    </Text>
-                  </YStack>
-                </XStack>
-              </YStack>
-              <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2">
-                <ScrollView
-                  horizontal
-                  pagingEnabled
-                  showsHorizontalScrollIndicator={false}
-                  scrollEventThrottle={16}
-                  // ScrollView genişliği kolona eşitlensin
-                  style={{ width: '100%' }}
-                  // Genişliği doğrudan ScrollView'dan ölç
-                  onLayout={(e) => setMaintenanceCardWidth(e.nativeEvent.layout.width)}
-                >
-                  <XStack alignItems="center" space="$3" style={{ width: maintenanceCardWidth || 1 }}>
-                    <MaterialIcons name="build" size={24} color="#007AFF" />
+            <YStack width="100%" backgroundColor="$color1" borderWidth={1} borderColor="$gray4" borderRadius="$5" padding="$3" gap="$3">
+              <XStack gap="$3">
+                <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
+                  <XStack alignItems="center" space="$3">
+                    <MaterialIcons name="speed" size={24} color="#007AFF" />
                     <YStack>
                       <Text fontSize="$5" fontWeight="600" color="$color">
-                        {firstVehicle?.hedefKm} km
+                        {firstVehicle?.guncelKm} km
                       </Text>
                       <Text color="$color" opacity={0.7}>
-                        {t('bakimZamani')}
+                        {t('guncelKm')}
                       </Text>
                     </YStack>
                   </XStack>
-
-                  <XStack alignItems="center" space="$3" style={{ width: maintenanceCardWidth || 1 }}>
-                    <MaterialIcons name="event" size={24} color="#007AFF" />
-                    <YStack>
-                      <FormattedDate value={firstVehicle?.hedefTarih ?? ''} format="L" textProps={{ fontSize: '$5', fontWeight: '600' }} />
-                      <Text color="$color" opacity={0.7}>
-                        {t('bakimZamani')}
-                      </Text>
-                    </YStack>
-                  </XStack>
-                </ScrollView>
-              </YStack>
-            </XStack>
-            <XStack gap="$3">
-              <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
-                <XStack alignItems="center" space="$3">
-                  <MaterialIcons name="policy" size={24} color="#007AFF" />
-                  <YStack>
-                    <FormattedDate value={firstVehicle?.sonSigortaTarih ?? ''} format="L" textProps={{ fontSize: '$5', fontWeight: '600' }} />
-                    <Text color="$color" opacity={0.7}>
-                      {t('sigortaBitis')}
-                    </Text>
-                  </YStack>
-                </XStack>
-              </YStack>
-              <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
-                <XStack alignItems="center" space="$3">
-                  <MaterialIcons name="local-gas-station" size={24} color="#007AFF" />
-                  <YStack>
-                    <XStack>
-                      <Text fontSize="$5" fontWeight="600" color="$color" numberOfLines={1} ellipsizeMode="tail" maxWidth={60}>
-                        {firstVehicle?.ortalamaTuketim}
-                      </Text>
-                      <Text fontSize="$5" color="$color" opacity={0.7}>
-                        {t('fuelConsumptionUnit')}
-                      </Text>
+                </YStack>
+                <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2">
+                  <ScrollView
+                    horizontal
+                    pagingEnabled
+                    showsHorizontalScrollIndicator={false}
+                    scrollEventThrottle={16}
+                    // ScrollView genişliği kolona eşitlensin
+                    style={{ width: '100%' }}
+                    // Genişliği doğrudan ScrollView'dan ölç
+                    onLayout={(e) => setMaintenanceCardWidth(e.nativeEvent.layout.width)}
+                  >
+                    <XStack alignItems="center" space="$3" style={{ width: maintenanceCardWidth || 1 }}>
+                      <MaterialIcons name="build" size={24} color="#007AFF" />
+                      <YStack>
+                        <Text fontSize="$5" fontWeight="600" color="$color">
+                          {firstVehicle?.hedefKm} km
+                        </Text>
+                        <Text color="$color" opacity={0.7}>
+                          {t('bakimZamani')}
+                        </Text>
+                      </YStack>
                     </XStack>
-                    <Text color="$color" opacity={0.7}>
-                      {t('yakitTuketimi')}
-                    </Text>
-                  </YStack>
-                </XStack>
-              </YStack>
-            </XStack>
+
+                    <XStack alignItems="center" space="$3" style={{ width: maintenanceCardWidth || 1 }}>
+                      <MaterialIcons name="event" size={24} color="#007AFF" />
+                      <YStack>
+                        <FormattedDate value={firstVehicle?.hedefTarih ?? ''} format="L" textProps={{ fontSize: '$5', fontWeight: '600' }} />
+                        <Text color="$color" opacity={0.7}>
+                          {t('bakimZamani')}
+                        </Text>
+                      </YStack>
+                    </XStack>
+                  </ScrollView>
+                </YStack>
+              </XStack>
+              <XStack gap="$3">
+                <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$5" padding="$2" gap="$2">
+                  <XStack alignItems="center" space="$3">
+                    <MaterialIcons name="policy" size={24} color="#007AFF" />
+                    <YStack>
+                      <Text fontSize="$5" fontWeight="600" color="$color">
+                        <FormattedDate value={firstVehicle?.sonSigortaTarih ?? ''} format="L" textProps={{ fontSize: '$5', fontWeight: '600' }} />
+                      </Text>
+                      <Text color="$color" opacity={0.7}>
+                        {t('sigortaBitis')}
+                      </Text>
+                    </YStack>
+                  </XStack>
+                </YStack>
+                <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$5" padding="$2" gap="$2">
+                  <XStack alignItems="center" space="$3">
+                    <MaterialIcons name="local-gas-station" size={24} color="#007AFF" />
+                    <YStack>
+                      <XStack>
+                        <Text fontSize="$5" fontWeight="600" color="$color" numberOfLines={1} ellipsizeMode="tail" maxWidth={60}>
+                          {firstVehicle?.ortalamaTuketim}
+                        </Text>
+                        <Text fontSize="$5" color="$color" opacity={0.7}>
+                          {t('fuelConsumptionUnit')}
+                        </Text>
+                      </XStack>
+                      <Text color="$color" opacity={0.7}>
+                        {t('yakitTuketimi')}
+                      </Text>
+                    </YStack>
+                  </XStack>
+                </YStack>
+              </XStack>
+            </YStack>
           </YStack>
 
           <XStack padding="$4" gap="$3" width="100%">
@@ -216,59 +220,61 @@ export default function DriverMainPage() {
 
           {Array.isArray(reminderData) && (
             <YStack padding="$4" gap="$2">
-              <Text fontSize="$6" fontWeight="700" color="$color">
-                {t('tasks')}
-              </Text>
-              <YStack gap="$2">
-                {(reminderData as { category: string; count: number }[])
-                  .filter((i) => i.count > 0)
-                  .map((item) => {
-                    const iconMap: Record<string, { icon: any; color: string; subtitleKey?: string; rightText?: string }> = {
-                      vergi: { icon: 'request-quote', color: '#F59E0B' },
-                      egzoz: { icon: 'science', color: '#6B7280' },
-                      sigorta: { icon: 'policy', color: '#2563EB' },
-                      muayene: { icon: 'assignment', color: '#22C55E' },
-                      sozlesme: { icon: 'description', color: '#A855F7' },
-                      ceza: { icon: 'gavel', color: '#EF4444' },
-                      kiralama: { icon: 'directions-car', color: '#14B8A6' },
-                      tasitKarti: { icon: 'credit-card', color: '#0EA5E9' },
-                      periyodikBakim: { icon: 'event', color: '#F59E0B' },
-                    };
-                    const cfg = iconMap[item.category] || { icon: 'notifications', color: '#6B7280' };
-                    const label = t(`${item.category}`);
-                    const subtitle = cfg.subtitleKey ? t(cfg.subtitleKey) : undefined;
-                    return (
-                      <Pressable key={item.category} style={{ width: '100%' }}>
-                        <XStack
-                          alignItems="center"
-                          justifyContent="space-between"
-                          borderWidth={1}
-                          borderColor="$gray4"
-                          borderRadius="$3"
-                          padding="$3"
-                          backgroundColor="$backgroundStrong"
-                        >
-                          <XStack alignItems="center" gap="$3">
-                            <Stack width={28} height={28} borderRadius={6} alignItems="center" justifyContent="center">
-                              <MaterialIcons name={cfg.icon} size={18} color={cfg.color} />
-                            </Stack>
-                            <YStack gap="$1">
-                              <Text fontSize="$5" fontWeight="600" color="$color">{`${item.count} ${label}`}</Text>
-                              {subtitle && (
-                                <Text color="$color" opacity={0.7}>
-                                  {subtitle}
-                                </Text>
-                              )}
-                            </YStack>
+              <YStack backgroundColor="$color1" borderWidth={1} borderColor="$gray4" borderRadius="$5" padding="$3" gap="$3">
+                <Text fontSize="$6" fontWeight="700" color="$color">
+                  {t('tasks')}
+                </Text>
+                <YStack gap="$2">
+                  {(reminderData as { category: string; count: number }[])
+                    .filter((i) => i.count > 0)
+                    .map((item) => {
+                      const iconMap: Record<string, { icon: any; color: string; subtitleKey?: string; rightText?: string }> = {
+                        vergi: { icon: 'request-quote', color: '#F59E0B' },
+                        egzoz: { icon: 'science', color: '#6B7280' },
+                        sigorta: { icon: 'policy', color: '#2563EB' },
+                        muayene: { icon: 'assignment', color: '#22C55E' },
+                        sozlesme: { icon: 'description', color: '#A855F7' },
+                        ceza: { icon: 'gavel', color: '#EF4444' },
+                        kiralama: { icon: 'directions-car', color: '#14B8A6' },
+                        tasitKarti: { icon: 'credit-card', color: '#0EA5E9' },
+                        periyodikBakim: { icon: 'event', color: '#F59E0B' },
+                      };
+                      const cfg = iconMap[item.category] || { icon: 'notifications', color: '#6B7280' };
+                      const label = t(`${item.category}`);
+                      const subtitle = cfg.subtitleKey ? t(cfg.subtitleKey) : undefined;
+                      return (
+                        <Pressable key={item.category} style={{ width: '100%' }}>
+                          <XStack
+                            alignItems="center"
+                            justifyContent="space-between"
+                            borderWidth={1}
+                            borderColor="$gray4"
+                            borderRadius="$3"
+                            padding="$3"
+                            backgroundColor="$backgroundStrong"
+                          >
+                            <XStack alignItems="center" gap="$3">
+                              <Stack width={28} height={28} borderRadius={6} alignItems="center" justifyContent="center">
+                                <MaterialIcons name={cfg.icon} size={18} color={cfg.color} />
+                              </Stack>
+                              <YStack gap="$1">
+                                <Text fontSize="$5" fontWeight="600" color="$color">{`${item.count} ${label}`}</Text>
+                                {subtitle && (
+                                  <Text color="$color" opacity={0.7}>
+                                    {subtitle}
+                                  </Text>
+                                )}
+                              </YStack>
+                            </XStack>
+                            <XStack alignItems="center" gap="$1">
+                              {cfg.rightText && <Text color="$gray11">{cfg.rightText}</Text>}
+                              <MaterialIcons name="chevron-right" size={20} color="#9BA1A6" />
+                            </XStack>
                           </XStack>
-                          <XStack alignItems="center" gap="$1">
-                            {cfg.rightText && <Text color="$gray11">{cfg.rightText}</Text>}
-                            <MaterialIcons name="chevron-right" size={20} color="#9BA1A6" />
-                          </XStack>
-                        </XStack>
-                      </Pressable>
-                    );
-                  })}
+                        </Pressable>
+                      );
+                    })}
+                </YStack>
               </YStack>
             </YStack>
           )}
