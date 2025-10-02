@@ -32,6 +32,7 @@
     "dayjs": "^1.11.13",
     "expo": "^54.0.12",
     "expo-blur": "~15.0.7",
+    "expo-camera": "~17.0.8",
     "expo-constants": "~18.0.9",
     "expo-dev-client": "~6.0.13",
     "expo-file-system": "~19.0.16",

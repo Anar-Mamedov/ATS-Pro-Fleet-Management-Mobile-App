@@ -4,8 +4,9 @@ import { Theme, View } from '@tamagui/core';
 import { XStack, YStack } from '@tamagui/stacks';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
+import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Dimensions, FlatList, Modal, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { ActivityIndicator, Alert, Dimensions, FlatList, Modal, Pressable, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { apiService } from '../../services/apiService';
 
 type PhotoItem = {
@@ -102,6 +103,42 @@ const viewerStyles = StyleSheet.create({
     borderRadius: 999,
     padding: 8,
   },
+  cameraContainer: {
+    flex: 1,
+    backgroundColor: 'black',
+  },
+  camera: {
+    flex: 1,
+  },
+  cameraControls: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    paddingVertical: 32,
+    paddingHorizontal: 24,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  cameraButton: {
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    borderRadius: 999,
+    padding: 16,
+  },
+  captureButton: {
+    backgroundColor: '#fff',
+    borderRadius: 999,
+    padding: 20,
+    borderWidth: 4,
+    borderColor: 'rgba(255,255,255,0.5)',
+  },
+  cameraText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
 
 export default function ResimUpload({ refId, refGroup, isForDefault = false, disabled = false, onUploaded, onDeleted }: ResimUploadProps) {
@@ -112,8 +149,12 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
   const [multiSelectMode, setMultiSelectMode] = useState<boolean>(false);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [bulkDeleting, setBulkDeleting] = useState<boolean>(false);
+  const [cameraVisible, setCameraVisible] = useState<boolean>(false);
+  const [facing, setFacing] = useState<CameraType>('back');
+  const [permission, requestPermission] = useCameraPermissions();
   const refreshKey = useRef(0);
   const viewerListRef = useRef<FlatList<LoadedPhoto> | null>(null);
+  const cameraRef = useRef<CameraView>(null);
 
   const fetchList = useCallback(async () => {
     if (!refId || !refGroup) return;
@@ -290,41 +331,81 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
 
   const pickFromLibrary = useCallback(async () => {
     if (disabled || bulkDeleting) return;
-    const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!perm.granted) {
-      Alert.alert('İzin Gerekli', 'Galeriye erişim izni verilmedi.');
-      return;
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: 'images',
-      quality: 0.9,
-      allowsMultipleSelection: true,
-      selectionLimit: 5,
-    });
-    if (result.canceled) return;
 
-    // Upload each selected asset separately (backend expects field name `images`)
-    for (const asset of result.assets) {
-      await uploadAsset(asset.uri, asset.fileName || 'photo.jpg');
+    try {
+      const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!perm.granted) {
+        Alert.alert('İzin Gerekli', 'Galeriye erişim izni verilmedi. Lütfen ayarlardan izin verin.');
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.9,
+        allowsMultipleSelection: true,
+        selectionLimit: 5,
+        exif: false, // Expo SDK 54 için performans iyileştirmesi
+      });
+
+      if (result.canceled) return;
+
+      // Upload each selected asset separately (backend expects field name `images`)
+      for (const asset of result.assets) {
+        await uploadAsset(asset.uri, asset.fileName || 'photo.jpg');
+      }
+      refresh();
+      onUploaded?.();
+    } catch (error) {
+      console.error('Galeri erişim hatası:', error);
+      Alert.alert('Hata', 'Galeriye erişim sırasında bir hata oluştu.');
     }
-    refresh();
-    onUploaded?.();
   }, [disabled, bulkDeleting, uploadAsset, refresh, onUploaded]);
 
-  const takePhoto = useCallback(async () => {
+  const openCamera = useCallback(async () => {
     if (disabled || bulkDeleting) return;
-    const perm = await ImagePicker.requestCameraPermissionsAsync();
-    if (!perm.granted) {
-      Alert.alert('İzin Gerekli', 'Kameraya erişim izni verilmedi.');
+
+    if (!permission) {
       return;
     }
-    const result = await ImagePicker.launchCameraAsync({ mediaTypes: 'images', quality: 0.9 });
-    if (result.canceled) return;
-    const asset = result.assets[0];
-    await uploadAsset(asset.uri, asset.fileName || 'photo.jpg');
-    refresh();
-    onUploaded?.();
-  }, [disabled, bulkDeleting, uploadAsset, refresh, onUploaded]);
+
+    if (!permission.granted) {
+      const result = await requestPermission();
+      if (!result.granted) {
+        Alert.alert('İzin Gerekli', 'Kameraya erişim izni verilmedi. Lütfen ayarlardan izin verin.');
+        return;
+      }
+    }
+
+    setCameraVisible(true);
+  }, [disabled, bulkDeleting, permission, requestPermission]);
+
+  const takePhotoWithCamera = useCallback(async () => {
+    if (!cameraRef.current) return;
+
+    try {
+      const photo = await cameraRef.current.takePictureAsync({
+        quality: 0.9,
+        base64: false,
+        exif: false,
+      });
+
+      await uploadAsset(photo.uri, 'photo.jpg');
+      setCameraVisible(false);
+      refresh();
+      onUploaded?.();
+    } catch (error) {
+      console.error('Fotoğraf çekme hatası:', error);
+      Alert.alert('Hata', 'Fotoğraf çekerken bir hata oluştu.');
+    }
+  }, [uploadAsset, refresh, onUploaded]);
+
+  const toggleCameraFacing = useCallback(() => {
+    setFacing((current) => (current === 'back' ? 'front' : 'back'));
+  }, []);
+
+  const closeCamera = useCallback(() => {
+    setCameraVisible(false);
+  }, []);
 
   // Tek butonlu yükleme akışı (UploadPhoto.tsx ile aynı davranış)
   const showImageOptions = useCallback(() => {
@@ -333,7 +414,7 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
       {
         text: 'Kamera',
         onPress: () => {
-          void takePhoto();
+          void openCamera();
         },
       },
       {
@@ -347,7 +428,7 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
         style: 'cancel',
       },
     ]);
-  }, [disabled, bulkDeleting, pickFromLibrary, takePhoto]);
+  }, [disabled, bulkDeleting, pickFromLibrary, openCamera]);
 
   const grid = useMemo(() => {
     if (loading) {
@@ -426,11 +507,7 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
                         padding: 4,
                       }}
                     >
-                      <MaterialIcons
-                        name={isSelected ? 'check-circle' : 'radio-button-unchecked'}
-                        size={20}
-                        color={isSelected ? '#4caf50' : '#fff'}
-                      />
+                      <MaterialIcons name={isSelected ? 'check-circle' : 'radio-button-unchecked'} size={20} color={isSelected ? '#4caf50' : '#fff'} />
                     </View>
                   )}
                   {isSelected && bulkDeleting && (
@@ -457,17 +534,7 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
         </XStack>
       </ScrollView>
     );
-  }, [
-    items,
-    loading,
-    disabled,
-    openViewer,
-    multiSelectMode,
-    selectedIds,
-    handleSelectToggle,
-    toggleMultiSelect,
-    bulkDeleting,
-  ]);
+  }, [items, loading, disabled, openViewer, multiSelectMode, selectedIds, handleSelectToggle, toggleMultiSelect, bulkDeleting]);
 
   return (
     <Theme>
@@ -536,6 +603,26 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
           <Pressable onPress={closeViewer} style={viewerStyles.closeButton} hitSlop={12}>
             <MaterialIcons name="close" size={28} color="#fff" />
           </Pressable>
+        </View>
+      </Modal>
+
+      <Modal visible={cameraVisible} animationType="slide" onRequestClose={closeCamera}>
+        <View style={viewerStyles.cameraContainer}>
+          <CameraView ref={cameraRef} style={viewerStyles.camera} facing={facing} />
+
+          <View style={viewerStyles.cameraControls}>
+            <TouchableOpacity style={viewerStyles.cameraButton} onPress={closeCamera}>
+              <MaterialIcons name="close" size={24} color="#fff" />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={viewerStyles.captureButton} onPress={takePhotoWithCamera}>
+              <MaterialIcons name="camera-alt" size={32} color="#000" />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={viewerStyles.cameraButton} onPress={toggleCameraFacing}>
+              <MaterialIcons name="flip-camera-ios" size={24} color="#fff" />
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
     </Theme>

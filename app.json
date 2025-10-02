@@ -19,7 +19,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.ATSProMobileApp"
+      "package": "com.anonymous.ATSProMobileApp",
+      "permissions": ["android.permission.CAMERA", "android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"]
     },
     "web": {
       "bundler": "metro",
@@ -39,7 +40,22 @@
       ],
       "expo-secure-store",
       "expo-font",
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Uygulama fotoğraflarınıza erişmek için izin gerekiyor.",
+          "cameraPermission": "Uygulama kameranızı kullanmak için izin gerekiyor."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Uygulama kameranızı kullanmak için izin gerekiyor.",
+          "microphonePermission": "Uygulama mikrofonunuzu kullanmak için izin gerekiyor.",
+          "recordAudioAndroid": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
