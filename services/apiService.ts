@@ -115,10 +115,8 @@ export const apiService = {
   // Photo upload endpoint
   uploadPhoto: async (formData: FormData, refId: number, refGroup: string, isForDefault: boolean = true) => {
     const response = await axiosInstance.post(`/Photo/UploadPhoto?refId=${refId}&refGroup=${refGroup}&isForDefault=${isForDefault}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      timeout: 30000, // 30 seconds timeout
+      // Let Axios/React Native set the correct multipart boundary
+      timeout: 60000,
     });
     return response.data;
   },
