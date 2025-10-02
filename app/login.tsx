@@ -1,21 +1,16 @@
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button } from '@tamagui/button';
-import { Stack, Text, styled } from '@tamagui/core';
+import { Stack, Text } from '@tamagui/core';
+import { Input } from '@tamagui/input';
 import { YStack } from '@tamagui/stacks';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, TextInput, TouchableOpacity } from 'react-native';
+import { Alert, TouchableOpacity } from 'react-native';
 import { apiService } from '../services/apiService';
 
-const StyledInput = styled(TextInput, {
-  borderWidth: 1,
-  borderColor: '$borderColor',
-  borderRadius: '$3',
-  padding: '$3',
-  backgroundColor: '$background',
-});
+// Replaced custom StyledInput with Tamagui Input for proper theming
 
 export default function Login() {
   const { t } = useTranslation();
@@ -24,6 +19,8 @@ export default function Login() {
   const [kullaniciKod, setKullaniciKod] = useState('');
   const [sifre, setSifre] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const getTextFromEvent = (e: any) => e?.nativeEvent?.text ?? e?.target?.value ?? '';
 
   useEffect(() => {
     checkCompanyInfo();
@@ -126,19 +123,27 @@ export default function Login() {
 
         <Stack flex={1} justifyContent="center" padding="$4">
           <YStack space="$4" alignItems="center">
-            <Text fontSize="$8" fontWeight="bold" marginBottom="$6" fontFamily="SF Pro Text">
+            <Text fontSize="$8" color="$color" fontWeight="bold" marginBottom="$6" fontFamily="SF Pro Text">
               {t('companyLogin')}
             </Text>
 
             <YStack width="100%" space="$3">
-              <Text fontSize="$5" fontWeight="500" fontFamily="SF Pro Text">
+              <Text fontSize="$5" color="$color" fontWeight="500" fontFamily="SF Pro Text">
                 {t('companyKey')}
               </Text>
-              <StyledInput value={companyKey} onChangeText={setCompanyKeyInput} placeholder={t('enterCompanyKey')} autoCapitalize="none" />
+              <Input
+                value={companyKey}
+                onChange={(e) => setCompanyKeyInput(getTextFromEvent(e))}
+                placeholder={t('enterCompanyKey')}
+                autoCapitalize="none"
+                size="$3"
+                borderRadius="$3"
+                width="100%"
+              />
             </YStack>
 
             <Button size="$4" backgroundColor="$blue10" width="100%" onPress={handleCompanySubmit} disabled={loading}>
-              <Text color="white" fontWeight="400" fontSize="$4" fontFamily="SF Pro Text">
+              <Text color="$color" fontWeight="400" fontSize="$4" fontFamily="SF Pro Text">
                 {loading ? t('checking') : t('continue')}
               </Text>
             </Button>
@@ -151,26 +156,34 @@ export default function Login() {
   return (
     <Stack flex={1} justifyContent="center" padding="$4" backgroundColor="$background">
       <YStack space="$4" alignItems="center">
-        <Text fontSize="$8" fontWeight="bold" marginBottom="$6" fontFamily="SF Pro Text">
+        <Text fontSize="$8" color="$color" fontWeight="bold" marginBottom="$6" fontFamily="SF Pro Text">
           {t('login')}
         </Text>
 
         <YStack width="100%" space="$3">
-          <Text fontSize="$5" fontWeight="500" fontFamily="SF Pro Text">
+          <Text fontSize="$5" color="$color" fontWeight="500" fontFamily="SF Pro Text">
             {t('userCode')}
           </Text>
-          <StyledInput value={kullaniciKod} onChangeText={setKullaniciKod} placeholder={t('enterUserCode')} autoCapitalize="none" />
+          <Input
+            value={kullaniciKod}
+            onChange={(e) => setKullaniciKod(getTextFromEvent(e))}
+            placeholder={t('enterUserCode')}
+            autoCapitalize="none"
+            size="$3"
+            borderRadius="$3"
+            width="100%"
+          />
         </YStack>
 
         <YStack width="100%" space="$3">
-          <Text fontSize="$5" fontWeight="500" fontFamily="SF Pro Text">
+          <Text fontSize="$5" color="$color" fontWeight="500" fontFamily="SF Pro Text">
             {t('password')}
           </Text>
-          <StyledInput value={sifre} onChangeText={setSifre} placeholder={t('enterPassword')} secureTextEntry />
+          <Input value={sifre} onChange={(e) => setSifre(getTextFromEvent(e))} placeholder={t('enterPassword')} type="password" size="$3" borderRadius="$3" width="100%" />
         </YStack>
 
         <Button size="$4" backgroundColor="$green10" width="100%" onPress={handleLogin} disabled={loading}>
-          <Text color="white" fontWeight="400" fontSize="$4" fontFamily="SF Pro Text">
+          <Text color="$color" fontWeight="400" fontSize="$4" fontFamily="SF Pro Text">
             {loading ? t('loggingIn') : t('login')}
           </Text>
         </Button>

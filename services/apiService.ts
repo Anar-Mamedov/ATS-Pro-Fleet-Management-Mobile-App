@@ -95,6 +95,18 @@ export const apiService = {
     return response.data;
   },
 
+  // Photo list endpoint
+  getPhotosByRefGroup: async (refId: number | string, refGroup: string) => {
+    const response = await axiosInstance.get(`/Photo/GetPhotosByRefGroup?refId=${refId}&refGroup=${refGroup}`);
+    return response.data;
+  },
+
+  // Photo delete endpoint
+  deletePhotoById: async (photoId: number) => {
+    const response = await axiosInstance.get(`/Photo/DeletePhotoById?id=${photoId}`);
+    return response.data;
+  },
+
   updateUserInfo: async (userData: { isDriver: boolean; siraNo: number; kullaniciKod: string; isim: string; aktif: boolean; soyAd: string; email: string; telefon: string }) => {
     const response = await axiosInstance.post('/User/UpdateUserInfo', userData);
     return response.data;
@@ -103,10 +115,8 @@ export const apiService = {
   // Photo upload endpoint
   uploadPhoto: async (formData: FormData, refId: number, refGroup: string, isForDefault: boolean = true) => {
     const response = await axiosInstance.post(`/Photo/UploadPhoto?refId=${refId}&refGroup=${refGroup}&isForDefault=${isForDefault}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      timeout: 30000, // 30 seconds timeout
+      // Let Axios/React Native set the correct multipart boundary
+      timeout: 60000,
     });
     return response.data;
   },

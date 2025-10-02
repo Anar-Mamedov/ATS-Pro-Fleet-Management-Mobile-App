@@ -8,9 +8,6 @@ const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL || 'http://localhost:3000/api'
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: BASE_URL,
-  headers: {
-    'Content-type': 'application/json',
-  },
 });
 
 // Sadece HTTP interceptor'lar için gereken basit token helper'ları
