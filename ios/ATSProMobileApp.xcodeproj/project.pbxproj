@@ -8,28 +8,28 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		26923A668516960498AC7FE5 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CE7FC3E5337DA512882031 /* ExpoModulesProvider.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		4228DB5FC4C32E8D792837C2 /* libPods-ATSProMobileApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05AEF6A70AA2E32D5F1373BA /* libPods-ATSProMobileApp.a */; };
-		A920EDE52FA4A1CB3DB2F7C5 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 56031B27305E1FD615D5D52B /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
+		C08B58B20601DD57AFC40371 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2AA004B371B306050A1ECA8E /* PrivacyInfo.xcprivacy */; };
+		E44258632C88D5000F7B1F8D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE58F0856C0A304357902026 /* ExpoModulesProvider.swift */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
+		FDB5B5940FFAAF5E6A59A1F4 /* libPods-ATSProMobileApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FBD9233F2BA31F4BCC6A5329 /* libPods-ATSProMobileApp.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		01CE7FC3E5337DA512882031 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-ATSProMobileApp/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		05AEF6A70AA2E32D5F1373BA /* libPods-ATSProMobileApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ATSProMobileApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07F961A680F5B00A75B9A /* ATSProMobileApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ATSProMobileApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ATSProMobileApp/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ATSProMobileApp/Info.plist; sourceTree = "<group>"; };
-		1E3263356822BEB2D6861F40 /* Pods-ATSProMobileApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ATSProMobileApp.debug.xcconfig"; path = "Target Support Files/Pods-ATSProMobileApp/Pods-ATSProMobileApp.debug.xcconfig"; sourceTree = "<group>"; };
-		513A7F35CFB4706E49F3FB41 /* Pods-ATSProMobileApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ATSProMobileApp.release.xcconfig"; path = "Target Support Files/Pods-ATSProMobileApp/Pods-ATSProMobileApp.release.xcconfig"; sourceTree = "<group>"; };
-		56031B27305E1FD615D5D52B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = ATSProMobileApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		2AA004B371B306050A1ECA8E /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = ATSProMobileApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = ATSProMobileApp/SplashScreen.storyboard; sourceTree = "<group>"; };
+		BAAB3AD601CCE1249E843C56 /* Pods-ATSProMobileApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ATSProMobileApp.debug.xcconfig"; path = "Target Support Files/Pods-ATSProMobileApp/Pods-ATSProMobileApp.debug.xcconfig"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
+		CE58F0856C0A304357902026 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-ATSProMobileApp/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = ATSProMobileApp/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* ATSProMobileApp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "ATSProMobileApp-Bridging-Header.h"; path = "ATSProMobileApp/ATSProMobileApp-Bridging-Header.h"; sourceTree = "<group>"; };
+		F8AC63C7E56FB78E4D097F9B /* Pods-ATSProMobileApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ATSProMobileApp.release.xcconfig"; path = "Target Support Files/Pods-ATSProMobileApp/Pods-ATSProMobileApp.release.xcconfig"; sourceTree = "<group>"; };
+		FBD9233F2BA31F4BCC6A5329 /* libPods-ATSProMobileApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ATSProMobileApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4228DB5FC4C32E8D792837C2 /* libPods-ATSProMobileApp.a in Frameworks */,
+				FDB5B5940FFAAF5E6A59A1F4 /* libPods-ATSProMobileApp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,7 +53,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				56031B27305E1FD615D5D52B /* PrivacyInfo.xcprivacy */,
+				2AA004B371B306050A1ECA8E /* PrivacyInfo.xcprivacy */,
 			);
 			name = ATSProMobileApp;
 			sourceTree = "<group>";
@@ -62,35 +62,19 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				05AEF6A70AA2E32D5F1373BA /* libPods-ATSProMobileApp.a */,
+				FBD9233F2BA31F4BCC6A5329 /* libPods-ATSProMobileApp.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		378374A9CAE0DBB50621FA2F /* Pods */ = {
+		780CB016DDE92878F5AAAB96 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				1E3263356822BEB2D6861F40 /* Pods-ATSProMobileApp.debug.xcconfig */,
-				513A7F35CFB4706E49F3FB41 /* Pods-ATSProMobileApp.release.xcconfig */,
+				BAAB3AD601CCE1249E843C56 /* Pods-ATSProMobileApp.debug.xcconfig */,
+				F8AC63C7E56FB78E4D097F9B /* Pods-ATSProMobileApp.release.xcconfig */,
 			);
 			name = Pods;
 			path = Pods;
-			sourceTree = "<group>";
-		};
-		52B8EE3F1E5B0254D20C7496 /* ATSProMobileApp */ = {
-			isa = PBXGroup;
-			children = (
-				01CE7FC3E5337DA512882031 /* ExpoModulesProvider.swift */,
-			);
-			name = ATSProMobileApp;
-			sourceTree = "<group>";
-		};
-		6D824A66E673097049801F52 /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				52B8EE3F1E5B0254D20C7496 /* ATSProMobileApp */,
-			);
-			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -107,8 +91,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				378374A9CAE0DBB50621FA2F /* Pods */,
-				6D824A66E673097049801F52 /* ExpoModulesProviders */,
+				780CB016DDE92878F5AAAB96 /* Pods */,
+				C5C92E027FE6661A0FD6FC05 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -123,6 +107,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		A2DA64C99BAE651981C8AB9B /* ATSProMobileApp */ = {
+			isa = PBXGroup;
+			children = (
+				CE58F0856C0A304357902026 /* ExpoModulesProvider.swift */,
+			);
+			name = ATSProMobileApp;
+			sourceTree = "<group>";
+		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
@@ -130,6 +122,14 @@
 			);
 			name = Supporting;
 			path = ATSProMobileApp/Supporting;
+			sourceTree = "<group>";
+		};
+		C5C92E027FE6661A0FD6FC05 /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				A2DA64C99BAE651981C8AB9B /* ATSProMobileApp */,
+			);
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -140,13 +140,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "ATSProMobileApp" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				A0F81EF99FA298651D08527E /* [Expo] Configure project */,
+				A66A5AE2EEFF1188EA5308EF /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				9BDDAFC0227C1FB97F86857B /* [CP] Embed Pods Frameworks */,
+				633EC1F5436E7F3EF5ED1594 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -196,7 +196,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				A920EDE52FA4A1CB3DB2F7C5 /* PrivacyInfo.xcprivacy in Resources */,
+				C08B58B20601DD57AFC40371 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,6 +242,28 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		633EC1F5436E7F3EF5ED1594 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ATSProMobileApp/Pods-ATSProMobileApp-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ATSProMobileApp/Pods-ATSProMobileApp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -282,29 +304,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ATSProMobileApp/Pods-ATSProMobileApp-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		9BDDAFC0227C1FB97F86857B /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ATSProMobileApp/Pods-ATSProMobileApp-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ATSProMobileApp/Pods-ATSProMobileApp-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A0F81EF99FA298651D08527E /* [Expo] Configure project */ = {
+		A66A5AE2EEFF1188EA5308EF /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -336,7 +336,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				26923A668516960498AC7FE5 /* ExpoModulesProvider.swift in Sources */,
+				E44258632C88D5000F7B1F8D /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,7 +345,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1E3263356822BEB2D6861F40 /* Pods-ATSProMobileApp.debug.xcconfig */;
+			baseConfigurationReference = BAAB3AD601CCE1249E843C56 /* Pods-ATSProMobileApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -381,7 +381,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 513A7F35CFB4706E49F3FB41 /* Pods-ATSProMobileApp.release.xcconfig */;
+			baseConfigurationReference = F8AC63C7E56FB78E4D097F9B /* Pods-ATSProMobileApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
