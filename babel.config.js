@@ -6,10 +6,23 @@ module.exports = function (api) {
       [
         '@tamagui/babel-plugin',
         {
-          components: ['@tamagui/core'],
+          components: ['tamagui', '@tamagui/core'],
           config: './tamagui.config.ts',
+          logTimings: true,
         },
       ],
+      [
+        'module-resolver',
+        {
+          root: ['.'],
+          alias: {
+            '@': './',
+          },
+          extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
+        },
+      ],
+      // Reanimated plugin must be listed last (includes worklets automatically)
+      'react-native-reanimated/plugin',
     ],
   };
 };

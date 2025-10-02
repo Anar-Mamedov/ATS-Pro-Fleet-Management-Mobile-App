@@ -66,7 +66,6 @@ export default function DriverMainPage() {
   const openDocsSheet = () => docsSheetRef.current?.present();
   const closeDocsSheet = () => docsSheetRef.current?.dismiss();
   const openPhotosSheet = () => photosSheetRef.current?.present();
-  const closePhotosSheet = () => photosSheetRef.current?.dismiss();
 
   useEffect(() => {
     if (firstVehicle) {
@@ -331,10 +330,10 @@ export default function DriverMainPage() {
               </Text>
               <BottomSheetFlatList
                 data={Array.isArray(vehicleData) ? vehicleData : []}
-                keyExtractor={(item) => String(item.aracId)}
+                keyExtractor={(item: any) => String(item.aracId)}
                 contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8 }}
                 ItemSeparatorComponent={() => <YStack height={1} backgroundColor="$gray4" />}
-                renderItem={({ item, index }) => {
+                renderItem={({ item, index }: { item: any; index: number }) => {
                   const isSelected = index === selectedIndex;
                   return (
                     <Pressable
