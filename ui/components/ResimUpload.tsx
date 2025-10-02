@@ -6,7 +6,9 @@ import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Dimensions, FlatList, Modal, Pressable, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, Alert, Dimensions, FlatList, Modal, Platform, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
+import { ScrollView, NativeViewGestureHandler } from 'react-native-gesture-handler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { apiService } from '../../services/apiService';
 
 type PhotoItem = {
@@ -91,8 +93,8 @@ const viewerStyles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: SCREEN.width,
-    height: SCREEN.height,
+    width: '100%',
+    height: '100%',
     backgroundColor: 'black',
   },
   closeButton: {
@@ -142,6 +144,7 @@ const viewerStyles = StyleSheet.create({
 });
 
 export default function ResimUpload({ refId, refGroup, isForDefault = false, disabled = false, onUploaded, onDeleted }: ResimUploadProps) {
+  const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState<boolean>(false);
   const [items, setItems] = useState<LoadedPhoto[]>([]);
   const [viewerVisible, setViewerVisible] = useState<boolean>(false);
@@ -152,38 +155,56 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
   const [cameraVisible, setCameraVisible] = useState<boolean>(false);
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
+  const itemsRef = useRef<LoadedPhoto[]>([]);
   const refreshKey = useRef(0);
   const viewerListRef = useRef<FlatList<LoadedPhoto> | null>(null);
   const cameraRef = useRef<CameraView>(null);
 
-  const fetchList = useCallback(async () => {
-    if (!refId || !refGroup) return;
-    try {
-      setLoading(true);
-      const list: PhotoItem[] = await apiService.getPhotosByRefGroup(refId, refGroup);
+  useEffect(() => {
+    itemsRef.current = items;
+  }, [items]);
 
-      const loaded: LoadedPhoto[] = [];
-      for (const it of list) {
-        try {
-          const data: ArrayBuffer = await apiService.downloadPhotoById(it.tbResimId, it.rsmUzanti, it.rsmAd);
-          const base64 = encodeBase64(new Uint8Array(data));
-          const mime = getMimeTypeFromExtension(it.rsmUzanti);
-          loaded.push({ ...it, uri: `data:${mime};base64,${base64}` });
-        } catch {
-          // Skip failed item but continue others
-        }
+  const hydratePhotoItems = useCallback(async (photoItems: PhotoItem[]): Promise<LoadedPhoto[]> => {
+    const hydrated: LoadedPhoto[] = [];
+    for (const photo of photoItems || []) {
+      try {
+        const data: ArrayBuffer = await apiService.downloadPhotoById(photo.tbResimId, photo.rsmUzanti, photo.rsmAd);
+        const base64 = encodeBase64(new Uint8Array(data));
+        const mime = getMimeTypeFromExtension(photo.rsmUzanti);
+        hydrated.push({ ...photo, uri: `data:${mime};base64,${base64}` });
+      } catch (error) {
+        console.warn('Fotoğraf indirilemedi, öğe atlandı:', {
+          photoId: photo.tbResimId,
+          error,
+        });
       }
+    }
+    return hydrated;
+  }, []);
+
+  const fetchList = useCallback(async () => {
+    if (!refId || !refGroup) {
+      return itemsRef.current;
+    }
+
+    setLoading(true);
+    try {
+      const list: PhotoItem[] = await apiService.getPhotosByRefGroup(refId, refGroup);
+      const loaded = await hydratePhotoItems(list);
       setItems(loaded);
       setSelectedIds((current) => current.filter((id) => loaded.some((it) => it.tbResimId === id)));
-    } catch {
+      return loaded;
+    } catch (error) {
+      console.error('Resim listesi alınırken hata oluştu:', error);
       Alert.alert('Hata', 'Resimler yüklenirken bir hata oluştu.');
+      return itemsRef.current;
     } finally {
       setLoading(false);
     }
-  }, [refId, refGroup]);
+  }, [refId, refGroup, hydratePhotoItems]);
 
   useEffect(() => {
-    fetchList();
+    void fetchList();
   }, [fetchList]);
 
   useEffect(() => {
@@ -209,9 +230,9 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
     return () => clearTimeout(timer);
   }, [viewerVisible, selectedIndex, items.length]);
 
-  const refresh = useCallback(() => {
+  const refresh = useCallback(async () => {
     refreshKey.current += 1;
-    fetchList();
+    await fetchList();
   }, [fetchList]);
 
   const openViewer = useCallback(
@@ -269,13 +290,13 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
       }
       onDeleted?.();
       exitMultiSelect();
-      refresh();
+      await refresh();
       completed = true;
     } catch (error: any) {
       Alert.alert('Hata', error?.message || 'Fotoğraflar silinirken bir hata oluştu.');
     } finally {
       if (!completed) {
-        refresh();
+        await refresh();
       }
       setBulkDeleting(false);
     }
@@ -314,19 +335,70 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
     async (uri: string, fileName: string) => {
       try {
         setLoading(true);
-        const form = new FormData();
+        console.log('Upload başlatılıyor:', { uri, fileName, refId, refGroup, isForDefault });
+
+        if (!uri || uri === '') {
+          throw new Error('Resim URI boş veya geçersiz');
+        }
+
+        if (Platform.OS !== 'web') {
+          try {
+            const FileSystemLegacy = require('expo-file-system/legacy');
+            const info = await FileSystemLegacy.getInfoAsync(uri);
+            console.log('Dosya bilgisi:', info);
+            if (!info?.exists) {
+              throw new Error('Dosya bulunamadı');
+            }
+          } catch (fsError) {
+            console.warn('Dosya bilgisi alınırken hata:', fsError);
+            throw fsError instanceof Error ? fsError : new Error(String(fsError));
+          }
+        }
+
         const ext = (fileName.split('.').pop() || 'jpg').toLowerCase();
         const type = getMimeTypeFromExtension(ext);
-        const fileDetails = { uri, name: fileName, type } as any;
-        form.append('images', fileDetails as any);
-        await apiService.uploadPhoto(form, Number(refId), refGroup, isForDefault);
-      } catch {
-        Alert.alert('Hata', 'Yükleme sırasında bir hata oluştu.');
+
+        console.log('FormData hazırlanıyor:', { ext, type, uri: uri.substring(0, 50) + '...' });
+
+        let result;
+        if (Platform.OS === 'web') {
+          const response = await fetch(uri);
+          const blob = await response.blob();
+          const form = new FormData();
+          form.append('images', blob, fileName);
+          console.log('API çağrısı yapılıyor... (web)');
+          result = await apiService.uploadPhoto(form, Number(refId), refGroup, isForDefault);
+        } else {
+          const fileDetails = {
+            uri,
+            name: fileName,
+            type,
+          } as const;
+          console.log('API çağrısı yapılıyor... (native)');
+          result = await apiService.uploadPhoto(fileDetails, Number(refId), refGroup, isForDefault);
+        }
+        console.log('Upload başarılı:', result);
+
+        // Başarılı yükleme sonrası refresh
+        if (Platform.OS !== 'web') {
+          // Backend yeni fotoğrafı işleyene kadar çok kısa bir süre tanıyalım
+          await new Promise((resolve) => setTimeout(resolve, 350));
+        }
+        await refresh();
+        onUploaded?.();
+      } catch (error: any) {
+        console.error('Upload hatası detayı:', {
+          message: error?.message,
+          stack: error?.stack,
+          error,
+        });
+        const errorMessage = error?.message || error?.toString() || 'Bilinmeyen hata';
+        Alert.alert('Yükleme Hatası', `Resim yüklenirken hata oluştu:\n${errorMessage}`);
       } finally {
         setLoading(false);
       }
     },
-    [refId, refGroup, isForDefault]
+    [refId, refGroup, isForDefault, refresh, onUploaded]
   );
 
   const pickFromLibrary = useCallback(async () => {
@@ -353,51 +425,77 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
       for (const asset of result.assets) {
         await uploadAsset(asset.uri, asset.fileName || 'photo.jpg');
       }
-      refresh();
       onUploaded?.();
     } catch (error) {
       console.error('Galeri erişim hatası:', error);
       Alert.alert('Hata', 'Galeriye erişim sırasında bir hata oluştu.');
     }
-  }, [disabled, bulkDeleting, uploadAsset, refresh, onUploaded]);
+  }, [disabled, bulkDeleting, uploadAsset, onUploaded]);
 
   const openCamera = useCallback(async () => {
     if (disabled || bulkDeleting) return;
 
-    if (!permission) {
-      return;
-    }
+    try {
+      console.log('Kamera izinleri kontrol ediliyor...');
 
-    if (!permission.granted) {
-      const result = await requestPermission();
-      if (!result.granted) {
-        Alert.alert('İzin Gerekli', 'Kameraya erişim izni verilmedi. Lütfen ayarlardan izin verin.');
+      if (!permission) {
+        console.log('İzin durumu yükleniyor...');
         return;
       }
-    }
 
-    setCameraVisible(true);
+      if (!permission.granted) {
+        console.log('Kamera izni isteniyor...');
+        const result = await requestPermission();
+        if (!result.granted) {
+          Alert.alert('İzin Gerekli', 'Kameraya erişim izni verilmedi. Lütfen ayarlardan izin verin.');
+          return;
+        }
+        console.log('Kamera izni verildi');
+      } else {
+        console.log('Kamera izni zaten mevcut');
+      }
+
+      console.log('Kamera açılıyor...');
+      setCameraVisible(true);
+    } catch (error) {
+      console.error('Kamera açma hatası:', error);
+      Alert.alert('Hata', 'Kamera açılırken bir hata oluştu.');
+    }
   }, [disabled, bulkDeleting, permission, requestPermission]);
 
   const takePhotoWithCamera = useCallback(async () => {
-    if (!cameraRef.current) return;
+    if (!cameraRef.current) {
+      console.error('Kamera referansı bulunamadı');
+      Alert.alert('Hata', 'Kamera referansı bulunamadı');
+      return;
+    }
 
     try {
+      console.log('Fotoğraf çekiliyor...');
       const photo = await cameraRef.current.takePictureAsync({
         quality: 0.9,
         base64: false,
         exif: false,
       });
 
-      await uploadAsset(photo.uri, 'photo.jpg');
+      console.log('Fotoğraf çekildi:', { uri: photo.uri, width: photo.width, height: photo.height });
+
+      if (!photo.uri) {
+        throw new Error('Fotoğraf URI alınamadı');
+      }
+
+      // Kamera kapatıldıktan sonra yükleme yap
       setCameraVisible(false);
-      refresh();
-      onUploaded?.();
-    } catch (error) {
+
+      // Yükleme işlemini başlat
+      await uploadAsset(photo.uri, `camera_${Date.now()}.jpg`);
+    } catch (error: any) {
       console.error('Fotoğraf çekme hatası:', error);
-      Alert.alert('Hata', 'Fotoğraf çekerken bir hata oluştu.');
+      const errorMessage = error?.message || error?.toString() || 'Bilinmeyen hata';
+      Alert.alert('Kamera Hatası', `Fotoğraf çekerken hata oluştu:\n${errorMessage}`);
+      setCameraVisible(false);
     }
-  }, [uploadAsset, refresh, onUploaded]);
+  }, [uploadAsset]);
 
   const toggleCameraFacing = useCallback(() => {
     setFacing((current) => (current === 'back' ? 'front' : 'back'));
@@ -445,7 +543,7 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
     return (
       <ScrollView
         style={{ maxHeight: MAX_GRID_HEIGHT }}
-        contentContainerStyle={{ paddingBottom: GRID_SPACING / 2 }}
+        contentContainerStyle={{ paddingBottom: (GRID_SPACING / 2) + Math.max(insets.bottom, 0) }}
         nestedScrollEnabled
         scrollEnabled={shouldScroll}
         showsVerticalScrollIndicator={shouldScroll}
@@ -576,7 +674,7 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
         {grid}
       </YStack>
       <Modal visible={viewerVisible} transparent animationType="fade" onRequestClose={closeViewer}>
-        <View style={viewerStyles.backdrop}>
+        <View style={[viewerStyles.backdrop, { paddingTop: insets.top, paddingBottom: Math.max(insets.bottom, 8) }]}>
           {items.length > 0 && (
             <FlatList
               ref={(ref) => {
@@ -600,7 +698,7 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
               }}
             />
           )}
-          <Pressable onPress={closeViewer} style={viewerStyles.closeButton} hitSlop={12}>
+          <Pressable onPress={closeViewer} style={[viewerStyles.closeButton, { top: Math.max(12, insets.top + 12) }]} hitSlop={12}>
             <MaterialIcons name="close" size={28} color="#fff" />
           </Pressable>
         </View>
@@ -610,7 +708,7 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
         <View style={viewerStyles.cameraContainer}>
           <CameraView ref={cameraRef} style={viewerStyles.camera} facing={facing} />
 
-          <View style={viewerStyles.cameraControls}>
+          <View style={[viewerStyles.cameraControls, { paddingBottom: 32 + Math.max(insets.bottom, 0) }]}>
             <TouchableOpacity style={viewerStyles.cameraButton} onPress={closeCamera}>
               <MaterialIcons name="close" size={24} color="#fff" />
             </TouchableOpacity>

@@ -94,7 +94,7 @@ export default function UploadPhoto({ refId, refGroup, isForDefault = true, curr
     setIsUploading(true);
 
     try {
-      const formData = new FormData();
+      let uploadPayload: FormData | { uri: string; name: string; type: string };
       let logData: any;
 
       // Platform'a göre farklı yaklaşımlar
@@ -102,7 +102,9 @@ export default function UploadPhoto({ refId, refGroup, isForDefault = true, curr
         // Web için blob kullan
         const response = await fetch(imageUri);
         const blob = await response.blob();
+        const formData = new FormData();
         formData.append('images', blob, fileName);
+        uploadPayload = formData;
         logData = { name: fileName, type: blob.type, size: blob.size, uri: imageUri };
       } else {
         // Android/iOS için URI kullan - güncel Expo önerisi
@@ -114,14 +116,13 @@ export default function UploadPhoto({ refId, refGroup, isForDefault = true, curr
         const finalFileName = `${baseName}.${fileExtension}`;
         const mimeType = `image/${fileExtension === 'jpg' ? 'jpeg' : fileExtension}`;
 
-        const fileDetails = {
+        uploadPayload = {
           uri: imageUri,
           type: mimeType,
           name: finalFileName,
         };
 
-        formData.append('images', fileDetails as any);
-        logData = fileDetails;
+        logData = uploadPayload;
       }
 
       console.log('--- Photo Upload Data ---');
@@ -131,7 +132,7 @@ export default function UploadPhoto({ refId, refGroup, isForDefault = true, curr
       console.log('--------------------------');
 
       // API endpoint'e yükleme
-      await apiService.uploadPhoto(formData, refId, refGroup, isForDefault);
+      await apiService.uploadPhoto(uploadPayload, refId, refGroup, isForDefault);
 
       // Başarılı yükleme
       setSelectedImageUri(imageUri);
