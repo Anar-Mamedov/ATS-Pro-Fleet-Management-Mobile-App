@@ -5,7 +5,7 @@ import { XStack, YStack } from '@tamagui/stacks';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Dimensions, FlatList, Modal, Pressable, StyleSheet } from 'react-native';
+import { ActivityIndicator, Alert, Dimensions, FlatList, Modal, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { apiService } from '../../services/apiService';
 
 type PhotoItem = {
@@ -74,6 +74,10 @@ function getMimeTypeFromExtension(ext: string): string {
 }
 
 const SCREEN = Dimensions.get('window');
+const GRID_ITEM_SIZE = Math.min(140, Math.max(90, Math.floor((SCREEN.width - 64) / 3)));
+const GRID_SPACING = 12; // tamagui $3 approx.
+const MAX_VISIBLE_ROWS = 3;
+const MAX_GRID_HEIGHT = GRID_ITEM_SIZE * MAX_VISIBLE_ROWS + GRID_SPACING * (MAX_VISIBLE_ROWS - 1);
 
 const viewerStyles = StyleSheet.create({
   backdrop: {
@@ -102,10 +106,12 @@ const viewerStyles = StyleSheet.create({
 
 export default function ResimUpload({ refId, refGroup, isForDefault = false, disabled = false, onUploaded, onDeleted }: ResimUploadProps) {
   const [loading, setLoading] = useState<boolean>(false);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [items, setItems] = useState<LoadedPhoto[]>([]);
   const [viewerVisible, setViewerVisible] = useState<boolean>(false);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [multiSelectMode, setMultiSelectMode] = useState<boolean>(false);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [bulkDeleting, setBulkDeleting] = useState<boolean>(false);
   const refreshKey = useRef(0);
   const viewerListRef = useRef<FlatList<LoadedPhoto> | null>(null);
 
@@ -127,6 +133,7 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
         }
       }
       setItems(loaded);
+      setSelectedIds((current) => current.filter((id) => loaded.some((it) => it.tbResimId === id)));
     } catch {
       Alert.alert('Hata', 'Resimler yüklenirken bir hata oluştu.');
     } finally {
@@ -168,16 +175,91 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
 
   const openViewer = useCallback(
     (index: number) => {
-      if (!items.length) return;
+      if (!items.length || multiSelectMode || bulkDeleting) return;
       setSelectedIndex(index);
       setViewerVisible(true);
     },
-    [items.length]
+    [items.length, multiSelectMode, bulkDeleting]
   );
 
   const closeViewer = useCallback(() => {
     setViewerVisible(false);
   }, []);
+
+  const exitMultiSelect = useCallback(() => {
+    setMultiSelectMode(false);
+    setSelectedIds([]);
+  }, []);
+
+  const toggleMultiSelect = useCallback(() => {
+    if (disabled || bulkDeleting) return;
+    setMultiSelectMode((prev) => {
+      const next = !prev;
+      if (!next) {
+        setSelectedIds([]);
+      }
+      return next;
+    });
+  }, [disabled, bulkDeleting]);
+
+  const handleSelectToggle = useCallback(
+    (photoId: number) => {
+      if (disabled || bulkDeleting) return;
+      setSelectedIds((current) => {
+        if (current.includes(photoId)) {
+          return current.filter((id) => id !== photoId);
+        }
+        return [...current, photoId];
+      });
+    },
+    [disabled, bulkDeleting]
+  );
+
+  const handleBulkDelete = useCallback(async () => {
+    if (disabled || !selectedIds.length) return;
+    let completed = false;
+    try {
+      setBulkDeleting(true);
+      for (const photoId of selectedIds) {
+        const res = await apiService.deletePhotoById(photoId);
+        if (res && res.success === false) {
+          throw new Error(res.message || 'Silme işlemi başarısız oldu');
+        }
+      }
+      onDeleted?.();
+      exitMultiSelect();
+      refresh();
+      completed = true;
+    } catch (error: any) {
+      Alert.alert('Hata', error?.message || 'Fotoğraflar silinirken bir hata oluştu.');
+    } finally {
+      if (!completed) {
+        refresh();
+      }
+      setBulkDeleting(false);
+    }
+  }, [disabled, selectedIds, onDeleted, exitMultiSelect, refresh]);
+
+  const confirmBulkDelete = useCallback(() => {
+    if (!selectedIds.length || bulkDeleting) return;
+    Alert.alert('Onay', 'Seçilen fotoğrafları silmek istiyor musunuz?', [
+      { text: 'Hayır', style: 'cancel' },
+      {
+        text: 'Evet',
+        style: 'destructive',
+        onPress: () => {
+          void handleBulkDelete();
+        },
+      },
+    ]);
+  }, [selectedIds, bulkDeleting, handleBulkDelete]);
+
+  useEffect(() => {
+    if (!multiSelectMode) return;
+    if (disabled || items.length === 0) {
+      exitMultiSelect();
+    }
+  }, [disabled, items.length, multiSelectMode, exitMultiSelect]);
 
   const renderViewerItem = useCallback(({ item }: { item: LoadedPhoto }) => {
     return (
@@ -207,7 +289,7 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
   );
 
   const pickFromLibrary = useCallback(async () => {
-    if (disabled) return;
+    if (disabled || bulkDeleting) return;
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
       Alert.alert('İzin Gerekli', 'Galeriye erişim izni verilmedi.');
@@ -227,10 +309,10 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
     }
     refresh();
     onUploaded?.();
-  }, [disabled, uploadAsset, refresh, onUploaded]);
+  }, [disabled, bulkDeleting, uploadAsset, refresh, onUploaded]);
 
   const takePhoto = useCallback(async () => {
-    if (disabled) return;
+    if (disabled || bulkDeleting) return;
     const perm = await ImagePicker.requestCameraPermissionsAsync();
     if (!perm.granted) {
       Alert.alert('İzin Gerekli', 'Kameraya erişim izni verilmedi.');
@@ -242,11 +324,11 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
     await uploadAsset(asset.uri, asset.fileName || 'photo.jpg');
     refresh();
     onUploaded?.();
-  }, [disabled, uploadAsset, refresh, onUploaded]);
+  }, [disabled, bulkDeleting, uploadAsset, refresh, onUploaded]);
 
   // Tek butonlu yükleme akışı (UploadPhoto.tsx ile aynı davranış)
   const showImageOptions = useCallback(() => {
-    if (disabled) return;
+    if (disabled || bulkDeleting) return;
     Alert.alert('Resim Seç', 'Resim kaynağını seçin', [
       {
         text: 'Kamera',
@@ -265,27 +347,7 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
         style: 'cancel',
       },
     ]);
-  }, [disabled, pickFromLibrary, takePhoto]);
-
-  const handleDelete = useCallback(
-    async (photoId: number) => {
-      if (disabled) return;
-      try {
-        setDeletingId(photoId);
-        const res = await apiService.deletePhotoById(photoId);
-        if (res && res.success === false) {
-          throw new Error(res.message || 'Silme işlemi başarısız oldu');
-        }
-        onDeleted?.();
-        refresh();
-      } catch (error: any) {
-        Alert.alert('Hata', error?.message || 'Fotoğraf silinirken bir hata oluştu.');
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [disabled, onDeleted, refresh]
-  );
+  }, [disabled, bulkDeleting, pickFromLibrary, takePhoto]);
 
   const grid = useMemo(() => {
     if (loading) {
@@ -295,51 +357,153 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
         </View>
       );
     }
+
+    const estimatedPerRow = Math.max(1, Math.floor((SCREEN.width + GRID_SPACING) / (GRID_ITEM_SIZE + GRID_SPACING)));
+    const shouldScroll = items.length > estimatedPerRow * MAX_VISIBLE_ROWS;
+
     return (
-      <XStack flexWrap="wrap" gap="$3">
-        {items.map((it, index) => (
-          <View key={it.tbResimId} position="relative">
-            <Pressable
-              onPress={() => openViewer(index)}
-              style={{ width: 150, height: 150, borderRadius: 8, overflow: 'hidden' }}
-            >
-              <Image source={{ uri: it.uri }} style={{ width: 150, height: 150 }} contentFit="cover" transition={200} />
-            </Pressable>
-            {!disabled && (
-              <Pressable
-                onPress={() =>
-                  Alert.alert('Onay', 'Bu fotoğrafı silmek istiyor musunuz?', [
-                    { text: 'Hayır', style: 'cancel' },
-                    { text: 'Evet', style: 'destructive', onPress: () => handleDelete(it.tbResimId) },
-                  ])
-                }
-                style={{ position: 'absolute', top: 6, right: 6 }}
-              >
-                <View backgroundColor="$backgroundStrong" opacity={0.85} padding="$2" borderRadius={999}>
-                  {deletingId === it.tbResimId ? <ActivityIndicator size="small" /> : <MaterialIcons name="delete" size={18} color="#d00" />}
-                </View>
-              </Pressable>
-            )}
-          </View>
-        ))}
-      </XStack>
+      <ScrollView
+        style={{ maxHeight: MAX_GRID_HEIGHT }}
+        contentContainerStyle={{ paddingBottom: GRID_SPACING / 2 }}
+        nestedScrollEnabled
+        scrollEnabled={shouldScroll}
+        showsVerticalScrollIndicator={shouldScroll}
+      >
+        <XStack flexWrap="wrap" gap="$3" justifyContent="flex-start">
+          {items.map((it, index) => {
+            const isSelected = selectedIds.includes(it.tbResimId);
+            return (
+              <View key={it.tbResimId} position="relative" marginBottom="$3">
+                <Pressable
+                  onPress={() => {
+                    if (multiSelectMode) {
+                      handleSelectToggle(it.tbResimId);
+                    } else {
+                      openViewer(index);
+                    }
+                  }}
+                  onLongPress={() => {
+                    if (disabled || bulkDeleting) return;
+                    if (!multiSelectMode) {
+                      toggleMultiSelect();
+                    }
+                    handleSelectToggle(it.tbResimId);
+                  }}
+                  delayLongPress={200}
+                  disabled={bulkDeleting}
+                  style={{
+                    width: GRID_ITEM_SIZE,
+                    height: GRID_ITEM_SIZE,
+                    borderRadius: 8,
+                    overflow: 'hidden',
+                    borderWidth: isSelected ? 2 : 0,
+                    borderColor: isSelected ? '#1b74e4' : 'transparent',
+                  }}
+                >
+                  <Image source={{ uri: it.uri }} style={{ width: '100%', height: '100%' }} contentFit="cover" transition={200} />
+                  {multiSelectMode && (
+                    <View
+                      pointerEvents="none"
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: isSelected ? 'rgba(27,116,228,0.2)' : 'rgba(0,0,0,0.15)',
+                      }}
+                    />
+                  )}
+                  {multiSelectMode && (
+                    <View
+                      pointerEvents="none"
+                      style={{
+                        position: 'absolute',
+                        top: 8,
+                        left: 8,
+                        backgroundColor: 'rgba(0,0,0,0.6)',
+                        borderRadius: 999,
+                        padding: 4,
+                      }}
+                    >
+                      <MaterialIcons
+                        name={isSelected ? 'check-circle' : 'radio-button-unchecked'}
+                        size={20}
+                        color={isSelected ? '#4caf50' : '#fff'}
+                      />
+                    </View>
+                  )}
+                  {isSelected && bulkDeleting && (
+                    <View
+                      pointerEvents="none"
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.45)',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <ActivityIndicator color="#fff" />
+                    </View>
+                  )}
+                </Pressable>
+              </View>
+            );
+          })}
+        </XStack>
+      </ScrollView>
     );
-  }, [items, loading, deletingId, disabled, handleDelete, openViewer]);
+  }, [
+    items,
+    loading,
+    disabled,
+    openViewer,
+    multiSelectMode,
+    selectedIds,
+    handleSelectToggle,
+    toggleMultiSelect,
+    bulkDeleting,
+  ]);
 
   return (
     <Theme>
       <YStack gap="$3">
-        <XStack gap="$2" justifyContent="center" alignItems="center">
+        <XStack gap="$2" justifyContent="center" alignItems="center" flexWrap="wrap">
           <Button
             size="$4"
             theme="blue"
             icon={<MaterialIcons name="cloud-upload" size={20} color="white" />}
             onPress={showImageOptions}
-            disabled={disabled || loading}
-            opacity={disabled || loading ? 0.6 : 1}
+            disabled={disabled || loading || bulkDeleting}
+            opacity={disabled || loading || bulkDeleting ? 0.6 : 1}
           >
             Fotoğraf Yükle
           </Button>
+          <Button
+            size="$3"
+            theme={multiSelectMode ? 'green' : 'gray'}
+            icon={<MaterialIcons name="edit" size={18} color="white" />}
+            onPress={toggleMultiSelect}
+            disabled={disabled || bulkDeleting || (!multiSelectMode && items.length === 0)}
+            opacity={disabled || bulkDeleting || (!multiSelectMode && items.length === 0) ? 0.6 : 1}
+            accessibilityLabel={multiSelectMode ? 'Seçim modunu kapat' : 'Seçim modunu aç'}
+          />
+          {multiSelectMode && (
+            <Button
+              size="$4"
+              theme="red"
+              icon={<MaterialIcons name="delete-forever" size={20} color="white" />}
+              onPress={confirmBulkDelete}
+              disabled={bulkDeleting || !selectedIds.length}
+              opacity={bulkDeleting || !selectedIds.length ? 0.6 : 1}
+            >
+              {selectedIds.length > 0 ? `Seçilenleri Sil (${selectedIds.length})` : 'Seçilenleri Sil'}
+            </Button>
+          )}
         </XStack>
         <View height={1} backgroundColor="$gray4" />
         {grid}
