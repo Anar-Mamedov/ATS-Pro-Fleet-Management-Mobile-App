@@ -24,6 +24,7 @@
     "@tamagui/core": "^1.126.18",
     "@tamagui/font-inter": "^1.126.18",
     "@tamagui/form": "^1.126.18",
+    "@tamagui/input": "1.126.18",
     "@tamagui/stacks": "^1.126.18",
     "@tamagui/text": "^1.126.18",
     "@tamagui/theme-base": "^1.126.18",

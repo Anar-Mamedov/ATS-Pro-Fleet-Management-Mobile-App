@@ -12,6 +12,7 @@ import { Pressable, RefreshControl, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { apiService } from '../../../services/apiService';
 import { FormattedDate } from '../../../ui/components/FormattedDate';
+import ResimUpload from '../../../ui/components/ResimUpload';
 
 export default function DriverMainPage() {
   const { t } = useTranslation();
@@ -58,6 +59,14 @@ export default function DriverMainPage() {
   const snapPoints = useMemo(() => ['30%', '50%'], []);
   const openSheet = () => bottomSheetModalRef.current?.present();
   const closeSheet = () => bottomSheetModalRef.current?.dismiss();
+
+  // Separate sheets for Araç Belgeleri and Araç Fotoğrafları
+  const docsSheetRef = useRef<BottomSheetModal>(null);
+  const photosSheetRef = useRef<BottomSheetModal>(null);
+  const openDocsSheet = () => docsSheetRef.current?.present();
+  const closeDocsSheet = () => docsSheetRef.current?.dismiss();
+  const openPhotosSheet = () => photosSheetRef.current?.present();
+  const closePhotosSheet = () => photosSheetRef.current?.dismiss();
 
   useEffect(() => {
     if (firstVehicle) {
@@ -189,10 +198,10 @@ export default function DriverMainPage() {
             </YStack>
           </YStack>
 
-          <XStack padding="$4" gap="$3" width="100%">
+          <XStack padding="$4" gap="$3" width="100%" flexWrap="wrap">
             <Button
               backgroundColor="$blue10"
-              flex={1}
+              flexBasis="48%"
               onPress={() => {}}
               pressTheme={false}
               hoverTheme={false}
@@ -205,7 +214,7 @@ export default function DriverMainPage() {
             </Button>
             <Button
               backgroundColor="$green10"
-              flex={1}
+              flexBasis="48%"
               onPress={() => {}}
               pressTheme={false}
               hoverTheme={false}
@@ -214,6 +223,32 @@ export default function DriverMainPage() {
             >
               <Button.Text color="white" fontSize="$5">
                 {t('yakitGirisi')}
+              </Button.Text>
+            </Button>
+            <Button
+              backgroundColor="$purple10"
+              flexBasis="48%"
+              onPress={openDocsSheet}
+              pressTheme={false}
+              hoverTheme={false}
+              pressStyle={{ backgroundColor: '$purple10', opacity: 0.85 }}
+              icon={<MaterialIcons name="description" size={20} color="white" />}
+            >
+              <Button.Text color="white" fontSize="$5">
+                Araç Belgeleri
+              </Button.Text>
+            </Button>
+            <Button
+              backgroundColor="$orange10"
+              flexBasis="48%"
+              onPress={openPhotosSheet}
+              pressTheme={false}
+              hoverTheme={false}
+              pressStyle={{ backgroundColor: '$orange10', opacity: 0.85 }}
+              icon={<MaterialIcons name="photo-library" size={20} color="white" />}
+            >
+              <Button.Text color="white" fontSize="$5">
+                Araç Fotoğrafları
               </Button.Text>
             </Button>
           </XStack>
@@ -339,6 +374,57 @@ export default function DriverMainPage() {
                   );
                 }}
               />
+            </YStack>
+          </BottomSheetView>
+        </BottomSheetModal>
+
+        {/* Araç Belgeleri Bottom Sheet */}
+        <BottomSheetModal
+          ref={docsSheetRef}
+          index={1}
+          snapPoints={snapPoints}
+          enablePanDownToClose
+          handleIndicatorStyle={{ backgroundColor: themeName === 'dark' ? '#9BA1A6' : '#A1A1AA' }}
+          backdropComponent={(backdropProps) => <BottomSheetBackdrop {...backdropProps} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.4} pressBehavior="close" />}
+          backgroundStyle={{ backgroundColor: themeName === 'dark' ? '#1C1C1E' : '#FFFFFF' }}
+        >
+          <BottomSheetView style={{ flex: 1, paddingTop: 20 }}>
+            <YStack space="$3" paddingHorizontal="$4">
+              <Text fontSize="$6" fontWeight="600" textAlign="center" marginBottom="$2" color="$color">
+                Araç Belgeleri
+              </Text>
+              <Text color="$color" opacity={0.7} textAlign="center">
+                Şimdilik içerik yok.
+              </Text>
+              <Button alignSelf="center" onPress={closeDocsSheet} pressTheme={false} hoverTheme={false}>
+                <Button.Text>{t('close') ?? 'Kapat'}</Button.Text>
+              </Button>
+            </YStack>
+          </BottomSheetView>
+        </BottomSheetModal>
+
+        {/* Araç Fotoğrafları Bottom Sheet */}
+        <BottomSheetModal
+          ref={photosSheetRef}
+          index={1}
+          snapPoints={snapPoints}
+          enablePanDownToClose
+          handleIndicatorStyle={{ backgroundColor: themeName === 'dark' ? '#9BA1A6' : '#A1A1AA' }}
+          backdropComponent={(backdropProps) => <BottomSheetBackdrop {...backdropProps} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.4} pressBehavior="close" />}
+          backgroundStyle={{ backgroundColor: themeName === 'dark' ? '#1C1C1E' : '#FFFFFF' }}
+        >
+          <BottomSheetView style={{ flex: 1, paddingTop: 20 }}>
+            <YStack space="$3" paddingHorizontal="$4">
+              <Text fontSize="$6" fontWeight="600" textAlign="center" marginBottom="$2" color="$color">
+                Araç Fotoğrafları
+              </Text>
+              {firstVehicle ? (
+                <ResimUpload refId={firstVehicle.aracId} refGroup="ARAC" isForDefault={false} />
+              ) : (
+                <Text color="$color" opacity={0.7} textAlign="center">
+                  Lütfen bir araç seçin.
+                </Text>
+              )}
             </YStack>
           </BottomSheetView>
         </BottomSheetModal>
