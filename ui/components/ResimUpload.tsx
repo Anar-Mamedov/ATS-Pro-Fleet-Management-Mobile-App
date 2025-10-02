@@ -5,7 +5,7 @@ import { XStack, YStack } from '@tamagui/stacks';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable } from 'react-native';
+import { ActivityIndicator, Alert, Dimensions, FlatList, Modal, Pressable, StyleSheet } from 'react-native';
 import { apiService } from '../../services/apiService';
 
 type PhotoItem = {
@@ -73,11 +73,41 @@ function getMimeTypeFromExtension(ext: string): string {
   }
 }
 
+const SCREEN = Dimensions.get('window');
+
+const viewerStyles = StyleSheet.create({
+  backdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.95)',
+  },
+  imageContainer: {
+    width: SCREEN.width,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
+    width: SCREEN.width,
+    height: SCREEN.height,
+    backgroundColor: 'black',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 48,
+    right: 24,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    borderRadius: 999,
+    padding: 8,
+  },
+});
+
 export default function ResimUpload({ refId, refGroup, isForDefault = false, disabled = false, onUploaded, onDeleted }: ResimUploadProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [items, setItems] = useState<LoadedPhoto[]>([]);
+  const [viewerVisible, setViewerVisible] = useState<boolean>(false);
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const refreshKey = useRef(0);
+  const viewerListRef = useRef<FlatList<LoadedPhoto> | null>(null);
 
   const fetchList = useCallback(async () => {
     if (!refId || !refGroup) return;
@@ -108,10 +138,54 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
     fetchList();
   }, [fetchList]);
 
+  useEffect(() => {
+    if (!items.length) {
+      setViewerVisible(false);
+      setSelectedIndex(0);
+      return;
+    }
+    if (selectedIndex > items.length - 1) {
+      setSelectedIndex(items.length - 1);
+    }
+  }, [items.length, selectedIndex]);
+
+  useEffect(() => {
+    if (!viewerVisible || !items.length) return;
+    const timer = setTimeout(() => {
+      try {
+        viewerListRef.current?.scrollToIndex({ index: selectedIndex, animated: false });
+      } catch {
+        // ignore scroll errors (e.g. stale index)
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [viewerVisible, selectedIndex, items.length]);
+
   const refresh = useCallback(() => {
     refreshKey.current += 1;
     fetchList();
   }, [fetchList]);
+
+  const openViewer = useCallback(
+    (index: number) => {
+      if (!items.length) return;
+      setSelectedIndex(index);
+      setViewerVisible(true);
+    },
+    [items.length]
+  );
+
+  const closeViewer = useCallback(() => {
+    setViewerVisible(false);
+  }, []);
+
+  const renderViewerItem = useCallback(({ item }: { item: LoadedPhoto }) => {
+    return (
+      <View style={viewerStyles.imageContainer}>
+        <Image source={{ uri: item.uri }} style={viewerStyles.image} contentFit="contain" transition={200} />
+      </View>
+    );
+  }, []);
 
   const uploadAsset = useCallback(
     async (uri: string, fileName: string) => {
@@ -223,9 +297,14 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
     }
     return (
       <XStack flexWrap="wrap" gap="$3">
-        {items.map((it) => (
+        {items.map((it, index) => (
           <View key={it.tbResimId} position="relative">
-            <Image source={{ uri: it.uri }} style={{ width: 150, height: 150, borderRadius: 8 }} contentFit="cover" transition={200} />
+            <Pressable
+              onPress={() => openViewer(index)}
+              style={{ width: 150, height: 150, borderRadius: 8, overflow: 'hidden' }}
+            >
+              <Image source={{ uri: it.uri }} style={{ width: 150, height: 150 }} contentFit="cover" transition={200} />
+            </Pressable>
             {!disabled && (
               <Pressable
                 onPress={() =>
@@ -245,7 +324,7 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
         ))}
       </XStack>
     );
-  }, [items, loading, deletingId, disabled, handleDelete]);
+  }, [items, loading, deletingId, disabled, handleDelete, openViewer]);
 
   return (
     <Theme>
@@ -265,6 +344,36 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
         <View height={1} backgroundColor="$gray4" />
         {grid}
       </YStack>
+      <Modal visible={viewerVisible} transparent animationType="fade" onRequestClose={closeViewer}>
+        <View style={viewerStyles.backdrop}>
+          {items.length > 0 && (
+            <FlatList
+              ref={(ref) => {
+                viewerListRef.current = ref;
+              }}
+              data={items}
+              renderItem={renderViewerItem}
+              keyExtractor={(item) => item.tbResimId.toString()}
+              horizontal
+              pagingEnabled
+              style={{ flex: 1 }}
+              initialScrollIndex={selectedIndex}
+              getItemLayout={(_, index) => ({ length: SCREEN.width, offset: SCREEN.width * index, index })}
+              showsHorizontalScrollIndicator={false}
+              onMomentumScrollEnd={(event) => {
+                const newIndex = Math.round(event.nativeEvent.contentOffset.x / SCREEN.width);
+                if (!Number.isNaN(newIndex)) {
+                  const boundedIndex = Math.max(0, Math.min(newIndex, items.length - 1));
+                  setSelectedIndex(boundedIndex);
+                }
+              }}
+            />
+          )}
+          <Pressable onPress={closeViewer} style={viewerStyles.closeButton} hitSlop={12}>
+            <MaterialIcons name="close" size={28} color="#fff" />
+          </Pressable>
+        </View>
+      </Modal>
     </Theme>
   );
 }
