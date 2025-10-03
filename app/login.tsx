@@ -53,6 +53,17 @@ export default function Login() {
     try {
       const companyInfo = await apiService.getCompanyInfo(companyKey.trim());
 
+      const isValidCompany =
+        !!companyInfo &&
+        typeof companyInfo.siraNo === 'number' &&
+        companyInfo.siraNo > 0 &&
+        typeof companyInfo.firmaAdi === 'string' &&
+        companyInfo.firmaAdi.trim().length > 0;
+
+      if (!isValidCompany) {
+        throw new Error(t('companyInfoError'));
+      }
+
       await AsyncStorage.setItem('companyInfo', JSON.stringify(companyInfo));
       await AsyncStorage.setItem('companyKey', companyKey.trim());
 
