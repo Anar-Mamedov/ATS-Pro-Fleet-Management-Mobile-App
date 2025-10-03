@@ -4,7 +4,7 @@ import { Theme, View } from '@tamagui/core';
 import { XStack, YStack } from '@tamagui/stacks';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
+import { CameraView, CameraType, FlashMode, useCameraPermissions } from 'expo-camera';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Dimensions, FlatList, Modal, Platform, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
 import { ScrollView, NativeViewGestureHandler } from 'react-native-gesture-handler';
@@ -105,6 +105,14 @@ const viewerStyles = StyleSheet.create({
     borderRadius: 999,
     padding: 8,
   },
+  flashButton: {
+    position: 'absolute',
+    top: 48,
+    left: 24,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    borderRadius: 999,
+    padding: 8,
+  },
   cameraContainer: {
     flex: 1,
     backgroundColor: 'black',
@@ -154,6 +162,7 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
   const [bulkDeleting, setBulkDeleting] = useState<boolean>(false);
   const [cameraVisible, setCameraVisible] = useState<boolean>(false);
   const [facing, setFacing] = useState<CameraType>('back');
+  const [flashMode, setFlashMode] = useState<FlashMode>('off');
   const [permission, requestPermission] = useCameraPermissions();
   const itemsRef = useRef<LoadedPhoto[]>([]);
   const refreshKey = useRef(0);
@@ -341,18 +350,17 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
           throw new Error('Resim URI boş veya geçersiz');
         }
 
-        if (Platform.OS !== 'web') {
-          try {
-            const FileSystemLegacy = require('expo-file-system/legacy');
-            const info = await FileSystemLegacy.getInfoAsync(uri);
-            console.log('Dosya bilgisi:', info);
-            if (!info?.exists) {
-              throw new Error('Dosya bulunamadı');
-            }
-          } catch (fsError) {
-            console.warn('Dosya bilgisi alınırken hata:', fsError);
-            throw fsError instanceof Error ? fsError : new Error(String(fsError));
+        // Dosya varlığını kontrol et
+        try {
+          const FileSystemLegacy = require('expo-file-system/legacy');
+          const info = await FileSystemLegacy.getInfoAsync(uri);
+          console.log('Dosya bilgisi:', info);
+          if (!info?.exists) {
+            throw new Error('Dosya bulunamadı');
           }
+        } catch (fsError) {
+          console.warn('Dosya bilgisi alınırken hata:', fsError);
+          throw fsError instanceof Error ? fsError : new Error(String(fsError));
         }
 
         const ext = (fileName.split('.').pop() || 'jpg').toLowerCase();
@@ -360,30 +368,18 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
 
         console.log('FormData hazırlanıyor:', { ext, type, uri: uri.substring(0, 50) + '...' });
 
-        let result;
-        if (Platform.OS === 'web') {
-          const response = await fetch(uri);
-          const blob = await response.blob();
-          const form = new FormData();
-          form.append('images', blob, fileName);
-          console.log('API çağrısı yapılıyor... (web)');
-          result = await apiService.uploadPhoto(form, Number(refId), refGroup, isForDefault);
-        } else {
-          const fileDetails = {
-            uri,
-            name: fileName,
-            type,
-          } as const;
-          console.log('API çağrısı yapılıyor... (native)');
-          result = await apiService.uploadPhoto(fileDetails, Number(refId), refGroup, isForDefault);
-        }
+        const fileDetails = {
+          uri,
+          name: fileName,
+          type,
+        } as const;
+        
+        console.log('API çağrısı yapılıyor...');
+        const result = await apiService.uploadPhoto(fileDetails, Number(refId), refGroup, isForDefault);
         console.log('Upload başarılı:', result);
 
-        // Başarılı yükleme sonrası refresh
-        if (Platform.OS !== 'web') {
-          // Backend yeni fotoğrafı işleyene kadar çok kısa bir süre tanıyalım
-          await new Promise((resolve) => setTimeout(resolve, 350));
-        }
+        // Backend yeni fotoğrafı işleyene kadar çok kısa bir süre tanıyalım
+        await new Promise((resolve) => setTimeout(resolve, 350));
         await refresh();
         onUploaded?.();
       } catch (error: any) {
@@ -499,6 +495,14 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
 
   const toggleCameraFacing = useCallback(() => {
     setFacing((current) => (current === 'back' ? 'front' : 'back'));
+  }, []);
+
+  const toggleFlash = useCallback(() => {
+    setFlashMode((current) => {
+      if (current === 'off') return 'on';
+      if (current === 'on') return 'auto';
+      return 'off';
+    });
   }, []);
 
   const closeCamera = useCallback(() => {
@@ -706,7 +710,23 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
 
       <Modal visible={cameraVisible} animationType="slide" onRequestClose={closeCamera}>
         <View style={viewerStyles.cameraContainer}>
-          <CameraView ref={cameraRef} style={viewerStyles.camera} facing={facing} />
+          <CameraView ref={cameraRef} style={viewerStyles.camera} facing={facing} enableTorch={flashMode === 'on'} />
+
+          {/* Flash butonu - sol üst köşe */}
+          <TouchableOpacity 
+            style={[viewerStyles.flashButton, { top: Math.max(12, insets.top + 12) }]} 
+            onPress={toggleFlash}
+          >
+            <MaterialIcons 
+              name={
+                flashMode === 'off' ? 'flash-off' : 
+                flashMode === 'on' ? 'flash-on' : 
+                'flash-auto'
+              } 
+              size={24} 
+              color={flashMode === 'off' ? '#fff' : '#FFD700'} 
+            />
+          </TouchableOpacity>
 
           <View style={[viewerStyles.cameraControls, { paddingBottom: 32 + Math.max(insets.bottom, 0) }]}>
             <TouchableOpacity style={viewerStyles.cameraButton} onPress={closeCamera}>
