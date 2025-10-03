@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "ATSProMobileApp.app"
-               BlueprintName = "ATSProMobileApp"
-               ReferencedContainer = "container:ATSProMobileApp.xcodeproj">
+               BuildableName = "ATSPro.app"
+               BlueprintName = "ATSPro"
+               ReferencedContainer = "container:ATSPro.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "ATSProMobileAppTests.xctest"
-               BlueprintName = "ATSProMobileAppTests"
-               ReferencedContainer = "container:ATSProMobileApp.xcodeproj">
+               BuildableName = "ATSProTests.xctest"
+               BlueprintName = "ATSProTests"
+               ReferencedContainer = "container:ATSPro.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "ATSProMobileApp.app"
-            BlueprintName = "ATSProMobileApp"
-            ReferencedContainer = "container:ATSProMobileApp.xcodeproj">
+            BuildableName = "ATSPro.app"
+            BlueprintName = "ATSPro"
+            ReferencedContainer = "container:ATSPro.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "ATSProMobileApp.app"
-            BlueprintName = "ATSProMobileApp"
-            ReferencedContainer = "container:ATSProMobileApp.xcodeproj">
+            BuildableName = "ATSPro.app"
+            BlueprintName = "ATSPro"
+            ReferencedContainer = "container:ATSPro.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
