@@ -4,12 +4,13 @@ import { Theme, View } from '@tamagui/core';
 import { XStack, YStack } from '@tamagui/stacks';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { CameraView, CameraType, FlashMode, useCameraPermissions } from 'expo-camera';
+import { useCameraPermissions } from 'expo-camera';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Dimensions, FlatList, Modal, Platform, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
-import { ScrollView, NativeViewGestureHandler } from 'react-native-gesture-handler';
+import { ActivityIndicator, Alert, Dimensions, FlatList, Modal, Pressable, StyleSheet } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { apiService } from '../../services/apiService';
+import { CameraCaptureModal } from './CameraCaptureModal';
 
 type PhotoItem = {
   tbResimId: number;
@@ -105,50 +106,6 @@ const viewerStyles = StyleSheet.create({
     borderRadius: 999,
     padding: 8,
   },
-  flashButton: {
-    position: 'absolute',
-    top: 48,
-    left: 24,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    borderRadius: 999,
-    padding: 8,
-  },
-  cameraContainer: {
-    flex: 1,
-    backgroundColor: 'black',
-  },
-  camera: {
-    flex: 1,
-  },
-  cameraControls: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    paddingVertical: 32,
-    paddingHorizontal: 24,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  cameraButton: {
-    backgroundColor: 'rgba(255,255,255,0.3)',
-    borderRadius: 999,
-    padding: 16,
-  },
-  captureButton: {
-    backgroundColor: '#fff',
-    borderRadius: 999,
-    padding: 20,
-    borderWidth: 4,
-    borderColor: 'rgba(255,255,255,0.5)',
-  },
-  cameraText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
 });
 
 export default function ResimUpload({ refId, refGroup, isForDefault = false, disabled = false, onUploaded, onDeleted }: ResimUploadProps) {
@@ -161,13 +118,10 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [bulkDeleting, setBulkDeleting] = useState<boolean>(false);
   const [cameraVisible, setCameraVisible] = useState<boolean>(false);
-  const [facing, setFacing] = useState<CameraType>('back');
-  const [flashMode, setFlashMode] = useState<FlashMode>('off');
   const [permission, requestPermission] = useCameraPermissions();
   const itemsRef = useRef<LoadedPhoto[]>([]);
   const refreshKey = useRef(0);
   const viewerListRef = useRef<FlatList<LoadedPhoto> | null>(null);
-  const cameraRef = useRef<CameraView>(null);
 
   useEffect(() => {
     itemsRef.current = items;
@@ -459,55 +413,18 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
     }
   }, [disabled, bulkDeleting, permission, requestPermission]);
 
-  const takePhotoWithCamera = useCallback(async () => {
-    if (!cameraRef.current) {
-      console.error('Kamera referansı bulunamadı');
-      Alert.alert('Hata', 'Kamera referansı bulunamadı');
-      return;
-    }
-
-    try {
-      console.log('Fotoğraf çekiliyor...');
-      const photo = await cameraRef.current.takePictureAsync({
-        quality: 0.9,
-        base64: false,
-        exif: false,
-      });
-
-      console.log('Fotoğraf çekildi:', { uri: photo.uri, width: photo.width, height: photo.height });
-
-      if (!photo.uri) {
+  const handleCameraCapture = useCallback(
+    async (photo: { uri?: string }) => {
+      console.log('Kamera fotoğrafı alındı:', photo);
+      if (!photo?.uri) {
         throw new Error('Fotoğraf URI alınamadı');
       }
 
-      // Kamera kapatıldıktan sonra yükleme yap
       setCameraVisible(false);
-
-      // Yükleme işlemini başlat
       await uploadAsset(photo.uri, `camera_${Date.now()}.jpg`);
-    } catch (error: any) {
-      console.error('Fotoğraf çekme hatası:', error);
-      const errorMessage = error?.message || error?.toString() || 'Bilinmeyen hata';
-      Alert.alert('Kamera Hatası', `Fotoğraf çekerken hata oluştu:\n${errorMessage}`);
-      setCameraVisible(false);
-    }
-  }, [uploadAsset]);
-
-  const toggleCameraFacing = useCallback(() => {
-    setFacing((current) => (current === 'back' ? 'front' : 'back'));
-  }, []);
-
-  const toggleFlash = useCallback(() => {
-    setFlashMode((current) => {
-      if (current === 'off') return 'on';
-      if (current === 'on') return 'auto';
-      return 'off';
-    });
-  }, []);
-
-  const closeCamera = useCallback(() => {
-    setCameraVisible(false);
-  }, []);
+    },
+    [uploadAsset]
+  );
 
   // Tek butonlu yükleme akışı (UploadPhoto.tsx ile aynı davranış)
   const showImageOptions = useCallback(() => {
@@ -708,41 +625,11 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
         </View>
       </Modal>
 
-      <Modal visible={cameraVisible} animationType="slide" onRequestClose={closeCamera}>
-        <View style={viewerStyles.cameraContainer}>
-          <CameraView ref={cameraRef} style={viewerStyles.camera} facing={facing} enableTorch={flashMode === 'on'} />
-
-          {/* Flash butonu - sol üst köşe */}
-          <TouchableOpacity 
-            style={[viewerStyles.flashButton, { top: Math.max(12, insets.top + 12) }]} 
-            onPress={toggleFlash}
-          >
-            <MaterialIcons 
-              name={
-                flashMode === 'off' ? 'flash-off' : 
-                flashMode === 'on' ? 'flash-on' : 
-                'flash-auto'
-              } 
-              size={24} 
-              color={flashMode === 'off' ? '#fff' : '#FFD700'} 
-            />
-          </TouchableOpacity>
-
-          <View style={[viewerStyles.cameraControls, { paddingBottom: 32 + Math.max(insets.bottom, 0) }]}>
-            <TouchableOpacity style={viewerStyles.cameraButton} onPress={closeCamera}>
-              <MaterialIcons name="close" size={24} color="#fff" />
-            </TouchableOpacity>
-
-            <TouchableOpacity style={viewerStyles.captureButton} onPress={takePhotoWithCamera}>
-              <MaterialIcons name="camera-alt" size={32} color="#000" />
-            </TouchableOpacity>
-
-            <TouchableOpacity style={viewerStyles.cameraButton} onPress={toggleCameraFacing}>
-              <MaterialIcons name="flip-camera-ios" size={24} color="#fff" />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+      <CameraCaptureModal
+        visible={cameraVisible}
+        onClose={() => setCameraVisible(false)}
+        onCapture={handleCameraCapture}
+      />
     </Theme>
   );
 }
