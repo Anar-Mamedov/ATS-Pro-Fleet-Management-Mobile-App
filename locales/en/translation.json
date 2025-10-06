@@ -85,5 +85,11 @@
   "change_photo": "Change Photo",
   "upload_photo": "Upload Photo",
   "photo_upload_info": "Click the button to upload your profile photo. Square format is recommended.",
-  "fuelConsumptionUnit": "L/100 km"
+  "fuelConsumptionUnit": "L/100 km",
+  "cezaGirisi": "Penalty Entry",
+  "yakitGirisi": "Fuel Entry",
+  "arizaBildir": "Report Breakdown",
+  "talepBildir": "Submit Request",
+  "aracBelgeleri": "Vehicle Documents",
+  "aracFotograflari": "Vehicle Photos"
 }

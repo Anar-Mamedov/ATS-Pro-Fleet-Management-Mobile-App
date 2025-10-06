@@ -225,6 +225,32 @@ export default function DriverMainPage() {
               </Button.Text>
             </Button>
             <Button
+              backgroundColor="$red10"
+              flexBasis="48%"
+              onPress={() => {}}
+              pressTheme={false}
+              hoverTheme={false}
+              pressStyle={{ backgroundColor: '$red10', opacity: 0.85 }}
+              icon={<MaterialIcons name="report-problem" size={20} color="white" />}
+            >
+              <Button.Text color="white" fontSize="$5">
+                {t('arizaBildir')}
+              </Button.Text>
+            </Button>
+            <Button
+              backgroundColor="$yellow10"
+              flexBasis="48%"
+              onPress={() => {}}
+              pressTheme={false}
+              hoverTheme={false}
+              pressStyle={{ backgroundColor: '$yellow10', opacity: 0.85 }}
+              icon={<MaterialIcons name="contact-support" size={20} color="white" />}
+            >
+              <Button.Text color="white" fontSize="$5">
+                {t('talepBildir')}
+              </Button.Text>
+            </Button>
+            <Button
               backgroundColor="$purple10"
               flexBasis="48%"
               onPress={openDocsSheet}
@@ -234,7 +260,7 @@ export default function DriverMainPage() {
               icon={<MaterialIcons name="description" size={20} color="white" />}
             >
               <Button.Text color="white" fontSize="$5">
-                Araç Belgeleri
+                {t('aracBelgeleri')}
               </Button.Text>
             </Button>
             <Button
@@ -247,7 +273,7 @@ export default function DriverMainPage() {
               icon={<MaterialIcons name="photo-library" size={20} color="white" />}
             >
               <Button.Text color="white" fontSize="$5">
-                Araç Fotoğrafları
+                {t('aracFotograflari')}
               </Button.Text>
             </Button>
           </XStack>
@@ -390,7 +416,7 @@ export default function DriverMainPage() {
           <BottomSheetView style={{ flex: 1, paddingTop: 20 }}>
             <YStack space="$3" paddingHorizontal="$4">
               <Text fontSize="$6" fontWeight="600" textAlign="center" marginBottom="$2" color="$color">
-                Araç Belgeleri
+                {t('aracBelgeleri')}
               </Text>
               <Text color="$color" opacity={0.7} textAlign="center">
                 Şimdilik içerik yok.
@@ -415,7 +441,7 @@ export default function DriverMainPage() {
           <BottomSheetView style={{ flex: 1, paddingTop: 20 }}>
             <YStack space="$3" paddingHorizontal="$4">
               <Text fontSize="$6" fontWeight="600" textAlign="center" marginBottom="$2" color="$color">
-                Araç Fotoğrafları
+                {t('aracFotograflari')}
               </Text>
               {firstVehicle ? (
                 <ResimUpload refId={firstVehicle.aracId} refGroup="ARAC" isForDefault={false} />

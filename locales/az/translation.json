@@ -69,5 +69,11 @@
   "operationFailed": "Əməliyyat uğursuz oldu",
   "personalInfoUpdated": "Şəxsi məlumatlar yeniləndi",
   "updateError": "Yeniləmə xətası",
-  "fuelConsumptionUnit": "lt/100 km"
+  "fuelConsumptionUnit": "lt/100 km",
+  "cezaGirisi": "Cərimə Girişi",
+  "yakitGirisi": "Yanacaq Girişi",
+  "arizaBildir": "Nasazlıq Bildir",
+  "talepBildir": "Sorğu Göndər",
+  "aracBelgeleri": "Avtomobil Sənədləri",
+  "aracFotograflari": "Avtomobil Şəkilləri"
 }
