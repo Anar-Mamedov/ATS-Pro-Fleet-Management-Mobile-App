@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { apiService } from '../../../services/apiService';
 import { FormattedDate } from '../../../ui/components/FormattedDate';
 import ResimUpload from '../../../ui/components/ResimUpload';
+import ReportAProblem from './components/ReportAProblem';
 
 export default function DriverMainPage() {
   const { t } = useTranslation();
@@ -57,6 +58,7 @@ export default function DriverMainPage() {
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['30%', '50%'], []);
+  const faultSnapPoints = useMemo(() => ['70%', '90%'], []);
   const openSheet = () => bottomSheetModalRef.current?.present();
   const closeSheet = () => bottomSheetModalRef.current?.dismiss();
 
@@ -410,24 +412,14 @@ export default function DriverMainPage() {
         <BottomSheetModal
           ref={faultSheetRef}
           index={1}
-          snapPoints={snapPoints}
+          snapPoints={faultSnapPoints}
           enablePanDownToClose
           handleIndicatorStyle={{ backgroundColor: themeName === 'dark' ? '#9BA1A6' : '#A1A1AA' }}
           backdropComponent={(backdropProps) => <BottomSheetBackdrop {...backdropProps} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.4} pressBehavior="close" />}
           backgroundStyle={{ backgroundColor: themeName === 'dark' ? '#1C1C1E' : '#FFFFFF' }}
         >
-          <BottomSheetView style={{ flex: 1, paddingTop: 20 }}>
-            <YStack space="$3" paddingHorizontal="$4">
-              <Text fontSize="$6" fontWeight="600" textAlign="center" marginBottom="$2" color="$color">
-                {t('arizaBildir')}
-              </Text>
-              <Text color="$color" opacity={0.7} textAlign="center">
-                {t('noContentYet')}
-              </Text>
-              <Button alignSelf="center" onPress={closeFaultSheet} pressTheme={false} hoverTheme={false}>
-                <Button.Text>{t('close') ?? 'Kapat'}</Button.Text>
-              </Button>
-            </YStack>
+          <BottomSheetView style={{ flex: 1 }}>
+            <ReportAProblem />
           </BottomSheetView>
         </BottomSheetModal>
 
