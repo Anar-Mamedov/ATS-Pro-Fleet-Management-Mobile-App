@@ -1,3 +1,5 @@
+import 'react-native-reanimated';
+
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { TamaguiProvider } from '@tamagui/core';
 import * as NavigationBar from 'expo-navigation-bar';

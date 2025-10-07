@@ -69,5 +69,13 @@
   "operationFailed": "Операция не удалась",
   "personalInfoUpdated": "Личная информация обновлена",
   "updateError": "Ошибка обновления",
-  "fuelConsumptionUnit": "л/100 км"
+  "fuelConsumptionUnit": "л/100 км",
+  "cezaGirisi": "Ввод штрафа",
+  "yakitGirisi": "Ввод топлива",
+  "arizaBildir": "Сообщить о неисправности",
+  "talepBildir": "Отправить запрос",
+  "aracBelgeleri": "Документы автомобиля",
+  "aracFotograflari": "Фотографии автомобиля",
+  "noContentYet": "Контент пока отсутствует.",
+  "pleaseSelectVehicle": "Пожалуйста, выберите автомобиль."
 }
