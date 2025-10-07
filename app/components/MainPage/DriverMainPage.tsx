@@ -25,12 +25,14 @@ export default function DriverMainPage() {
   const [maintenanceCardWidth, setMaintenanceCardWidth] = useState<number>(0);
   const [reminderData, setReminderData] = useState<any>(null);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [userId, setUserId] = useState<number>(0);
 
   const firstVehicle = Array.isArray(vehicleData) && vehicleData.length > 0 ? vehicleData[selectedIndex] : null;
 
   const getUserInfo = useCallback(async () => {
     const id = await AsyncStorage.getItem('id');
     if (id) {
+      setUserId(parseInt(id));
       const data = await apiService.getUserInfoById(id);
       setAracIds(Array.isArray(data?.aracIds) ? data.aracIds : []);
     }
@@ -67,7 +69,6 @@ export default function DriverMainPage() {
   const docsSheetRef = useRef<BottomSheetModal>(null);
   const photosSheetRef = useRef<BottomSheetModal>(null);
   const openFaultSheet = () => faultSheetRef.current?.present();
-  const closeFaultSheet = () => faultSheetRef.current?.dismiss();
   const openDocsSheet = () => docsSheetRef.current?.present();
   const closeDocsSheet = () => docsSheetRef.current?.dismiss();
   const openPhotosSheet = () => photosSheetRef.current?.present();
@@ -419,7 +420,7 @@ export default function DriverMainPage() {
           backgroundStyle={{ backgroundColor: themeName === 'dark' ? '#1C1C1E' : '#FFFFFF' }}
         >
           <BottomSheetView style={{ flex: 1 }}>
-            <ReportAProblem />
+            <ReportAProblem aracId={firstVehicle?.aracId || 0} talepEdenId={userId} />
           </BottomSheetView>
         </BottomSheetModal>
 

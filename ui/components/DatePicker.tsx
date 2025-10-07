@@ -35,7 +35,7 @@ export function CustomDatePicker<T extends FieldValues>({
   label,
   placeholder,
   error,
-  format = 'LL',
+  format = 'L',
   minimumDate,
   maximumDate,
   required = false,
