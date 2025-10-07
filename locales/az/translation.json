@@ -75,5 +75,7 @@
   "arizaBildir": "Nasazlıq Bildir",
   "talepBildir": "Sorğu Göndər",
   "aracBelgeleri": "Avtomobil Sənədləri",
-  "aracFotograflari": "Avtomobil Şəkilləri"
+  "aracFotograflari": "Avtomobil Şəkilləri",
+  "noContentYet": "Hələlik məzmun yoxdur.",
+  "pleaseSelectVehicle": "Zəhmət olmasa bir nəqliyyat vasitəsi seçin."
 }

@@ -75,5 +75,7 @@
   "arizaBildir": "Сообщить о неисправности",
   "talepBildir": "Отправить запрос",
   "aracBelgeleri": "Документы автомобиля",
-  "aracFotograflari": "Фотографии автомобиля"
+  "aracFotograflari": "Фотографии автомобиля",
+  "noContentYet": "Контент пока отсутствует.",
+  "pleaseSelectVehicle": "Пожалуйста, выберите автомобиль."
 }

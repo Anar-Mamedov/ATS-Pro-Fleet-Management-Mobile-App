@@ -61,8 +61,11 @@ export default function DriverMainPage() {
   const closeSheet = () => bottomSheetModalRef.current?.dismiss();
 
   // Separate sheets for Araç Belgeleri and Araç Fotoğrafları
+  const faultSheetRef = useRef<BottomSheetModal>(null);
   const docsSheetRef = useRef<BottomSheetModal>(null);
   const photosSheetRef = useRef<BottomSheetModal>(null);
+  const openFaultSheet = () => faultSheetRef.current?.present();
+  const closeFaultSheet = () => faultSheetRef.current?.dismiss();
   const openDocsSheet = () => docsSheetRef.current?.present();
   const closeDocsSheet = () => docsSheetRef.current?.dismiss();
   const openPhotosSheet = () => photosSheetRef.current?.present();
@@ -227,7 +230,7 @@ export default function DriverMainPage() {
             <Button
               backgroundColor="$red10"
               flexBasis="48%"
-              onPress={() => {}}
+              onPress={openFaultSheet}
               pressTheme={false}
               hoverTheme={false}
               pressStyle={{ backgroundColor: '$red10', opacity: 0.85 }}
@@ -403,6 +406,31 @@ export default function DriverMainPage() {
           </BottomSheetView>
         </BottomSheetModal>
 
+        {/* Arıza Bildir Bottom Sheet */}
+        <BottomSheetModal
+          ref={faultSheetRef}
+          index={1}
+          snapPoints={snapPoints}
+          enablePanDownToClose
+          handleIndicatorStyle={{ backgroundColor: themeName === 'dark' ? '#9BA1A6' : '#A1A1AA' }}
+          backdropComponent={(backdropProps) => <BottomSheetBackdrop {...backdropProps} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.4} pressBehavior="close" />}
+          backgroundStyle={{ backgroundColor: themeName === 'dark' ? '#1C1C1E' : '#FFFFFF' }}
+        >
+          <BottomSheetView style={{ flex: 1, paddingTop: 20 }}>
+            <YStack space="$3" paddingHorizontal="$4">
+              <Text fontSize="$6" fontWeight="600" textAlign="center" marginBottom="$2" color="$color">
+                {t('arizaBildir')}
+              </Text>
+              <Text color="$color" opacity={0.7} textAlign="center">
+                {t('noContentYet')}
+              </Text>
+              <Button alignSelf="center" onPress={closeFaultSheet} pressTheme={false} hoverTheme={false}>
+                <Button.Text>{t('close') ?? 'Kapat'}</Button.Text>
+              </Button>
+            </YStack>
+          </BottomSheetView>
+        </BottomSheetModal>
+
         {/* Araç Belgeleri Bottom Sheet */}
         <BottomSheetModal
           ref={docsSheetRef}
@@ -419,7 +447,7 @@ export default function DriverMainPage() {
                 {t('aracBelgeleri')}
               </Text>
               <Text color="$color" opacity={0.7} textAlign="center">
-                Şimdilik içerik yok.
+                {t('noContentYet')}
               </Text>
               <Button alignSelf="center" onPress={closeDocsSheet} pressTheme={false} hoverTheme={false}>
                 <Button.Text>{t('close') ?? 'Kapat'}</Button.Text>
@@ -447,7 +475,7 @@ export default function DriverMainPage() {
                 <ResimUpload refId={firstVehicle.aracId} refGroup="ARAC" isForDefault={false} />
               ) : (
                 <Text color="$color" opacity={0.7} textAlign="center">
-                  Lütfen bir araç seçin.
+                  {t('pleaseSelectVehicle')}
                 </Text>
               )}
             </YStack>

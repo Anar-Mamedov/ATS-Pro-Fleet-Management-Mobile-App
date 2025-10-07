@@ -91,5 +91,7 @@
   "arizaBildir": "Report Breakdown",
   "talepBildir": "Submit Request",
   "aracBelgeleri": "Vehicle Documents",
-  "aracFotograflari": "Vehicle Photos"
+  "aracFotograflari": "Vehicle Photos",
+  "noContentYet": "No content yet.",
+  "pleaseSelectVehicle": "Please select a vehicle."
 }
