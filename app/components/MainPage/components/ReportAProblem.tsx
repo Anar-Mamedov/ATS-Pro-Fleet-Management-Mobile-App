@@ -1,7 +1,8 @@
 import { useThemeController } from '@/config/theme';
+import { apiService } from '@/services/apiService';
 import { DatePicker } from '@/ui/components/DatePicker';
 import { NumaratorOnAdd } from '@/ui/components/NumaratorOnAdd';
-import { apiService } from '@/services/apiService';
+import TalepOncelik from '@/ui/components/TalepOncelik';
 import { Button } from '@tamagui/button';
 import { Text } from '@tamagui/core';
 import { YStack } from '@tamagui/stacks';
@@ -13,6 +14,7 @@ import { Alert, ScrollView, StyleSheet, TextInput } from 'react-native';
 interface ReportAProblemForm {
   hasarNo: string;
   problemDate: Date;
+  oncelik: string;
   description: string;
 }
 
@@ -35,6 +37,7 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0 }: ReportAProblemProps) {
     defaultValues: {
       hasarNo: '',
       problemDate: new Date(),
+      oncelik: '',
       description: '',
     },
   });
@@ -48,10 +51,10 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0 }: ReportAProblemProps) {
         aracId: aracId,
         lokasyonId: 0, // Varsayılan değer
         aciklama: data.description,
-        tarih: data.problemDate.toISOString(),
-        talepDurum: 'Beklemede', // Varsayılan değer
-        talepOncelik: 'Normal', // Varsayılan değer
-        talepTur: 'Arıza', // Varsayılan değer
+        tarih: data.problemDate.toISOString().split('T')[0], // YYYY-MM-DD formatında
+        talepDurum: 'beklemede', // Varsayılan değer
+        talepOncelik: data.oncelik,
+        talepTur: 'ariza', // Varsayılan değer
         talepEdenId: talepEdenId,
       };
 
@@ -87,6 +90,28 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0 }: ReportAProblemProps) {
         />
 
         <DatePicker control={control} name="problemDate" label={t('problemDate')} placeholder={t('selectDate')} error={errors.problemDate?.message} required />
+
+        <YStack gap="$2">
+          <Text fontSize="$3" fontWeight="600">
+            {t('priority') || 'Öncelik'}
+            <Text color="$red10" marginLeft="$1">
+              *
+            </Text>
+          </Text>
+          <TalepOncelik
+            control={control}
+            name="oncelik"
+            rules={{
+              required: t('priorityRequired') || 'Öncelik seçimi zorunludur',
+            }}
+            placeholder={t('selectPriority') || 'Öncelik seçin'}
+          />
+          {errors.oncelik && (
+            <Text color="$red10" fontSize="$2">
+              {errors.oncelik.message}
+            </Text>
+          )}
+        </YStack>
 
         <Controller
           control={control}
