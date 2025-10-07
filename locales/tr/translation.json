@@ -110,5 +110,21 @@
   "kiralama": "Kiralama",
   "tasitKarti": "Taşıt Kartı",
   "periyodikBakim": "Planlı Bakım",
-  "tasks": "Görevler"
+  "tasks": "Görevler",
+  "damageNumber": "Hasar No",
+  "enterDamageNumber": "Hasar numarası giriniz",
+  "problemDate": "Arıza Tarihi",
+  "selectDate": "Tarih Seçin",
+  "description": "Açıklama",
+  "describeProblem": "Arızayı tanımlayın",
+  "descriptionRequired": "Açıklama zorunludur",
+  "descriptionMinLength": "Açıklama en az 10 karakter olmalıdır",
+  "reportAProblem": "Arıza Bildir",
+  "submit": "Gönder",
+  "submitting": "Gönderiliyor...",
+  "problemReportedSuccessfully": "Talep başarıyla oluşturuldu",
+  "problemReportError": "Talep oluşturulurken hata oluştu",
+  "fieldRequired": "Bu alan zorunludur",
+  "codeAlreadyExists": "Bu kod zaten kullanımda",
+  "validating": "Doğrulanıyor..."
 }

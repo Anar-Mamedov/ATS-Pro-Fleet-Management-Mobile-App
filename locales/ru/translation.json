@@ -77,5 +77,21 @@
   "aracBelgeleri": "Документы автомобиля",
   "aracFotograflari": "Фотографии автомобиля",
   "noContentYet": "Контент пока отсутствует.",
-  "pleaseSelectVehicle": "Пожалуйста, выберите автомобиль."
+  "pleaseSelectVehicle": "Пожалуйста, выберите автомобиль.",
+  "damageNumber": "Номер повреждения",
+  "enterDamageNumber": "Введите номер повреждения",
+  "problemDate": "Дата проблемы",
+  "selectDate": "Выберите дату",
+  "description": "Описание",
+  "describeProblem": "Опишите проблему",
+  "descriptionRequired": "Описание обязательно",
+  "descriptionMinLength": "Описание должно содержать не менее 10 символов",
+  "reportAProblem": "Сообщить о проблеме",
+  "submit": "Отправить",
+  "submitting": "Отправка...",
+  "problemReportedSuccessfully": "Запрос успешно создан",
+  "problemReportError": "Ошибка при создании запроса",
+  "fieldRequired": "Это поле обязательно",
+  "codeAlreadyExists": "Этот код уже используется",
+  "validating": "Проверка..."
 }

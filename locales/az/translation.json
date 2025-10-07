@@ -77,5 +77,21 @@
   "aracBelgeleri": "Avtomobil Sənədləri",
   "aracFotograflari": "Avtomobil Şəkilləri",
   "noContentYet": "Hələlik məzmun yoxdur.",
-  "pleaseSelectVehicle": "Zəhmət olmasa bir nəqliyyat vasitəsi seçin."
+  "pleaseSelectVehicle": "Zəhmət olmasa bir nəqliyyat vasitəsi seçin.",
+  "damageNumber": "Zərər Nömrəsi",
+  "enterDamageNumber": "Zərər nömrəsini daxil edin",
+  "problemDate": "Problem Tarixi",
+  "selectDate": "Tarix Seçin",
+  "description": "Təsvir",
+  "describeProblem": "Problemi təsvir edin",
+  "descriptionRequired": "Təsvir məcburidir",
+  "descriptionMinLength": "Təsvir ən azı 10 simvol olmalıdır",
+  "reportAProblem": "Problem Bildir",
+  "submit": "Göndər",
+  "submitting": "Göndərilir...",
+  "problemReportedSuccessfully": "Sorğu uğurla yaradıldı",
+  "problemReportError": "Sorğu yaradılarkən xəta baş verdi",
+  "fieldRequired": "Bu sahə məcburidir",
+  "codeAlreadyExists": "Bu kod artıq istifadə olunur",
+  "validating": "Yoxlanılır..."
 }

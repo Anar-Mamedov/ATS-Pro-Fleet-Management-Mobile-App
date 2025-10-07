@@ -2,6 +2,7 @@ import 'react-native-reanimated';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { TamaguiProvider } from '@tamagui/core';
+import { PortalProvider } from '@tamagui/portal';
 import * as NavigationBar from 'expo-navigation-bar';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -34,37 +35,39 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <TamaguiProvider config={config}>
-          <ThemeProvider>
-            <ThemeBars />
-            <BottomSheetModalProvider>
-              <Stack>
-                <Stack.Screen
-                  name="index"
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="welcome"
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="login"
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="(tabs)"
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-              </Stack>
-            </BottomSheetModalProvider>
-          </ThemeProvider>
+          <PortalProvider>
+            <ThemeProvider>
+              <ThemeBars />
+              <BottomSheetModalProvider>
+                <Stack>
+                  <Stack.Screen
+                    name="index"
+                    options={{
+                      headerShown: false,
+                    }}
+                  />
+                  <Stack.Screen
+                    name="welcome"
+                    options={{
+                      headerShown: false,
+                    }}
+                  />
+                  <Stack.Screen
+                    name="login"
+                    options={{
+                      headerShown: false,
+                    }}
+                  />
+                  <Stack.Screen
+                    name="(tabs)"
+                    options={{
+                      headerShown: false,
+                    }}
+                  />
+                </Stack>
+              </BottomSheetModalProvider>
+            </ThemeProvider>
+          </PortalProvider>
         </TamaguiProvider>
       </GestureHandlerRootView>
     </SafeAreaProvider>

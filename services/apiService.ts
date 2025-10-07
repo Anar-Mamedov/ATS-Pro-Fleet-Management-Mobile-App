@@ -244,4 +244,35 @@ export const apiService = {
     const response = await axiosInstance.get(`/MobileDashboard/GetDashboardReminder?vId=${vId}`);
     return response.data;
   },
+
+  // Numerator endpoints
+  getModuleCodeByCode: async (code: string) => {
+    const response = await axiosInstance.get(`/Numbering/GetModuleCodeByCode?code=${code}`);
+    return response.data;
+  },
+
+  // Table Code Item endpoints
+  isCodeItemExist: async (tableName: string, code: string) => {
+    const response = await axiosInstance.post('/TableCodeItem/IsCodeItemExist', {
+      tableName,
+      code,
+    });
+    return response.data;
+  },
+
+  // Request Notification endpoints
+  addRequestItem: async (requestData: {
+    talepNo: string;
+    aracId: number;
+    lokasyonId: number;
+    aciklama: string;
+    tarih: string;
+    talepDurum: string;
+    talepOncelik: string;
+    talepTur: string;
+    talepEdenId: number;
+  }) => {
+    const response = await axiosInstance.post('/RequestNotification/AddRequestItem', requestData);
+    return response.data;
+  },
 };

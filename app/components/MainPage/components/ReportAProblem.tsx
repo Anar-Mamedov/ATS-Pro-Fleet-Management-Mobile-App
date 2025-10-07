@@ -1,19 +1,29 @@
+import { useThemeController } from '@/config/theme';
+import { apiService } from '@/services/apiService';
+import { DatePicker } from '@/ui/components/DatePicker';
+import { NumaratorOnAdd } from '@/ui/components/NumaratorOnAdd';
+import TalepOncelik from '@/ui/components/TalepOncelik';
 import { Button } from '@tamagui/button';
 import { Text } from '@tamagui/core';
 import { YStack } from '@tamagui/stacks';
 import React, { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Alert, ScrollView, StyleSheet, TextInput } from 'react-native';
-import { DatePicker } from '@/ui/components/DatePicker';
-import { useThemeController } from '@/config/theme';
 
 interface ReportAProblemForm {
+  hasarNo: string;
   problemDate: Date;
+  oncelik: string;
   description: string;
 }
 
-function ReportAProblem() {
+interface ReportAProblemProps {
+  aracId?: number;
+  talepEdenId?: number;
+}
+
+function ReportAProblem({ aracId = 0, talepEdenId = 0 }: ReportAProblemProps) {
   const { t } = useTranslation();
   const { themeName } = useThemeController();
   const [loading, setLoading] = useState(false);
@@ -25,7 +35,9 @@ function ReportAProblem() {
     reset,
   } = useForm<ReportAProblemForm>({
     defaultValues: {
+      hasarNo: '',
       problemDate: new Date(),
+      oncelik: '',
       description: '',
     },
   });
@@ -33,14 +45,25 @@ function ReportAProblem() {
   const onSubmit = async (data: ReportAProblemForm) => {
     try {
       setLoading(true);
-      console.log('Problem report:', data);
 
-      // API çağrısı burada yapılacak
-      Alert.alert(t('success'), t('problemReportedSuccessfully'));
+      const requestData = {
+        talepNo: data.hasarNo,
+        aracId: aracId,
+        lokasyonId: 0, // Varsayılan değer
+        aciklama: data.description,
+        tarih: data.problemDate.toISOString().split('T')[0], // YYYY-MM-DD formatında
+        talepDurum: 'beklemede', // Varsayılan değer
+        talepOncelik: data.oncelik,
+        talepTur: 'ariza', // Varsayılan değer
+        talepEdenId: talepEdenId,
+      };
+
+      await apiService.addRequestItem(requestData);
+      Alert.alert(t('success'), t('problemReportedSuccessfully') || 'Talep başarıyla oluşturuldu');
       reset();
     } catch (error: any) {
       console.error('Error reporting problem:', error);
-      Alert.alert(t('error'), error.message || t('problemReportError'));
+      Alert.alert(t('error'), error.message || t('problemReportError') || 'Talep oluşturulurken hata oluştu');
     } finally {
       setLoading(false);
     }
@@ -55,14 +78,40 @@ function ReportAProblem() {
           {t('reportAProblem')}
         </Text>
 
-        <DatePicker
+        <NumaratorOnAdd
           control={control}
-          name="problemDate"
-          label={t('problemDate')}
-          placeholder={t('selectDate')}
-          error={errors.problemDate?.message}
+          name="hasarNo"
+          label={t('damageNumber') || 'Hasar No'}
+          placeholder={t('enterDamageNumber') || 'Hasar numarası giriniz'}
+          error={errors.hasarNo?.message}
+          moduleCode="TALEP_BILDIRIM"
+          tableName="HasarTakibi"
           required
         />
+
+        <DatePicker control={control} name="problemDate" label={t('problemDate')} placeholder={t('selectDate')} error={errors.problemDate?.message} required />
+
+        <YStack gap="$2">
+          <Text fontSize="$3" fontWeight="600">
+            {t('priority') || 'Öncelik'}
+            <Text color="$red10" marginLeft="$1">
+              *
+            </Text>
+          </Text>
+          <TalepOncelik
+            control={control}
+            name="oncelik"
+            rules={{
+              required: t('priorityRequired') || 'Öncelik seçimi zorunludur',
+            }}
+            placeholder={t('selectPriority') || 'Öncelik seçin'}
+          />
+          {errors.oncelik && (
+            <Text color="$red10" fontSize="$2">
+              {errors.oncelik.message}
+            </Text>
+          )}
+        </YStack>
 
         <Controller
           control={control}
@@ -109,15 +158,7 @@ function ReportAProblem() {
           )}
         />
 
-        <Button
-          onPress={handleSubmit(onSubmit)}
-          disabled={loading}
-          backgroundColor="$blue10"
-          color="white"
-          fontWeight="600"
-          height={50}
-          borderRadius="$2"
-        >
+        <Button onPress={handleSubmit(onSubmit)} disabled={loading} backgroundColor="$blue10" color="white" fontWeight="600" height={50} borderRadius="$2">
           {loading ? t('submitting') : t('submit')}
         </Button>
       </YStack>

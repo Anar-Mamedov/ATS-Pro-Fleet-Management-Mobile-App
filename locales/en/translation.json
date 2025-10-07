@@ -93,5 +93,21 @@
   "aracBelgeleri": "Vehicle Documents",
   "aracFotograflari": "Vehicle Photos",
   "noContentYet": "No content yet.",
-  "pleaseSelectVehicle": "Please select a vehicle."
+  "pleaseSelectVehicle": "Please select a vehicle.",
+  "damageNumber": "Damage Number",
+  "enterDamageNumber": "Enter damage number",
+  "problemDate": "Problem Date",
+  "selectDate": "Select Date",
+  "description": "Description",
+  "describeProblem": "Describe the problem",
+  "descriptionRequired": "Description is required",
+  "descriptionMinLength": "Description must be at least 10 characters",
+  "reportAProblem": "Report a Problem",
+  "submit": "Submit",
+  "submitting": "Submitting...",
+  "problemReportedSuccessfully": "Request created successfully",
+  "problemReportError": "Error occurred while creating request",
+  "fieldRequired": "This field is required",
+  "codeAlreadyExists": "This code is already in use",
+  "validating": "Validating..."
 }
