@@ -1,12 +1,13 @@
+import { Button } from '@tamagui/button';
 import { Text } from '@tamagui/core';
 import { Input } from '@tamagui/input';
-import { YStack } from '@tamagui/stacks';
+import { XStack, YStack } from '@tamagui/stacks';
 import dayjs, { setDayjsLocaleFromI18n } from '../../config/dayjs';
 import React, { useEffect, useState } from 'react';
 import { Controller, Control, FieldValues, Path } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Pressable } from 'react-native';
-import DatePicker from 'react-native-date-picker';
+import { Modal, Pressable, Platform } from 'react-native';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
 export interface CustomDatePickerProps<T extends FieldValues> {
   /** React Hook Form control object */
@@ -41,21 +42,33 @@ export function CustomDatePicker<T extends FieldValues>({
   required = false,
 }: CustomDatePickerProps<T>) {
   const { i18n, t } = useTranslation();
-  const [open, setOpen] = useState(false);
+  const [show, setShow] = useState(false);
+  const [tempDate, setTempDate] = useState<Date | null>(null);
+  const [renderPicker, setRenderPicker] = useState(false);
 
   useEffect(() => {
     setDayjsLocaleFromI18n(i18n.language);
   }, [i18n.language]);
 
-  // Map i18n language codes to react-native-date-picker locale codes
-  const getPickerLocale = (lang: string): string => {
+  useEffect(() => {
+    if (show) {
+      // Delay picker rendering to let modal animation complete
+      const timer = setTimeout(() => setRenderPicker(true), 50);
+      return () => clearTimeout(timer);
+    } else {
+      setRenderPicker(false);
+    }
+  }, [show]);
+
+  // Map i18n language to iOS locale
+  const getIOSLocale = (lang: string): string => {
     const localeMap: Record<string, string> = {
-      en: 'en',
-      tr: 'tr',
-      ru: 'ru',
-      az: 'az',
+      tr: 'tr_TR',
+      en: 'en_US',
+      ru: 'ru_RU',
+      az: 'az_AZ',
     };
-    return localeMap[lang] || 'en';
+    return localeMap[lang] || 'en_US';
   };
 
   return (
@@ -71,6 +84,36 @@ export function CustomDatePicker<T extends FieldValues>({
           ? dayjs(selectedDate).format(format)
           : '';
 
+        const handleShowPicker = () => {
+          setTempDate(selectedDate);
+          setShow(true);
+        };
+
+        const handleAndroidChange = (event: DateTimePickerEvent, date?: Date) => {
+          setShow(false);
+          if (event.type === 'set' && date) {
+            onChange(date);
+          }
+        };
+
+        const handleIOSChange = (_event: DateTimePickerEvent, date?: Date) => {
+          if (date) {
+            setTempDate(date);
+          }
+        };
+
+        const handleConfirm = () => {
+          if (tempDate) {
+            onChange(tempDate);
+          }
+          setShow(false);
+        };
+
+        const handleCancel = () => {
+          setShow(false);
+          setTempDate(null);
+        };
+
         return (
           <YStack gap="$2">
             {label && (
@@ -84,7 +127,7 @@ export function CustomDatePicker<T extends FieldValues>({
               </Text>
             )}
 
-            <Pressable onPress={() => setOpen(true)}>
+            <Pressable onPress={handleShowPicker}>
               <Input
                 id={name as string}
                 value={displayValue}
@@ -101,25 +144,71 @@ export function CustomDatePicker<T extends FieldValues>({
               </Text>
             )}
 
-            <DatePicker
-              modal
-              open={open}
-              date={selectedDate}
-              mode="date"
-              locale={getPickerLocale(i18n.language)}
-              minimumDate={minimumDate}
-              maximumDate={maximumDate}
-              onConfirm={(date) => {
-                setOpen(false);
-                onChange(date);
-              }}
-              onCancel={() => {
-                setOpen(false);
-              }}
-              title={label}
-              confirmText={t('confirm') || 'Confirm'}
-              cancelText={t('cancel') || 'Cancel'}
-            />
+            {Platform.OS === 'ios' ? (
+              <Modal
+                visible={show}
+                transparent
+                animationType="none"
+                onRequestClose={handleCancel}
+              >
+                <Pressable
+                  style={{
+                    flex: 1,
+                    justifyContent: 'flex-end',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                  }}
+                  onPress={handleCancel}
+                >
+                  <Pressable onPress={(e) => e.stopPropagation()}>
+                    <YStack
+                      backgroundColor="$background"
+                      paddingBottom="$4"
+                      borderTopLeftRadius="$4"
+                      borderTopRightRadius="$4"
+                      animation="quick"
+                      enterStyle={{ y: 300, opacity: 0 }}
+                      exitStyle={{ y: 300, opacity: 0 }}
+                      y={0}
+                      opacity={1}
+                    >
+                      <XStack justifyContent="space-between" alignItems="center" padding="$3" borderBottomWidth={1} borderColor="$borderColor">
+                        <Button size="$3" chromeless onPress={handleCancel}>
+                          <Text>{t('cancel') || 'Cancel'}</Text>
+                        </Button>
+                        <Button size="$3" chromeless onPress={handleConfirm}>
+                          <Text fontWeight="600">{t('confirm') || 'Confirm'}</Text>
+                        </Button>
+                      </XStack>
+                      <YStack alignItems="center" paddingVertical="$2">
+                        {renderPicker && (
+                          <DateTimePicker
+                            value={tempDate || selectedDate}
+                            mode="date"
+                            display="spinner"
+                            onChange={handleIOSChange}
+                            minimumDate={minimumDate}
+                            maximumDate={maximumDate}
+                            locale={getIOSLocale(i18n.language)}
+                            style={{ width: '100%' }}
+                          />
+                        )}
+                      </YStack>
+                    </YStack>
+                  </Pressable>
+                </Pressable>
+              </Modal>
+            ) : (
+              show && (
+                <DateTimePicker
+                  value={selectedDate}
+                  mode="date"
+                  display="default"
+                  onChange={handleAndroidChange}
+                  minimumDate={minimumDate}
+                  maximumDate={maximumDate}
+                />
+              )
+            )}
           </YStack>
         );
       }}

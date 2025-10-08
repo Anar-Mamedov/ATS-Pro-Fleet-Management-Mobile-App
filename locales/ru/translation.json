@@ -14,6 +14,7 @@
   "error": "Ошибка",
   "success": "Успешно",
   "cancel": "Отмена",
+  "confirm": "Подтвердить",
   "save": "Сохранить",
   "companyLogin": "Вход в компанию",
   "companyKey": "Ключ компании",
@@ -93,5 +94,12 @@
   "problemReportError": "Ошибка при создании запроса",
   "fieldRequired": "Это поле обязательно",
   "codeAlreadyExists": "Этот код уже используется",
-  "validating": "Проверка..."
+  "validating": "Проверка...",
+  "priorityLow": "Низкий",
+  "priorityMedium": "Средний",
+  "priorityHigh": "Высокий",
+  "priorityUrgent": "Срочный",
+  "selectPriority": "Выберите приоритет",
+  "priority": "Приоритет",
+  "priorityList": "Список приоритетов"
 }

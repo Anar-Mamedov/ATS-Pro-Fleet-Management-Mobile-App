@@ -14,6 +14,7 @@
   "error": "Hata",
   "success": "Başarılı",
   "cancel": "İptal",
+  "confirm": "Onayla",
   "save": "Kaydet",
   "companyLogin": "Firma Girişi",
   "companyKey": "Firma Anahtarı",
@@ -126,5 +127,12 @@
   "problemReportError": "Talep oluşturulurken hata oluştu",
   "fieldRequired": "Bu alan zorunludur",
   "codeAlreadyExists": "Bu kod zaten kullanımda",
-  "validating": "Doğrulanıyor..."
+  "validating": "Doğrulanıyor...",
+  "priorityLow": "Düşük",
+  "priorityMedium": "Orta",
+  "priorityHigh": "Yüksek",
+  "priorityUrgent": "Acil",
+  "selectPriority": "Öncelik seçin",
+  "priority": "Öncelik",
+  "priorityList": "Öncelik Listesi"
 }

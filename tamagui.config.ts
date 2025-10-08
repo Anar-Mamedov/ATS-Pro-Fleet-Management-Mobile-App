@@ -8,13 +8,13 @@ const appConfig = createTamagui({
     light: {
       ...config.themes.light,
       background: 'hsl(0, 0%, 94.1%)',
-      // backgroundStrong: '#F7F7F8',
+      backgroundStrong: '#F7F7F8',
     },
     dark: {
       ...config.themes.dark,
       background: '#111111',
       color1: '#212121',
-      // backgroundStrong: '#1C1C1E',
+      backgroundStrong: '#1C1C1E',
     },
   },
 });

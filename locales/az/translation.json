@@ -14,6 +14,7 @@
   "error": "Xəta",
   "success": "Uğurlu",
   "cancel": "Ləğv Et",
+  "confirm": "Təsdiq Et",
   "save": "Saxla",
   "companyLogin": "Şirkət Girişi",
   "companyKey": "Şirkət Açarı",
@@ -93,5 +94,12 @@
   "problemReportError": "Sorğu yaradılarkən xəta baş verdi",
   "fieldRequired": "Bu sahə məcburidir",
   "codeAlreadyExists": "Bu kod artıq istifadə olunur",
-  "validating": "Yoxlanılır..."
+  "validating": "Yoxlanılır...",
+  "priorityLow": "Aşağı",
+  "priorityMedium": "Orta",
+  "priorityHigh": "Yüksək",
+  "priorityUrgent": "Təcili",
+  "selectPriority": "Prioritet seçin",
+  "priority": "Prioritet",
+  "priorityList": "Prioritet Siyahısı"
 }
