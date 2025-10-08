@@ -103,5 +103,12 @@
   "priority": "Prioritet",
   "faultNumber": "Arıza Nömrəsi",
   "enterFaultNumber": "Arıza nömrəsini daxil edin",
-  "priorityList": "Prioritet Siyahısı"
+  "priorityList": "Prioritet Siyahısı",
+  "lokasyon": "Lokasiya",
+  "lokasyonlar": "Lokasiyalar",
+  "lokasyonSec": "Lokasiya seçin",
+  "lokasyonlarSec": "Lokasiyaları seçin",
+  "selectLocation": "Lokasiya Seçin",
+  "location": "Lokasiya",
+  "aramaYap": "Axtarış edin"
 }

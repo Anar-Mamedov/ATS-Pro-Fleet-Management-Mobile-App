@@ -119,5 +119,12 @@
   "priority": "Priority",
   "faultNumber": "Fault Number",
   "enterFaultNumber": "Enter fault number",
-  "priorityList": "Priority List"
+  "priorityList": "Priority List",
+  "lokasyon": "Location",
+  "lokasyonlar": "Locations",
+  "lokasyonSec": "Select location",
+  "lokasyonlarSec": "Select locations",
+  "selectLocation": "Select Location",
+  "location": "Location",
+  "aramaYap": "Search"
 }
