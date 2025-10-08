@@ -6,6 +6,7 @@ import { Sheet } from '@tamagui/sheet';
 import { YStack } from '@tamagui/stacks';
 import { Text } from '@tamagui/core';
 import { Check, ChevronDown } from '@tamagui/lucide-icons';
+import { useTranslation } from 'react-i18next';
 
 interface TalepOncelikProps {
   control: Control<any>;
@@ -14,19 +15,20 @@ interface TalepOncelikProps {
   placeholder?: string;
 }
 
-const priorityOptions = [
-  { value: 'dusuk', label: 'Düşük' },
-  { value: 'orta', label: 'Orta' },
-  { value: 'yuksek', label: 'Yüksek' },
-  { value: 'acil', label: 'Acil' },
-];
-
 const TalepOncelik: React.FC<TalepOncelikProps> = ({
   control,
   name,
   rules,
-  placeholder = 'Öncelik seçin',
+  placeholder,
 }) => {
+  const { t } = useTranslation();
+
+  const priorityOptions = [
+    { value: 'dusuk', label: t('priorityLow') },
+    { value: 'orta', label: t('priorityMedium') },
+    { value: 'yuksek', label: t('priorityHigh') },
+    { value: 'acil', label: t('priorityUrgent') },
+  ];
   return (
     <Controller
       control={control}
@@ -35,7 +37,7 @@ const TalepOncelik: React.FC<TalepOncelikProps> = ({
       render={({ field: { onChange, value } }) => (
         <Select value={value} onValueChange={onChange}>
           <Select.Trigger width="100%" iconAfter={ChevronDown}>
-            <Select.Value placeholder={placeholder} />
+            <Select.Value placeholder={placeholder || t('selectPriority')} />
           </Select.Trigger>
 
           <Adapt when="sm" platform="touch">
@@ -54,7 +56,7 @@ const TalepOncelik: React.FC<TalepOncelikProps> = ({
             >
               <Sheet.Frame padding="$4">
                 <Text fontSize="$6" fontWeight="bold" textAlign="center" marginBottom="$3">
-                  Öncelik Listesi
+                  {t('priorityList')}
                 </Text>
                 <Sheet.ScrollView>
                   <Adapt.Contents />

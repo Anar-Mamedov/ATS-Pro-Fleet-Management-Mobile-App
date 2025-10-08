@@ -275,4 +275,15 @@ export const apiService = {
     const response = await axiosInstance.post('/RequestNotification/AddRequestItem', requestData);
     return response.data;
   },
+
+  // Location endpoints
+  getChildLocationListByParentId: async (parentID: number, parameter: string = '') => {
+    const response = await axiosInstance.get('/Location/GetChildLocationListByParentId', {
+      params: {
+        parentID,
+        parameter,
+      },
+    });
+    return response.data;
+  },
 };

@@ -3,6 +3,7 @@ import { apiService } from '@/services/apiService';
 import { DatePicker } from '@/ui/components/DatePicker';
 import { NumaratorOnAdd } from '@/ui/components/NumaratorOnAdd';
 import TalepOncelik from '@/ui/components/TalepOncelik';
+import { LocationPicker } from '@/ui/components/LocationPicker';
 import { Button } from '@tamagui/button';
 import { Text } from '@tamagui/core';
 import { YStack } from '@tamagui/stacks';
@@ -12,9 +13,10 @@ import { useTranslation } from 'react-i18next';
 import { Alert, ScrollView, StyleSheet, TextInput } from 'react-native';
 
 interface ReportAProblemForm {
-  hasarNo: string;
+  arizaNo: string;
   problemDate: Date;
   oncelik: string;
+  lokasyon: string;
   description: string;
 }
 
@@ -27,6 +29,7 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0 }: ReportAProblemProps) {
   const { t } = useTranslation();
   const { themeName } = useThemeController();
   const [loading, setLoading] = useState(false);
+  const [selectedLocationId, setSelectedLocationId] = useState<number>(0);
 
   const {
     control,
@@ -35,9 +38,10 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0 }: ReportAProblemProps) {
     reset,
   } = useForm<ReportAProblemForm>({
     defaultValues: {
-      hasarNo: '',
+      arizaNo: '',
       problemDate: new Date(),
       oncelik: '',
+      lokasyon: '',
       description: '',
     },
   });
@@ -47,9 +51,9 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0 }: ReportAProblemProps) {
       setLoading(true);
 
       const requestData = {
-        talepNo: data.hasarNo,
+        talepNo: data.arizaNo,
         aracId: aracId,
-        lokasyonId: 0, // Varsayılan değer
+        lokasyonId: selectedLocationId,
         aciklama: data.description,
         tarih: data.problemDate.toISOString().split('T')[0], // YYYY-MM-DD formatında
         talepDurum: 'beklemede', // Varsayılan değer
@@ -61,6 +65,7 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0 }: ReportAProblemProps) {
       await apiService.addRequestItem(requestData);
       Alert.alert(t('success'), t('problemReportedSuccessfully') || 'Talep başarıyla oluşturuldu');
       reset();
+      setSelectedLocationId(0);
     } catch (error: any) {
       console.error('Error reporting problem:', error);
       Alert.alert(t('error'), error.message || t('problemReportError') || 'Talep oluşturulurken hata oluştu');
@@ -80,10 +85,10 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0 }: ReportAProblemProps) {
 
         <NumaratorOnAdd
           control={control}
-          name="hasarNo"
-          label={t('damageNumber') || 'Hasar No'}
-          placeholder={t('enterDamageNumber') || 'Hasar numarası giriniz'}
-          error={errors.hasarNo?.message}
+          name="arizaNo"
+          label={t('faultNumber') || 'Fault No'}
+          placeholder={t('enterFaultNumber') || 'Fault numarası giriniz'}
+          error={errors.arizaNo?.message}
           moduleCode="TALEP_BILDIRIM"
           tableName="HasarTakibi"
           required
@@ -112,6 +117,20 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0 }: ReportAProblemProps) {
             </Text>
           )}
         </YStack>
+
+        <LocationPicker
+          control={control}
+          name="lokasyon"
+          label={t('location') || 'Lokasyon'}
+          placeholder={t('selectLocation') || 'Lokasyon seçin'}
+          error={errors.lokasyon?.message}
+          required
+          onSubmit={(data) => {
+            if (data && !Array.isArray(data)) {
+              setSelectedLocationId(data.locationId);
+            }
+          }}
+        />
 
         <Controller
           control={control}
