@@ -117,5 +117,7 @@
   "priorityUrgent": "Urgent",
   "selectPriority": "Select priority",
   "priority": "Priority",
+  "faultNumber": "Fault Number",
+  "enterFaultNumber": "Enter fault number",
   "priorityList": "Priority List"
 }

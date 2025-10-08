@@ -101,5 +101,7 @@
   "priorityUrgent": "Təcili",
   "selectPriority": "Prioritet seçin",
   "priority": "Prioritet",
+  "faultNumber": "Arıza Nömrəsi",
+  "enterFaultNumber": "Arıza nömrəsini daxil edin",
   "priorityList": "Prioritet Siyahısı"
 }

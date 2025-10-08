@@ -101,5 +101,7 @@
   "priorityUrgent": "Срочный",
   "selectPriority": "Выберите приоритет",
   "priority": "Приоритет",
+  "faultNumber": "Номер проблемы",
+  "enterFaultNumber": "Введите номер проблемы",
   "priorityList": "Список приоритетов"
 }

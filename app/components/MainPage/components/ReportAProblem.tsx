@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { Alert, ScrollView, StyleSheet, TextInput } from 'react-native';
 
 interface ReportAProblemForm {
-  hasarNo: string;
+  arizaNo: string;
   problemDate: Date;
   oncelik: string;
   description: string;
@@ -35,7 +35,7 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0 }: ReportAProblemProps) {
     reset,
   } = useForm<ReportAProblemForm>({
     defaultValues: {
-      hasarNo: '',
+      arizaNo: '',
       problemDate: new Date(),
       oncelik: '',
       description: '',
@@ -47,7 +47,7 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0 }: ReportAProblemProps) {
       setLoading(true);
 
       const requestData = {
-        talepNo: data.hasarNo,
+        talepNo: data.arizaNo,
         aracId: aracId,
         lokasyonId: 0, // Varsayılan değer
         aciklama: data.description,
@@ -80,10 +80,10 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0 }: ReportAProblemProps) {
 
         <NumaratorOnAdd
           control={control}
-          name="hasarNo"
-          label={t('damageNumber') || 'Hasar No'}
-          placeholder={t('enterDamageNumber') || 'Hasar numarası giriniz'}
-          error={errors.hasarNo?.message}
+          name="arizaNo"
+          label={t('faultNumber') || 'Fault No'}
+          placeholder={t('enterFaultNumber') || 'Fault numarası giriniz'}
+          error={errors.arizaNo?.message}
           moduleCode="TALEP_BILDIRIM"
           tableName="HasarTakibi"
           required

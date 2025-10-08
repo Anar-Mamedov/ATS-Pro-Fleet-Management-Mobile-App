@@ -134,5 +134,7 @@
   "priorityUrgent": "Acil",
   "selectPriority": "Öncelik seçin",
   "priority": "Öncelik",
+  "faultNumber": "Arıza No",
+  "enterFaultNumber": "Arıza numarası giriniz",
   "priorityList": "Öncelik Listesi"
 }
