@@ -1,0 +1,110 @@
+import { Adapt } from '@tamagui/adapt';
+import { Text } from '@tamagui/core';
+import { Check, ChevronDown } from '@tamagui/lucide-icons';
+import { Select } from '@tamagui/select';
+import { Sheet } from '@tamagui/sheet';
+import { YStack } from '@tamagui/stacks';
+import React from 'react';
+import { Control, Controller } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+
+interface TalepTuruProps {
+  control: Control<any>;
+  name: string;
+  rules?: any;
+  placeholder?: string;
+}
+
+const TalepTuru: React.FC<TalepTuruProps> = ({ control, name, rules, placeholder }) => {
+  const { t } = useTranslation();
+
+  const requestOptions = [
+    { value: 'ariza', label: t('ariza') },
+    { value: 'lastik', label: t('lastik') },
+    { value: 'aksesuar', label: t('aksesuar') },
+    { value: 'yakit', label: t('yakit') },
+  ];
+  return (
+    <Controller
+      control={control}
+      name={name}
+      rules={rules}
+      render={({ field: { onChange, value } }) => (
+        <Select value={value} onValueChange={onChange}>
+          <Select.Trigger width="100%" iconAfter={ChevronDown}>
+            <Select.Value placeholder={placeholder || t('selectPriority')} />
+          </Select.Trigger>
+
+          <Adapt when="sm" platform="touch">
+            <Sheet
+              native
+              modal
+              dismissOnSnapToBottom
+              snapPointsMode="percent"
+              snapPoints={[40]}
+              animationConfig={{
+                type: 'spring',
+                damping: 20,
+                mass: 1.2,
+                stiffness: 250,
+              }}
+            >
+              <Sheet.Frame padding="$4">
+                <Text fontSize="$6" fontWeight="bold" textAlign="center" marginBottom="$3">
+                  {t('talepTuruListesi')}
+                </Text>
+                <Sheet.ScrollView>
+                  <Adapt.Contents />
+                </Sheet.ScrollView>
+              </Sheet.Frame>
+              <Sheet.Overlay animation="lazy" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} />
+            </Sheet>
+          </Adapt>
+
+          <Select.Content zIndex={200000}>
+            <Select.ScrollUpButton alignItems="center" justifyContent="center" position="relative" width="100%" height="$3">
+              <YStack zIndex={10}>
+                <ChevronDown size={20} />
+              </YStack>
+            </Select.ScrollUpButton>
+
+            <Select.Viewport minWidth={200}>
+              <Select.Group>
+                {requestOptions.map((option, index) => {
+                  const isSelected = value === option.value;
+                  return (
+                    <Select.Item
+                      key={option.value}
+                      index={index}
+                      value={option.value}
+                      backgroundColor={isSelected ? '$blue2' : 'transparent'}
+                      borderWidth={isSelected ? 1 : 0}
+                      borderColor={isSelected ? '$blue10' : 'transparent'}
+                      borderRadius="$3"
+                      marginVertical="$1"
+                      paddingHorizontal="$3"
+                      paddingVertical="$3"
+                    >
+                      <Select.ItemText>{option.label}</Select.ItemText>
+                      <Select.ItemIndicator marginLeft="auto">
+                        <Check size={16} color="$blue10" />
+                      </Select.ItemIndicator>
+                    </Select.Item>
+                  );
+                })}
+              </Select.Group>
+            </Select.Viewport>
+
+            <Select.ScrollDownButton alignItems="center" justifyContent="center" position="relative" width="100%" height="$3">
+              <YStack zIndex={10}>
+                <ChevronDown size={20} />
+              </YStack>
+            </Select.ScrollDownButton>
+          </Select.Content>
+        </Select>
+      )}
+    />
+  );
+};
+
+export default TalepTuru;
