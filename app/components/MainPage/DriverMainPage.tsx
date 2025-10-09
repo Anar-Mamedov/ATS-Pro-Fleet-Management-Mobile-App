@@ -60,7 +60,7 @@ export default function DriverMainPage() {
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['30%', '50%'], []);
-  const faultSnapPoints = useMemo(() => ['70%', '90%'], []);
+  const faultSnapPoints = useMemo(() => ['75%'], []);
   const openSheet = () => bottomSheetModalRef.current?.present();
   const closeSheet = () => bottomSheetModalRef.current?.dismiss();
 
@@ -69,6 +69,7 @@ export default function DriverMainPage() {
   const docsSheetRef = useRef<BottomSheetModal>(null);
   const photosSheetRef = useRef<BottomSheetModal>(null);
   const openFaultSheet = () => faultSheetRef.current?.present();
+  const closeFaultSheet = () => faultSheetRef.current?.dismiss();
   const openDocsSheet = () => docsSheetRef.current?.present();
   const closeDocsSheet = () => docsSheetRef.current?.dismiss();
   const openPhotosSheet = () => photosSheetRef.current?.present();
@@ -412,16 +413,16 @@ export default function DriverMainPage() {
         {/* Arıza Bildir Bottom Sheet */}
         <BottomSheetModal
           ref={faultSheetRef}
-          index={1}
+          index={0}
           snapPoints={faultSnapPoints}
           enablePanDownToClose
+          enableDynamicSizing={false}
+          topInset={46}
           handleIndicatorStyle={{ backgroundColor: themeName === 'dark' ? '#9BA1A6' : '#A1A1AA' }}
           backdropComponent={(backdropProps) => <BottomSheetBackdrop {...backdropProps} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.4} pressBehavior="close" />}
           backgroundStyle={{ backgroundColor: themeName === 'dark' ? '#1C1C1E' : '#FFFFFF' }}
         >
-          <BottomSheetView style={{ flex: 1 }}>
-            <ReportAProblem aracId={firstVehicle?.aracId || 0} talepEdenId={userId} />
-          </BottomSheetView>
+          <ReportAProblem aracId={firstVehicle?.aracId || 0} talepEdenId={userId} onSuccess={closeFaultSheet} />
         </BottomSheetModal>
 
         {/* Araç Belgeleri Bottom Sheet */}

@@ -4,13 +4,15 @@ import { DatePicker } from '@/ui/components/DatePicker';
 import { NumaratorOnAdd } from '@/ui/components/NumaratorOnAdd';
 import TalepOncelik from '@/ui/components/TalepOncelik';
 import { LocationPicker } from '@/ui/components/LocationPicker';
+import { PhotoUploadButton } from '@/ui/components/PhotoUploadButton';
+import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { Button } from '@tamagui/button';
 import { Text } from '@tamagui/core';
 import { YStack } from '@tamagui/stacks';
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Alert, ScrollView, StyleSheet, TextInput } from 'react-native';
+import { Alert, StyleSheet, TextInput } from 'react-native';
 
 interface ReportAProblemForm {
   arizaNo: string;
@@ -23,13 +25,15 @@ interface ReportAProblemForm {
 interface ReportAProblemProps {
   aracId?: number;
   talepEdenId?: number;
+  onSuccess?: () => void;
 }
 
-function ReportAProblem({ aracId = 0, talepEdenId = 0 }: ReportAProblemProps) {
+function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess }: ReportAProblemProps) {
   const { t } = useTranslation();
   const { themeName } = useThemeController();
   const [loading, setLoading] = useState(false);
   const [selectedLocationId, setSelectedLocationId] = useState<number>(0);
+  const [selectedPhotos, setSelectedPhotos] = useState<{ uri: string; fileName: string }[]>([]);
 
   const {
     control,
@@ -62,10 +66,64 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0 }: ReportAProblemProps) {
         talepEdenId: talepEdenId,
       };
 
-      await apiService.addRequestItem(requestData);
+      const response = await apiService.addRequestItem(requestData);
+      console.log('========================================');
+      console.log('AddRequestItem FULL RESPONSE:', JSON.stringify(response, null, 2));
+      console.log('Response type:', typeof response);
+      console.log('Response.status:', response?.status);
+      console.log('Response.data:', response?.data);
+      console.log('Response.data type:', typeof response?.data);
+      console.log('Has selectedPhotos:', selectedPhotos.length);
+      if (selectedPhotos.length > 0) {
+        console.log('SelectedPhotos:', selectedPhotos);
+      }
+      console.log('========================================');
+
+      // Eğer resimler seçildiyse ve form başarıyla eklendiyse resimleri upload et
+      // Response formatı: { status: true, statusCode: 200, data: 3, message: "..." }
+      if (response?.status === true && response?.data && selectedPhotos.length > 0) {
+        try {
+          const recordId = Number(response.data);
+          console.log('Starting photos upload for refId:', recordId);
+
+          // Tüm resimleri sırayla yükle
+          const uploadPromises = selectedPhotos.map(async (photo, index) => {
+            const ext = photo.fileName.split('.').pop() || 'jpg';
+            const mimeType = getMimeTypeFromExtension(ext);
+
+            const fileDetails = {
+              uri: photo.uri,
+              name: photo.fileName,
+              type: mimeType,
+            };
+
+            console.log(`Uploading photo ${index + 1}/${selectedPhotos.length}:`, { refId: recordId, refGroup: 'TALEP_BILDIRIM', fileName: photo.fileName });
+            return apiService.uploadPhoto(fileDetails, recordId, 'TALEP_BILDIRIM', false);
+          });
+
+          const uploadResults = await Promise.all(uploadPromises);
+          console.log('All photos uploaded successfully:', uploadResults);
+        } catch (uploadError: any) {
+          console.error('Photo upload error:', uploadError);
+          Alert.alert(
+            t('warning') || 'Uyarı',
+            t('photoUploadError') || 'Talep oluşturuldu ancak bazı resimler yüklenirken hata oluştu'
+          );
+        }
+      } else {
+        console.log('Skipping photo upload:', {
+          status: response?.status,
+          hasData: !!response?.data,
+          dataValue: response?.data,
+          hasPhotos: selectedPhotos.length
+        });
+      }
+
       Alert.alert(t('success'), t('problemReportedSuccessfully') || 'Talep başarıyla oluşturuldu');
       reset();
       setSelectedLocationId(0);
+      setSelectedPhotos([]);
+      onSuccess?.();
     } catch (error: any) {
       console.error('Error reporting problem:', error);
       Alert.alert(t('error'), error.message || t('problemReportError') || 'Talep oluşturulurken hata oluştu');
@@ -74,10 +132,28 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0 }: ReportAProblemProps) {
     }
   };
 
+  const getMimeTypeFromExtension = (ext: string): string => {
+    const lower = (ext || '').toLowerCase().replace(/^\./, '');
+    switch (lower) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'webp':
+        return 'image/webp';
+      case 'heic':
+      case 'heif':
+        return 'image/heic';
+      default:
+        return 'image/jpeg';
+    }
+  };
+
   const isDarkMode = themeName === 'dark';
 
   return (
-    <ScrollView style={styles.container}>
+    <BottomSheetScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <YStack padding="$4" gap="$4">
         <Text fontSize="$6" fontWeight="bold">
           {t('reportAProblem')}
@@ -177,17 +253,29 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0 }: ReportAProblemProps) {
           )}
         />
 
+        <PhotoUploadButton
+          selectedPhotos={selectedPhotos}
+          onPhotosChange={setSelectedPhotos}
+          disabled={loading}
+          label={t('photos') || 'Fotoğraflar'}
+          isDarkMode={isDarkMode}
+          maxPhotos={5}
+        />
+
         <Button onPress={handleSubmit(onSubmit)} disabled={loading} backgroundColor="$blue10" color="white" fontWeight="600" height={50} borderRadius="$2">
           {loading ? t('submitting') : t('submit')}
         </Button>
       </YStack>
-    </ScrollView>
+    </BottomSheetScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
+    paddingBottom: 24,
   },
   textArea: {
     padding: 12,
