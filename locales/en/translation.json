@@ -126,5 +126,7 @@
   "lokasyonlarSec": "Select locations",
   "selectLocation": "Select Location",
   "location": "Location",
+  "photo": "Photo",
+  "uploadPhoto": "Upload Photo",
   "aramaYap": "Search"
 }
