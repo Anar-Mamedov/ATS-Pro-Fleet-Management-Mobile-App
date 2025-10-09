@@ -7,6 +7,7 @@ import { YStack } from '@tamagui/stacks';
 import { Text } from '@tamagui/core';
 import { Check, ChevronDown } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
+import { Pressable } from 'react-native';
 
 interface TalepOncelikProps {
   control: Control<any>;
@@ -22,6 +23,7 @@ const TalepOncelik: React.FC<TalepOncelikProps> = ({
   placeholder,
 }) => {
   const { t } = useTranslation();
+  const [open, setOpen] = React.useState(false);
 
   const priorityOptions = [
     { value: 'dusuk', label: t('priorityLow') },
@@ -35,7 +37,7 @@ const TalepOncelik: React.FC<TalepOncelikProps> = ({
       name={name}
       rules={rules}
       render={({ field: { onChange, value } }) => (
-        <Select value={value} onValueChange={onChange}>
+        <Select value={value} onValueChange={onChange} open={open} onOpenChange={setOpen}>
           <Select.Trigger width="100%" iconAfter={ChevronDown}>
             <Select.Value placeholder={placeholder || t('selectPriority')} />
           </Select.Trigger>
@@ -59,7 +61,35 @@ const TalepOncelik: React.FC<TalepOncelikProps> = ({
                   {t('priorityList')}
                 </Text>
                 <Sheet.ScrollView>
-                  <Adapt.Contents />
+                  <YStack gap="$2" paddingVertical="$2">
+                    {priorityOptions.map((option) => {
+                      const isSelected = value === option.value;
+                      return (
+                        <Pressable
+                          key={option.value}
+                          onPress={() => {
+                            onChange(option.value);
+                            setOpen(false);
+                          }}
+                        >
+                          <YStack
+                            backgroundColor={isSelected ? '$blue2' : '$background'}
+                            borderWidth={isSelected ? 1 : 0}
+                            borderColor={isSelected ? '$blue10' : 'transparent'}
+                            borderRadius="$3"
+                            paddingHorizontal="$4"
+                            paddingVertical="$3"
+                            flexDirection="row"
+                            alignItems="center"
+                            justifyContent="space-between"
+                          >
+                            <Text fontSize="$5">{option.label}</Text>
+                            {isSelected && <Check size={16} color="$blue10" />}
+                          </YStack>
+                        </Pressable>
+                      );
+                    })}
+                  </YStack>
                 </Sheet.ScrollView>
               </Sheet.Frame>
               <Sheet.Overlay

@@ -7,6 +7,7 @@ import { YStack } from '@tamagui/stacks';
 import React from 'react';
 import { Control, Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { Pressable } from 'react-native';
 
 interface TalepTuruProps {
   control: Control<any>;
@@ -17,6 +18,7 @@ interface TalepTuruProps {
 
 const TalepTuru: React.FC<TalepTuruProps> = ({ control, name, rules, placeholder }) => {
   const { t } = useTranslation();
+  const [open, setOpen] = React.useState(false);
 
   const requestOptions = [
     { value: 'ariza', label: t('ariza') },
@@ -30,7 +32,7 @@ const TalepTuru: React.FC<TalepTuruProps> = ({ control, name, rules, placeholder
       name={name}
       rules={rules}
       render={({ field: { onChange, value } }) => (
-        <Select value={value} onValueChange={onChange}>
+        <Select value={value} onValueChange={onChange} open={open} onOpenChange={setOpen}>
           <Select.Trigger width="100%" iconAfter={ChevronDown}>
             <Select.Value placeholder={placeholder || t('selectPriority')} />
           </Select.Trigger>
@@ -54,7 +56,35 @@ const TalepTuru: React.FC<TalepTuruProps> = ({ control, name, rules, placeholder
                   {t('talepTuruListesi')}
                 </Text>
                 <Sheet.ScrollView>
-                  <Adapt.Contents />
+                  <YStack gap="$2" paddingVertical="$2">
+                    {requestOptions.map((option) => {
+                      const isSelected = value === option.value;
+                      return (
+                        <Pressable
+                          key={option.value}
+                          onPress={() => {
+                            onChange(option.value);
+                            setOpen(false);
+                          }}
+                        >
+                          <YStack
+                            backgroundColor={isSelected ? '$blue2' : '$background'}
+                            borderWidth={isSelected ? 1 : 0}
+                            borderColor={isSelected ? '$blue10' : 'transparent'}
+                            borderRadius="$3"
+                            paddingHorizontal="$4"
+                            paddingVertical="$3"
+                            flexDirection="row"
+                            alignItems="center"
+                            justifyContent="space-between"
+                          >
+                            <Text fontSize="$5">{option.label}</Text>
+                            {isSelected && <Check size={16} color="$blue10" />}
+                          </YStack>
+                        </Pressable>
+                      );
+                    })}
+                  </YStack>
                 </Sheet.ScrollView>
               </Sheet.Frame>
               <Sheet.Overlay animation="lazy" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} />
