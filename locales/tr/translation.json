@@ -160,5 +160,17 @@
   "priorityRequired": "Öncelik seçimi zorunludur",
   "warning": "Uyarı",
   "photoUploadError": "Talep oluşturuldu ancak bazı resimler yüklenirken hata oluştu",
-  "close": "Kapat"
+  "close": "Kapat",
+  "selectDocument": "Doküman Seç",
+  "noDocuments": "Henüz doküman yüklenmemiş",
+  "documentUploadSuccess": "Doküman başarıyla yüklendi",
+  "documentUploadError": "Doküman yüklenirken hata oluştu",
+  "documentDownloadError": "Doküman indirilirken hata oluştu",
+  "documentDownloaded": "Doküman indirildi",
+  "deleteDocument": "Dokümanı Sil",
+  "deleteDocumentConfirm": "Bu dokümanı silmek istediğinizden emin misiniz?",
+  "delete": "Sil",
+  "documentDeleted": "Doküman silindi",
+  "documentDeleteError": "Doküman silinirken hata oluştu",
+  "documentsLoadError": "Dokümanlar yüklenirken hata oluştu"
 }

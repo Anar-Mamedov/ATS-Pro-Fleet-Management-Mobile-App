@@ -127,5 +127,17 @@
   "priorityRequired": "Prioritet seçimi məcburidir",
   "warning": "Xəbərdarlıq",
   "photoUploadError": "Sorğu yaradıldı, lakin bəzi şəkilləri yükləyərkən xəta baş verdi",
-  "close": "Bağla"
+  "close": "Bağla",
+  "selectDocument": "Sənəd Seçin",
+  "noDocuments": "Hələ sənəd yüklənməyib",
+  "documentUploadSuccess": "Sənəd uğurla yükləndi",
+  "documentUploadError": "Sənəd yükləyərkən xəta baş verdi",
+  "documentDownloadError": "Sənəd endirilərkən xəta baş verdi",
+  "documentDownloaded": "Sənəd endirildi",
+  "deleteDocument": "Sənədi Sil",
+  "deleteDocumentConfirm": "Bu sənədi silmək istədiyinizdən əminsiniz?",
+  "delete": "Sil",
+  "documentDeleted": "Sənəd silindi",
+  "documentDeleteError": "Sənəd silinərkən xəta baş verdi",
+  "documentsLoadError": "Sənədlər yüklənərkən xəta baş verdi"
 }

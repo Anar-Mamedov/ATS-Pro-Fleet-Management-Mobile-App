@@ -27,13 +27,13 @@ const resolveUploadUrl = (path: string): string => {
   return `${base}${path}`;
 };
 
-const extractFilePart = (payload: UploadablePhoto) => {
+const extractFilePart = (payload: UploadablePhoto, fieldName: string = 'images') => {
   if (payload instanceof FormData) {
     // React Native FormData stores data in a private `_parts` array
     const maybeParts: any = (payload as any)?._parts;
     if (Array.isArray(maybeParts)) {
       for (const part of maybeParts) {
-        if (Array.isArray(part) && part[0] === 'images' && part[1]) {
+        if (Array.isArray(part) && (part[0] === fieldName || part[0] === 'images' || part[0] === 'documents') && part[1]) {
           return part[1] as { uri: string; name?: string; type?: string };
         }
       }
@@ -285,5 +285,115 @@ export const apiService = {
       },
     });
     return response.data;
+  },
+
+  // Document endpoints
+  getDocumentsByRefGroup: async (refId: number | string, refGroup: string) => {
+    const response = await axiosInstance.get('/Document/GetDocumentsByRefGroup', {
+      params: {
+        refId,
+        refGroup,
+        _: Date.now(), // cache buster
+      },
+    });
+    return response.data;
+  },
+
+  downloadDocumentById: async (fileId: number, extension: string, fileName: string) => {
+    const response = await axiosInstance.post(
+      '/Document/DownloadDocumentById',
+      {
+        fileId,
+        extension,
+        fileName,
+      },
+      {
+        responseType: 'arraybuffer',
+      }
+    );
+    return response.data;
+  },
+
+  deleteDocumentById: async (id: number) => {
+    const response = await axiosInstance.get(`/Document/DeleteDocumentById?id=${id}`);
+    return response.data;
+  },
+
+  uploadDocument: async (payload: UploadablePhoto, refId: number, refGroup: string) => {
+    const path = `/Document/UploadDocument?refId=${refId}&refGroup=${encodeURIComponent(refGroup)}`;
+
+    if (Platform.OS === 'web') {
+      let formData: FormData;
+      if (payload instanceof FormData) {
+        formData = payload;
+      } else {
+        const file = payload as { uri: string; name: string; type: string };
+        const response = await fetch(file.uri);
+        const blob = await response.blob();
+        formData = new FormData();
+        formData.append('documents', blob, file.name);
+      }
+
+      const response = await axiosInstance.post(path, formData, {
+        timeout: 60000,
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return response.data;
+    }
+
+    const filePart = extractFilePart(payload, 'documents');
+    if (!filePart?.uri) {
+      throw new Error('Yüklenecek dosya bulunamadı (geçersiz FormData).');
+    }
+
+    console.log('Upload document filePart:', filePart);
+
+    const token = await AsyncStorage.getItem('token');
+    const uploadUrl = resolveUploadUrl(path);
+
+    console.log('Upload URL:', uploadUrl);
+    console.log('File URI:', filePart.uri);
+
+    const result = await FileSystem.uploadAsync(uploadUrl, filePart.uri, {
+      httpMethod: 'POST',
+      uploadType: FileSystemUploadType.MULTIPART,
+      fieldName: 'documents',
+      parameters: {
+        refId: String(refId),
+        refGroup,
+      },
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    console.log('Upload result:', { status: result.status, body: result.body });
+
+    if (result.status >= 400) {
+      let message = `Doküman yüklenemedi (status ${result.status})`;
+      if (result.body) {
+        try {
+          const parsed = JSON.parse(result.body);
+          if (parsed?.message) {
+            message = parsed.message;
+          }
+        } catch {
+          // ignore JSON parse errors and keep default message
+        }
+      }
+      throw new Error(message);
+    }
+
+    if (!result.body) {
+      return {};
+    }
+
+    try {
+      return JSON.parse(result.body);
+    } catch {
+      return { success: true };
+    }
   },
 };

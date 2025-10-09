@@ -127,5 +127,17 @@
   "priorityRequired": "Требуется выбор приоритета",
   "warning": "Предупреждение",
   "photoUploadError": "Запрос создан, но некоторые фотографии не удалось загрузить",
-  "close": "Закрыть"
+  "close": "Закрыть",
+  "selectDocument": "Выбрать документ",
+  "noDocuments": "Документы еще не загружены",
+  "documentUploadSuccess": "Документ успешно загружен",
+  "documentUploadError": "Ошибка загрузки документа",
+  "documentDownloadError": "Ошибка скачивания документа",
+  "documentDownloaded": "Документ скачан",
+  "deleteDocument": "Удалить документ",
+  "deleteDocumentConfirm": "Вы уверены, что хотите удалить этот документ?",
+  "delete": "Удалить",
+  "documentDeleted": "Документ удален",
+  "documentDeleteError": "Ошибка удаления документа",
+  "documentsLoadError": "Ошибка загрузки документов"
 }
