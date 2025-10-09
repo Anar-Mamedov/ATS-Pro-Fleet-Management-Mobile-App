@@ -4,8 +4,9 @@ import { XStack, YStack } from '@tamagui/stacks';
 import { Text } from '@tamagui/core';
 import { Check, ChevronDown } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
-import { Modal, Pressable, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { Modal, Pressable, StyleSheet, TouchableOpacity, ScrollView, View } from 'react-native';
 import { useThemeController } from '@/config/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface TalepOncelikProps {
   control: Control<any>;
@@ -19,6 +20,7 @@ const TalepOncelik: React.FC<TalepOncelikProps> = ({ control, name, rules, place
   const { themeName } = useThemeController();
   const isDarkMode = themeName === 'dark';
   const [modalVisible, setModalVisible] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const priorityOptions = React.useMemo(
     () => [
@@ -74,69 +76,74 @@ const TalepOncelik: React.FC<TalepOncelikProps> = ({ control, name, rules, place
                 style={styles.modalOverlay}
                 onPress={() => setModalVisible(false)}
               >
-                <Pressable
-                  style={[
-                    styles.modalContent,
-                    { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
-                  ]}
-                  onPress={(e) => e.stopPropagation()}
-                >
-                  {/* Handle */}
-                  <YStack alignItems="center" paddingVertical="$2">
-                    <YStack
-                      width={40}
-                      height={4}
-                      borderRadius="$2"
-                      backgroundColor={isDarkMode ? '#444' : '#ccc'}
-                    />
-                  </YStack>
-
-                  {/* Title */}
-                  <Text
-                    fontSize="$6"
-                    fontWeight="bold"
-                    textAlign="center"
-                    marginBottom="$3"
-                    color={isDarkMode ? '#fff' : '#000'}
+                <View style={styles.safeArea}>
+                  <Pressable
+                    style={[
+                      styles.modalContent,
+                      {
+                        backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF',
+                        paddingBottom: insets.bottom + 20,
+                      },
+                    ]}
+                    onPress={(e) => e.stopPropagation()}
                   >
-                    {t('priorityList')}
-                  </Text>
-
-                  {/* Options */}
-                  <ScrollView style={styles.scrollView}>
-                    <YStack gap="$2" paddingVertical="$2">
-                      {priorityOptions.map((option) => {
-                        const isSelected = value === option.value;
-                        return (
-                          <TouchableOpacity
-                            key={option.value}
-                            onPress={() => {
-                              onChange(option.value);
-                              setModalVisible(false);
-                            }}
-                            activeOpacity={0.7}
-                          >
-                            <XStack
-                              backgroundColor={isSelected ? '$blue2' : 'transparent'}
-                              borderWidth={isSelected ? 1 : 0}
-                              borderColor={isSelected ? '$blue10' : 'transparent'}
-                              borderRadius="$3"
-                              paddingHorizontal="$4"
-                              paddingVertical="$3"
-                              alignItems="center"
-                              justifyContent="space-between"
-                            >
-                              <Text fontSize="$5" color={isDarkMode ? '#fff' : '#000'}>
-                                {option.label}
-                              </Text>
-                              {isSelected && <Check size={16} color="$blue10" />}
-                            </XStack>
-                          </TouchableOpacity>
-                        );
-                      })}
+                    {/* Handle */}
+                    <YStack alignItems="center" paddingVertical="$2">
+                      <YStack
+                        width={40}
+                        height={4}
+                        borderRadius="$2"
+                        backgroundColor={isDarkMode ? '#444' : '#ccc'}
+                      />
                     </YStack>
-                  </ScrollView>
-                </Pressable>
+
+                    {/* Title */}
+                    <Text
+                      fontSize="$6"
+                      fontWeight="bold"
+                      textAlign="center"
+                      marginBottom="$3"
+                      color={isDarkMode ? '#fff' : '#000'}
+                    >
+                      {t('priorityList')}
+                    </Text>
+
+                    {/* Options */}
+                    <ScrollView style={styles.scrollView}>
+                      <YStack gap="$2" paddingVertical="$2">
+                        {priorityOptions.map((option) => {
+                          const isSelected = value === option.value;
+                          return (
+                            <TouchableOpacity
+                              key={option.value}
+                              onPress={() => {
+                                onChange(option.value);
+                                setModalVisible(false);
+                              }}
+                              activeOpacity={0.7}
+                            >
+                              <XStack
+                                backgroundColor={isSelected ? '$blue2' : 'transparent'}
+                                borderWidth={isSelected ? 1 : 0}
+                                borderColor={isSelected ? '$blue10' : 'transparent'}
+                                borderRadius="$3"
+                                paddingHorizontal="$4"
+                                paddingVertical="$3"
+                                alignItems="center"
+                                justifyContent="space-between"
+                              >
+                                <Text fontSize="$5" color={isDarkMode ? '#fff' : '#000'}>
+                                  {option.label}
+                                </Text>
+                                {isSelected && <Check size={16} color="$blue10" />}
+                              </XStack>
+                            </TouchableOpacity>
+                          );
+                        })}
+                      </YStack>
+                    </ScrollView>
+                  </Pressable>
+                </View>
               </Pressable>
             </Modal>
           </>
@@ -152,11 +159,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'flex-end',
   },
+  safeArea: {
+    width: '100%',
+  },
   modalContent: {
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
-    maxHeight: '50%',
+    maxHeight: 400,
   },
   scrollView: {
     maxHeight: 300,
