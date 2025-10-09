@@ -145,5 +145,20 @@
   "location": "Lokasyon",
   "photo": "Fotoğraf",
   "uploadPhoto": "Fotoğraf Yükle",
-  "aramaYap": "Arama yapın"
+  "aramaYap": "Arama yapın",
+  "talepTuru": "Talep Türü",
+  "talepTuruRequired": "Talep türü seçimi zorunludur",
+  "selectTalepTuru": "Talep türü seçin",
+  "talepTuruListesi": "Talep Türü Listesi",
+  "ariza": "Arıza",
+  "lastik": "Lastik",
+  "aksesuar": "Aksesuar",
+  "yakit": "Yakıt",
+  "requestNumber": "Talep No",
+  "enterRequestNumber": "Talep numarası giriniz",
+  "requestSubmittedSuccessfully": "Talep başarıyla oluşturuldu",
+  "priorityRequired": "Öncelik seçimi zorunludur",
+  "warning": "Uyarı",
+  "photoUploadError": "Talep oluşturuldu ancak bazı resimler yüklenirken hata oluştu",
+  "close": "Kapat"
 }

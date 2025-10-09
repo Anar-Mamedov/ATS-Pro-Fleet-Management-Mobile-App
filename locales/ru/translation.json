@@ -112,5 +112,20 @@
   "location": "Местоположение",
   "photo": "Фотография",
   "uploadPhoto": "Загрузить фотографию",
-  "aramaYap": "Поиск"
+  "aramaYap": "Поиск",
+  "talepTuru": "Тип запроса",
+  "talepTuruRequired": "Требуется выбор типа запроса",
+  "selectTalepTuru": "Выберите тип запроса",
+  "talepTuruListesi": "Список типов запросов",
+  "ariza": "Неисправность",
+  "lastik": "Шина",
+  "aksesuar": "Аксессуар",
+  "yakit": "Топливо",
+  "requestNumber": "Номер запроса",
+  "enterRequestNumber": "Введите номер запроса",
+  "requestSubmittedSuccessfully": "Запрос успешно отправлен",
+  "priorityRequired": "Требуется выбор приоритета",
+  "warning": "Предупреждение",
+  "photoUploadError": "Запрос создан, но некоторые фотографии не удалось загрузить",
+  "close": "Закрыть"
 }

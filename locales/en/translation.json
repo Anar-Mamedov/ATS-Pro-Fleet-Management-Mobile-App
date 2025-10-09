@@ -128,5 +128,20 @@
   "location": "Location",
   "photo": "Photo",
   "uploadPhoto": "Upload Photo",
-  "aramaYap": "Search"
+  "aramaYap": "Search",
+  "talepTuru": "Request Type",
+  "talepTuruRequired": "Request type selection is required",
+  "selectTalepTuru": "Select request type",
+  "talepTuruListesi": "Request Type List",
+  "ariza": "Breakdown",
+  "lastik": "Tire",
+  "aksesuar": "Accessory",
+  "yakit": "Fuel",
+  "requestNumber": "Request Number",
+  "enterRequestNumber": "Enter request number",
+  "requestSubmittedSuccessfully": "Request submitted successfully",
+  "priorityRequired": "Priority selection is required",
+  "warning": "Warning",
+  "photoUploadError": "Request created but some photos failed to upload",
+  "close": "Close"
 }
