@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Controller, Control } from 'react-hook-form';
 import { XStack, YStack } from '@tamagui/stacks';
 import { Text } from '@tamagui/core';
 import { Check, ChevronDown } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
-import { Modal, Pressable, StyleSheet, TouchableOpacity, ScrollView, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, TouchableOpacity, ScrollView, Animated } from 'react-native';
 import { useThemeController } from '@/config/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -21,6 +21,20 @@ const TalepTuru: React.FC<TalepTuruProps> = ({ control, name, rules, placeholder
   const isDarkMode = themeName === 'dark';
   const [modalVisible, setModalVisible] = useState(false);
   const insets = useSafeAreaInsets();
+  const slideAnim = React.useRef(new Animated.Value(400)).current;
+
+  useEffect(() => {
+    if (modalVisible) {
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        useNativeDriver: true,
+        tension: 65,
+        friction: 11,
+      }).start();
+    } else {
+      slideAnim.setValue(400);
+    }
+  }, [modalVisible, slideAnim]);
 
   const requestOptions = React.useMemo(
     () => [
@@ -69,14 +83,21 @@ const TalepTuru: React.FC<TalepTuruProps> = ({ control, name, rules, placeholder
             <Modal
               visible={modalVisible}
               transparent={true}
-              animationType="slide"
+              animationType="none"
               onRequestClose={() => setModalVisible(false)}
             >
               <Pressable
                 style={styles.modalOverlay}
                 onPress={() => setModalVisible(false)}
               >
-                <View style={styles.safeArea}>
+                <Animated.View
+                  style={[
+                    styles.safeArea,
+                    {
+                      transform: [{ translateY: slideAnim }],
+                    },
+                  ]}
+                >
                   <Pressable
                     style={[
                       styles.modalContent,
@@ -143,7 +164,7 @@ const TalepTuru: React.FC<TalepTuruProps> = ({ control, name, rules, placeholder
                       </YStack>
                     </ScrollView>
                   </Pressable>
-                </View>
+                </Animated.View>
               </Pressable>
             </Modal>
           </>
