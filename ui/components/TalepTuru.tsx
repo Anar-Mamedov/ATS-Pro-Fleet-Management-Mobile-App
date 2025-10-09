@@ -1,13 +1,11 @@
-import { Adapt } from '@tamagui/adapt';
+import React, { useState } from 'react';
+import { Controller, Control } from 'react-hook-form';
+import { XStack, YStack } from '@tamagui/stacks';
 import { Text } from '@tamagui/core';
 import { Check, ChevronDown } from '@tamagui/lucide-icons';
-import { Select } from '@tamagui/select';
-import { Sheet } from '@tamagui/sheet';
-import { YStack } from '@tamagui/stacks';
-import React from 'react';
-import { Control, Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Pressable } from 'react-native';
+import { Modal, Pressable, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { useThemeController } from '@/config/theme';
 
 interface TalepTuruProps {
   control: Control<any>;
@@ -18,123 +16,151 @@ interface TalepTuruProps {
 
 const TalepTuru: React.FC<TalepTuruProps> = ({ control, name, rules, placeholder }) => {
   const { t } = useTranslation();
-  const [open, setOpen] = React.useState(false);
+  const { themeName } = useThemeController();
+  const isDarkMode = themeName === 'dark';
+  const [modalVisible, setModalVisible] = useState(false);
 
-  const requestOptions = [
-    { value: 'ariza', label: t('ariza') },
-    { value: 'lastik', label: t('lastik') },
-    { value: 'aksesuar', label: t('aksesuar') },
-    { value: 'yakit', label: t('yakit') },
-  ];
+  const requestOptions = React.useMemo(
+    () => [
+      { value: 'ariza', label: t('ariza') },
+      { value: 'lastik', label: t('lastik') },
+      { value: 'aksesuar', label: t('aksesuar') },
+      { value: 'yakit', label: t('yakit') },
+    ],
+    [t]
+  );
+
   return (
     <Controller
       control={control}
       name={name}
       rules={rules}
-      render={({ field: { onChange, value } }) => (
-        <Select value={value} onValueChange={onChange} open={open} onOpenChange={setOpen}>
-          <Select.Trigger width="100%" iconAfter={ChevronDown}>
-            <Select.Value placeholder={placeholder || t('selectPriority')} />
-          </Select.Trigger>
+      render={({ field: { onChange, value } }) => {
+        const selectedOption = requestOptions.find((opt) => opt.value === value);
 
-          <Adapt when="sm" platform="touch">
-            <Sheet
-              native
-              modal
-              dismissOnSnapToBottom
-              snapPointsMode="percent"
-              snapPoints={[40]}
-              animationConfig={{
-                type: 'spring',
-                damping: 20,
-                mass: 1.2,
-                stiffness: 250,
-              }}
+        return (
+          <>
+            {/* Trigger Button */}
+            <TouchableOpacity
+              onPress={() => setModalVisible(true)}
+              activeOpacity={0.7}
             >
-              <Sheet.Frame padding="$4">
-                <Text fontSize="$6" fontWeight="bold" textAlign="center" marginBottom="$3">
-                  {t('talepTuruListesi')}
+              <XStack
+                alignItems="center"
+                justifyContent="space-between"
+                paddingHorizontal="$3"
+                paddingVertical="$3"
+                borderRadius="$4"
+                borderWidth={1}
+                borderColor={isDarkMode ? '#333' : '#ddd'}
+                backgroundColor={isDarkMode ? '#1a1a1a' : '#f5f5f5'}
+                minHeight={48}
+              >
+                <Text fontSize="$4" color={value ? (isDarkMode ? '#fff' : '#000') : '#999'}>
+                  {selectedOption ? selectedOption.label : placeholder || t('selectRequestType')}
                 </Text>
-                <Sheet.ScrollView>
-                  <YStack gap="$2" paddingVertical="$2">
-                    {requestOptions.map((option) => {
-                      const isSelected = value === option.value;
-                      return (
-                        <Pressable
-                          key={option.value}
-                          onPress={() => {
-                            onChange(option.value);
-                            setOpen(false);
-                          }}
-                        >
-                          <YStack
-                            backgroundColor={isSelected ? '$blue2' : '$background'}
-                            borderWidth={isSelected ? 1 : 0}
-                            borderColor={isSelected ? '$blue10' : 'transparent'}
-                            borderRadius="$3"
-                            paddingHorizontal="$4"
-                            paddingVertical="$3"
-                            flexDirection="row"
-                            alignItems="center"
-                            justifyContent="space-between"
-                          >
-                            <Text fontSize="$5">{option.label}</Text>
-                            {isSelected && <Check size={16} color="$blue10" />}
-                          </YStack>
-                        </Pressable>
-                      );
-                    })}
+                <ChevronDown size={16} color={isDarkMode ? '#fff' : '#000'} />
+              </XStack>
+            </TouchableOpacity>
+
+            {/* Modal */}
+            <Modal
+              visible={modalVisible}
+              transparent={true}
+              animationType="slide"
+              onRequestClose={() => setModalVisible(false)}
+            >
+              <Pressable
+                style={styles.modalOverlay}
+                onPress={() => setModalVisible(false)}
+              >
+                <Pressable
+                  style={[
+                    styles.modalContent,
+                    { backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF' },
+                  ]}
+                  onPress={(e) => e.stopPropagation()}
+                >
+                  {/* Handle */}
+                  <YStack alignItems="center" paddingVertical="$2">
+                    <YStack
+                      width={40}
+                      height={4}
+                      borderRadius="$2"
+                      backgroundColor={isDarkMode ? '#444' : '#ccc'}
+                    />
                   </YStack>
-                </Sheet.ScrollView>
-              </Sheet.Frame>
-              <Sheet.Overlay animation="lazy" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} />
-            </Sheet>
-          </Adapt>
 
-          <Select.Content zIndex={200000}>
-            <Select.ScrollUpButton alignItems="center" justifyContent="center" position="relative" width="100%" height="$3">
-              <YStack zIndex={10}>
-                <ChevronDown size={20} />
-              </YStack>
-            </Select.ScrollUpButton>
+                  {/* Title */}
+                  <Text
+                    fontSize="$6"
+                    fontWeight="bold"
+                    textAlign="center"
+                    marginBottom="$3"
+                    color={isDarkMode ? '#fff' : '#000'}
+                  >
+                    {t('talepTuruListesi')}
+                  </Text>
 
-            <Select.Viewport minWidth={200}>
-              <Select.Group>
-                {requestOptions.map((option, index) => {
-                  const isSelected = value === option.value;
-                  return (
-                    <Select.Item
-                      key={option.value}
-                      index={index}
-                      value={option.value}
-                      backgroundColor={isSelected ? '$blue2' : 'transparent'}
-                      borderWidth={isSelected ? 1 : 0}
-                      borderColor={isSelected ? '$blue10' : 'transparent'}
-                      borderRadius="$3"
-                      marginVertical="$1"
-                      paddingHorizontal="$3"
-                      paddingVertical="$3"
-                    >
-                      <Select.ItemText>{option.label}</Select.ItemText>
-                      <Select.ItemIndicator marginLeft="auto">
-                        <Check size={16} color="$blue10" />
-                      </Select.ItemIndicator>
-                    </Select.Item>
-                  );
-                })}
-              </Select.Group>
-            </Select.Viewport>
-
-            <Select.ScrollDownButton alignItems="center" justifyContent="center" position="relative" width="100%" height="$3">
-              <YStack zIndex={10}>
-                <ChevronDown size={20} />
-              </YStack>
-            </Select.ScrollDownButton>
-          </Select.Content>
-        </Select>
-      )}
+                  {/* Options */}
+                  <ScrollView style={styles.scrollView}>
+                    <YStack gap="$2" paddingVertical="$2">
+                      {requestOptions.map((option) => {
+                        const isSelected = value === option.value;
+                        return (
+                          <TouchableOpacity
+                            key={option.value}
+                            onPress={() => {
+                              onChange(option.value);
+                              setModalVisible(false);
+                            }}
+                            activeOpacity={0.7}
+                          >
+                            <XStack
+                              backgroundColor={isSelected ? '$blue2' : 'transparent'}
+                              borderWidth={isSelected ? 1 : 0}
+                              borderColor={isSelected ? '$blue10' : 'transparent'}
+                              borderRadius="$3"
+                              paddingHorizontal="$4"
+                              paddingVertical="$3"
+                              alignItems="center"
+                              justifyContent="space-between"
+                            >
+                              <Text fontSize="$5" color={isDarkMode ? '#fff' : '#000'}>
+                                {option.label}
+                              </Text>
+                              {isSelected && <Check size={16} color="$blue10" />}
+                            </XStack>
+                          </TouchableOpacity>
+                        );
+                      })}
+                    </YStack>
+                  </ScrollView>
+                </Pressable>
+              </Pressable>
+            </Modal>
+          </>
+        );
+      }}
     />
   );
 };
+
+const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    maxHeight: '50%',
+  },
+  scrollView: {
+    maxHeight: 300,
+  },
+});
 
 export default TalepTuru;
