@@ -3,6 +3,7 @@ import { apiService } from '@/services/apiService';
 import { DatePicker } from '@/ui/components/DatePicker';
 import { NumaratorOnAdd } from '@/ui/components/NumaratorOnAdd';
 import TalepOncelik from '@/ui/components/TalepOncelik';
+import TalepTuru from '@/ui/components/TalepTuru';
 import { LocationPicker } from '@/ui/components/LocationPicker';
 import { PhotoUploadButton } from '@/ui/components/PhotoUploadButton';
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
@@ -18,6 +19,7 @@ interface ReportAProblemForm {
   arizaNo: string;
   problemDate: Date;
   oncelik: string;
+  talepTuru?: string;
   lokasyon: string;
   description: string;
 }
@@ -26,14 +28,17 @@ interface ReportAProblemProps {
   aracId?: number;
   talepEdenId?: number;
   onSuccess?: () => void;
+  mode?: 'ariza' | 'talep'; // 'ariza' için Arıza Bildir, 'talep' için Talep Bildir
 }
 
-function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess }: ReportAProblemProps) {
+function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess, mode = 'ariza' }: ReportAProblemProps) {
   const { t } = useTranslation();
   const { themeName } = useThemeController();
   const [loading, setLoading] = useState(false);
   const [selectedLocationId, setSelectedLocationId] = useState<number>(0);
   const [selectedPhotos, setSelectedPhotos] = useState<{ uri: string; fileName: string }[]>([]);
+
+  const isTalepMode = mode === 'talep';
 
   const {
     control,
@@ -45,6 +50,7 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess }: ReportAProbl
       arizaNo: '',
       problemDate: new Date(),
       oncelik: '',
+      talepTuru: '',
       lokasyon: '',
       description: '',
     },
@@ -62,7 +68,7 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess }: ReportAProbl
         tarih: data.problemDate.toISOString().split('T')[0], // YYYY-MM-DD formatında
         talepDurum: 'beklemede', // Varsayılan değer
         talepOncelik: data.oncelik,
-        talepTur: 'ariza', // Varsayılan değer
+        talepTur: isTalepMode ? (data.talepTuru || 'ariza') : 'ariza', // Talep modunda talepTuru kullan, arıza modunda 'ariza'
         talepEdenId: talepEdenId,
       };
 
@@ -119,7 +125,11 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess }: ReportAProbl
         });
       }
 
-      Alert.alert(t('success'), t('problemReportedSuccessfully') || 'Talep başarıyla oluşturuldu');
+      const successMessage = isTalepMode
+        ? t('requestSubmittedSuccessfully') || 'Talep başarıyla oluşturuldu'
+        : t('problemReportedSuccessfully') || 'Arıza başarıyla bildirildi';
+
+      Alert.alert(t('success'), successMessage);
       reset();
       setSelectedLocationId(0);
       setSelectedPhotos([]);
@@ -156,14 +166,14 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess }: ReportAProbl
     <BottomSheetScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <YStack padding="$4" gap="$4">
         <Text fontSize="$6" fontWeight="bold">
-          {t('reportAProblem')}
+          {isTalepMode ? t('talepBildir') || 'Talep Bildir' : t('reportAProblem')}
         </Text>
 
         <NumaratorOnAdd
           control={control}
           name="arizaNo"
-          label={t('faultNumber') || 'Fault No'}
-          placeholder={t('enterFaultNumber') || 'Fault numarası giriniz'}
+          label={isTalepMode ? t('requestNumber') || 'Talep No' : t('faultNumber') || 'Arıza No'}
+          placeholder={isTalepMode ? t('enterRequestNumber') || 'Talep numarası giriniz' : t('enterFaultNumber') || 'Arıza numarası giriniz'}
           error={errors.arizaNo?.message}
           moduleCode="TALEP_BILDIRIM"
           tableName="HasarTakibi"
@@ -193,6 +203,30 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess }: ReportAProbl
             </Text>
           )}
         </YStack>
+
+        {isTalepMode && (
+          <YStack gap="$2">
+            <Text fontSize="$3" fontWeight="600">
+              {t('talepTuru') || 'Talep Türü'}
+              <Text color="$red10" marginLeft="$1">
+                *
+              </Text>
+            </Text>
+            <TalepTuru
+              control={control}
+              name="talepTuru"
+              rules={{
+                required: t('talepTuruRequired') || 'Talep türü seçimi zorunludur',
+              }}
+              placeholder={t('selectTalepTuru') || 'Talep türü seçin'}
+            />
+            {errors.talepTuru && (
+              <Text color="$red10" fontSize="$2">
+                {errors.talepTuru.message}
+              </Text>
+            )}
+          </YStack>
+        )}
 
         <LocationPicker
           control={control}

@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { apiService } from '../../../services/apiService';
 import { FormattedDate } from '../../../ui/components/FormattedDate';
 import ResimUpload from '../../../ui/components/ResimUpload';
+import DocumentUpload from '../../../ui/components/DocumentUpload';
 import ReportAProblem from './components/ReportAProblem';
 
 export default function DriverMainPage() {
@@ -66,12 +67,14 @@ export default function DriverMainPage() {
 
   // Separate sheets for Araç Belgeleri and Araç Fotoğrafları
   const faultSheetRef = useRef<BottomSheetModal>(null);
+  const requestSheetRef = useRef<BottomSheetModal>(null);
   const docsSheetRef = useRef<BottomSheetModal>(null);
   const photosSheetRef = useRef<BottomSheetModal>(null);
   const openFaultSheet = () => faultSheetRef.current?.present();
   const closeFaultSheet = () => faultSheetRef.current?.dismiss();
+  const openRequestSheet = () => requestSheetRef.current?.present();
+  const closeRequestSheet = () => requestSheetRef.current?.dismiss();
   const openDocsSheet = () => docsSheetRef.current?.present();
-  const closeDocsSheet = () => docsSheetRef.current?.dismiss();
   const openPhotosSheet = () => photosSheetRef.current?.present();
 
   useEffect(() => {
@@ -247,7 +250,7 @@ export default function DriverMainPage() {
             <Button
               backgroundColor="$yellow10"
               flexBasis="48%"
-              onPress={() => {}}
+              onPress={openRequestSheet}
               pressTheme={false}
               hoverTheme={false}
               pressStyle={{ backgroundColor: '$yellow10', opacity: 0.85 }}
@@ -422,31 +425,46 @@ export default function DriverMainPage() {
           backdropComponent={(backdropProps) => <BottomSheetBackdrop {...backdropProps} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.4} pressBehavior="close" />}
           backgroundStyle={{ backgroundColor: themeName === 'dark' ? '#1C1C1E' : '#FFFFFF' }}
         >
-          <ReportAProblem aracId={firstVehicle?.aracId || 0} talepEdenId={userId} onSuccess={closeFaultSheet} />
+          <ReportAProblem aracId={firstVehicle?.aracId || 0} talepEdenId={userId} onSuccess={closeFaultSheet} mode="ariza" />
+        </BottomSheetModal>
+
+        {/* Talep Bildir Bottom Sheet */}
+        <BottomSheetModal
+          ref={requestSheetRef}
+          index={0}
+          snapPoints={faultSnapPoints}
+          enablePanDownToClose
+          enableDynamicSizing={false}
+          topInset={46}
+          handleIndicatorStyle={{ backgroundColor: themeName === 'dark' ? '#9BA1A6' : '#A1A1AA' }}
+          backdropComponent={(backdropProps) => <BottomSheetBackdrop {...backdropProps} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.4} pressBehavior="close" />}
+          backgroundStyle={{ backgroundColor: themeName === 'dark' ? '#1C1C1E' : '#FFFFFF' }}
+        >
+          <ReportAProblem aracId={firstVehicle?.aracId || 0} talepEdenId={userId} onSuccess={closeRequestSheet} mode="talep" />
         </BottomSheetModal>
 
         {/* Araç Belgeleri Bottom Sheet */}
         <BottomSheetModal
           ref={docsSheetRef}
-          index={1}
-          snapPoints={snapPoints}
+          index={0}
+          snapPoints={faultSnapPoints}
           enablePanDownToClose
+          enableDynamicSizing={false}
+          topInset={46}
           handleIndicatorStyle={{ backgroundColor: themeName === 'dark' ? '#9BA1A6' : '#A1A1AA' }}
           backdropComponent={(backdropProps) => <BottomSheetBackdrop {...backdropProps} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.4} pressBehavior="close" />}
           backgroundStyle={{ backgroundColor: themeName === 'dark' ? '#1C1C1E' : '#FFFFFF' }}
         >
-          <BottomSheetView style={{ flex: 1, paddingTop: 20 }}>
-            <YStack space="$3" paddingHorizontal="$4">
-              <Text fontSize="$6" fontWeight="600" textAlign="center" marginBottom="$2" color="$color">
-                {t('aracBelgeleri')}
-              </Text>
-              <Text color="$color" opacity={0.7} textAlign="center">
-                {t('noContentYet')}
-              </Text>
-              <Button alignSelf="center" onPress={closeDocsSheet} pressTheme={false} hoverTheme={false}>
-                <Button.Text>{t('close') ?? 'Kapat'}</Button.Text>
-              </Button>
-            </YStack>
+          <BottomSheetView style={{ flex: 1 }}>
+            {firstVehicle ? (
+              <DocumentUpload refId={firstVehicle.aracId} refGroup="ARAC" editable={true} />
+            ) : (
+              <YStack padding="$4" alignItems="center">
+                <Text color="$color" opacity={0.7} textAlign="center">
+                  {t('pleaseSelectVehicle')}
+                </Text>
+              </YStack>
+            )}
           </BottomSheetView>
         </BottomSheetModal>
 
