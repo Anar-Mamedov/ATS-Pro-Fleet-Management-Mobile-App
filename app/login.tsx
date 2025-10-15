@@ -233,9 +233,12 @@ export default function Login() {
                 onChange={(e) => setCompanyKeyInput(getTextFromEvent(e))}
                 placeholder={t('enterCompanyKey')}
                 autoCapitalize="none"
-                size="$3"
+                size="$4"
                 borderRadius="$3"
                 width="100%"
+                minHeight={50}
+                paddingVertical="$3"
+                maxFontSizeMultiplier={1.3}
               />
             </YStack>
 
@@ -285,9 +288,12 @@ export default function Login() {
             onChange={(e) => setKullaniciKod(getTextFromEvent(e))}
             placeholder={t('enterUserCode')}
             autoCapitalize="none"
-            size="$3"
+            size="$4"
             borderRadius="$3"
             width="100%"
+            minHeight={50}
+            paddingVertical="$3"
+            maxFontSizeMultiplier={1.3}
           />
         </YStack>
 
@@ -295,7 +301,7 @@ export default function Login() {
           <Text fontSize="$5" color="$color" fontWeight="500" fontFamily="SF Pro Text">
             {t('password')}
           </Text>
-          <Input value={sifre} onChange={(e) => setSifre(getTextFromEvent(e))} placeholder={t('enterPassword')} type="password" size="$3" borderRadius="$3" width="100%" />
+          <Input value={sifre} onChange={(e) => setSifre(getTextFromEvent(e))} placeholder={t('enterPassword')} type="password" size="$4" borderRadius="$3" width="100%" minHeight={50} paddingVertical="$3" maxFontSizeMultiplier={1.3} />
         </YStack>
 
         <Button size="$4" backgroundColor="$green10" width="100%" onPress={handleLogin} disabled={loading}>
