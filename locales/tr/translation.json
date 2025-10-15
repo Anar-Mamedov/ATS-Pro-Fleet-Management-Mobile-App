@@ -172,5 +172,6 @@
   "delete": "Sil",
   "documentDeleted": "Doküman silindi",
   "documentDeleteError": "Doküman silinirken hata oluştu",
-  "documentsLoadError": "Dokümanlar yüklenirken hata oluştu"
+  "documentsLoadError": "Dokümanlar yüklenirken hata oluştu",
+  "addMorePhotos": "Daha Fazla Fotoğraf Ekle"
 }

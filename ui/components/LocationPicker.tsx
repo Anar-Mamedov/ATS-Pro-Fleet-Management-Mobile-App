@@ -6,6 +6,7 @@ import { Text, View } from '@tamagui/core';
 import { XStack, YStack } from '@tamagui/stacks';
 import { Search, ChevronRight, ChevronDown, X } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { apiService } from '@/services/apiService';
 import { useThemeController } from '@/config/theme';
 
@@ -55,6 +56,7 @@ export function LocationPicker<T extends FieldValues>({
   const { t } = useTranslation();
   const { themeName } = useThemeController();
   const isDarkMode = themeName === 'dark';
+  const insets = useSafeAreaInsets();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -373,7 +375,7 @@ export function LocationPicker<T extends FieldValues>({
             presentationStyle="pageSheet"
             onRequestClose={() => setIsModalVisible(false)}
           >
-            <YStack flex={1} backgroundColor="$background" paddingTop="$2">
+            <YStack flex={1} backgroundColor="$background" paddingTop={insets.top}>
               {/* Header */}
               <XStack
                 paddingVertical="$4"
@@ -444,7 +446,7 @@ export function LocationPicker<T extends FieldValues>({
               {/* Footer */}
               <XStack
                 padding="$4"
-                paddingBottom="$6"
+                paddingBottom={insets.bottom + 16}
                 borderTopWidth={1}
                 borderTopColor="$borderColor"
                 gap="$3"

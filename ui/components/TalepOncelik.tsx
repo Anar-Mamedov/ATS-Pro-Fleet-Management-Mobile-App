@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Controller, Control } from 'react-hook-form';
-import { Select } from '@tamagui/select';
-import { Adapt } from '@tamagui/adapt';
-import { Sheet } from '@tamagui/sheet';
-import { YStack } from '@tamagui/stacks';
+import { XStack, YStack } from '@tamagui/stacks';
 import { Text } from '@tamagui/core';
 import { Check, ChevronDown } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
+import { Modal, Pressable, StyleSheet, TouchableOpacity, ScrollView, Animated } from 'react-native';
+import { useThemeController } from '@/config/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface TalepOncelikProps {
   control: Control<any>;
@@ -15,117 +15,183 @@ interface TalepOncelikProps {
   placeholder?: string;
 }
 
-const TalepOncelik: React.FC<TalepOncelikProps> = ({
-  control,
-  name,
-  rules,
-  placeholder,
-}) => {
+const TalepOncelik: React.FC<TalepOncelikProps> = ({ control, name, rules, placeholder }) => {
   const { t } = useTranslation();
+  const { themeName } = useThemeController();
+  const isDarkMode = themeName === 'dark';
+  const [modalVisible, setModalVisible] = useState(false);
+  const insets = useSafeAreaInsets();
+  const slideAnim = React.useRef(new Animated.Value(400)).current;
 
-  const priorityOptions = [
-    { value: 'dusuk', label: t('priorityLow') },
-    { value: 'orta', label: t('priorityMedium') },
-    { value: 'yuksek', label: t('priorityHigh') },
-    { value: 'acil', label: t('priorityUrgent') },
-  ];
+  useEffect(() => {
+    if (modalVisible) {
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        useNativeDriver: true,
+        tension: 65,
+        friction: 11,
+      }).start();
+    } else {
+      slideAnim.setValue(400);
+    }
+  }, [modalVisible, slideAnim]);
+
+  const priorityOptions = React.useMemo(
+    () => [
+      { value: 'dusuk', label: t('priorityLow') },
+      { value: 'orta', label: t('priorityMedium') },
+      { value: 'yuksek', label: t('priorityHigh') },
+      { value: 'acil', label: t('priorityUrgent') },
+    ],
+    [t]
+  );
+
   return (
     <Controller
       control={control}
       name={name}
       rules={rules}
-      render={({ field: { onChange, value } }) => (
-        <Select value={value} onValueChange={onChange}>
-          <Select.Trigger width="100%" iconAfter={ChevronDown}>
-            <Select.Value placeholder={placeholder || t('selectPriority')} />
-          </Select.Trigger>
+      render={({ field: { onChange, value } }) => {
+        const selectedOption = priorityOptions.find((opt) => opt.value === value);
 
-          <Adapt when="sm" platform="touch">
-            <Sheet
-              native
-              modal
-              dismissOnSnapToBottom
-              snapPointsMode="percent"
-              snapPoints={[40]}
-              animationConfig={{
-                type: 'spring',
-                damping: 20,
-                mass: 1.2,
-                stiffness: 250,
-              }}
+        return (
+          <>
+            {/* Trigger Button */}
+            <TouchableOpacity
+              onPress={() => setModalVisible(true)}
+              activeOpacity={0.7}
             >
-              <Sheet.Frame padding="$4">
-                <Text fontSize="$6" fontWeight="bold" textAlign="center" marginBottom="$3">
-                  {t('priorityList')}
+              <XStack
+                alignItems="center"
+                justifyContent="space-between"
+                paddingHorizontal="$3"
+                paddingVertical="$3"
+                borderRadius="$4"
+                borderWidth={1}
+                borderColor={isDarkMode ? '#333' : '#ddd'}
+                backgroundColor={isDarkMode ? '#1a1a1a' : '#f5f5f5'}
+                minHeight={48}
+              >
+                <Text fontSize="$4" color={value ? (isDarkMode ? '#fff' : '#000') : '#999'}>
+                  {selectedOption ? selectedOption.label : placeholder || t('selectPriority')}
                 </Text>
-                <Sheet.ScrollView>
-                  <Adapt.Contents />
-                </Sheet.ScrollView>
-              </Sheet.Frame>
-              <Sheet.Overlay
-                animation="lazy"
-                enterStyle={{ opacity: 0 }}
-                exitStyle={{ opacity: 0 }}
-              />
-            </Sheet>
-          </Adapt>
+                <ChevronDown size={16} color={isDarkMode ? '#fff' : '#000'} />
+              </XStack>
+            </TouchableOpacity>
 
-          <Select.Content zIndex={200000}>
-            <Select.ScrollUpButton
-              alignItems="center"
-              justifyContent="center"
-              position="relative"
-              width="100%"
-              height="$3"
+            {/* Modal */}
+            <Modal
+              visible={modalVisible}
+              transparent={true}
+              animationType="none"
+              onRequestClose={() => setModalVisible(false)}
             >
-              <YStack zIndex={10}>
-                <ChevronDown size={20} />
-              </YStack>
-            </Select.ScrollUpButton>
+              <Pressable
+                style={styles.modalOverlay}
+                onPress={() => setModalVisible(false)}
+              >
+                <Animated.View
+                  style={[
+                    styles.safeArea,
+                    {
+                      transform: [{ translateY: slideAnim }],
+                    },
+                  ]}
+                >
+                  <Pressable
+                    style={[
+                      styles.modalContent,
+                      {
+                        backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF',
+                        paddingBottom: insets.bottom + 20,
+                      },
+                    ]}
+                    onPress={(e) => e.stopPropagation()}
+                  >
+                    {/* Handle */}
+                    <YStack alignItems="center" paddingVertical="$2">
+                      <YStack
+                        width={40}
+                        height={4}
+                        borderRadius="$2"
+                        backgroundColor={isDarkMode ? '#444' : '#ccc'}
+                      />
+                    </YStack>
 
-            <Select.Viewport minWidth={200}>
-              <Select.Group>
-                {priorityOptions.map((option, index) => {
-                  const isSelected = value === option.value;
-                  return (
-                    <Select.Item
-                      key={option.value}
-                      index={index}
-                      value={option.value}
-                      backgroundColor={isSelected ? '$blue2' : 'transparent'}
-                      borderWidth={isSelected ? 1 : 0}
-                      borderColor={isSelected ? '$blue10' : 'transparent'}
-                      borderRadius="$3"
-                      marginVertical="$1"
-                      paddingHorizontal="$3"
-                      paddingVertical="$3"
+                    {/* Title */}
+                    <Text
+                      fontSize="$6"
+                      fontWeight="bold"
+                      textAlign="center"
+                      marginBottom="$3"
+                      color={isDarkMode ? '#fff' : '#000'}
                     >
-                      <Select.ItemText>{option.label}</Select.ItemText>
-                      <Select.ItemIndicator marginLeft="auto">
-                        <Check size={16} color="$blue10" />
-                      </Select.ItemIndicator>
-                    </Select.Item>
-                  );
-                })}
-              </Select.Group>
-            </Select.Viewport>
+                      {t('priorityList')}
+                    </Text>
 
-            <Select.ScrollDownButton
-              alignItems="center"
-              justifyContent="center"
-              position="relative"
-              width="100%"
-              height="$3"
-            >
-              <YStack zIndex={10}>
-                <ChevronDown size={20} />
-              </YStack>
-            </Select.ScrollDownButton>
-          </Select.Content>
-        </Select>
-      )}
+                    {/* Options */}
+                    <ScrollView style={styles.scrollView}>
+                      <YStack gap="$2" paddingVertical="$2">
+                        {priorityOptions.map((option) => {
+                          const isSelected = value === option.value;
+                          return (
+                            <TouchableOpacity
+                              key={option.value}
+                              onPress={() => {
+                                onChange(option.value);
+                                setModalVisible(false);
+                              }}
+                              activeOpacity={0.7}
+                            >
+                              <XStack
+                                backgroundColor={isSelected ? '$blue2' : 'transparent'}
+                                borderWidth={isSelected ? 1 : 0}
+                                borderColor={isSelected ? '$blue10' : 'transparent'}
+                                borderRadius="$3"
+                                paddingHorizontal="$4"
+                                paddingVertical="$3"
+                                alignItems="center"
+                                justifyContent="space-between"
+                              >
+                                <Text fontSize="$5" color={isDarkMode ? '#fff' : '#000'}>
+                                  {option.label}
+                                </Text>
+                                {isSelected && <Check size={16} color="$blue10" />}
+                              </XStack>
+                            </TouchableOpacity>
+                          );
+                        })}
+                      </YStack>
+                    </ScrollView>
+                  </Pressable>
+                </Animated.View>
+              </Pressable>
+            </Modal>
+          </>
+        );
+      }}
     />
   );
 };
+
+const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  safeArea: {
+    width: '100%',
+  },
+  modalContent: {
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    maxHeight: 400,
+  },
+  scrollView: {
+    maxHeight: 300,
+  },
+});
 
 export default TalepOncelik;

@@ -139,5 +139,6 @@
   "delete": "Удалить",
   "documentDeleted": "Документ удален",
   "documentDeleteError": "Ошибка удаления документа",
-  "documentsLoadError": "Ошибка загрузки документов"
+  "documentsLoadError": "Ошибка загрузки документов",
+  "addMorePhotos": "Добавить еще фотографии"
 }

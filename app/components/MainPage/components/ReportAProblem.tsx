@@ -29,13 +29,15 @@ interface ReportAProblemProps {
   talepEdenId?: number;
   onSuccess?: () => void;
   mode?: 'ariza' | 'talep'; // 'ariza' için Arıza Bildir, 'talep' için Talep Bildir
+  initialLocationId?: number;
+  initialLocationName?: string;
 }
 
-function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess, mode = 'ariza' }: ReportAProblemProps) {
+function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess, mode = 'ariza', initialLocationId, initialLocationName }: ReportAProblemProps) {
   const { t } = useTranslation();
   const { themeName } = useThemeController();
   const [loading, setLoading] = useState(false);
-  const [selectedLocationId, setSelectedLocationId] = useState<number>(0);
+  const [selectedLocationId, setSelectedLocationId] = useState<number>(initialLocationId || 0);
   const [selectedPhotos, setSelectedPhotos] = useState<{ uri: string; fileName: string }[]>([]);
 
   const isTalepMode = mode === 'talep';
@@ -51,7 +53,7 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess, mode = 'ariza'
       problemDate: new Date(),
       oncelik: '',
       talepTuru: '',
-      lokasyon: '',
+      lokasyon: initialLocationName || '',
       description: '',
     },
   });
@@ -235,6 +237,7 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess, mode = 'ariza'
           placeholder={t('selectLocation') || 'Lokasyon seçin'}
           error={errors.lokasyon?.message}
           required
+          selectedId={initialLocationId}
           onSubmit={(data) => {
             if (data && !Array.isArray(data)) {
               setSelectedLocationId(data.locationId);

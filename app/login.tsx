@@ -7,7 +7,7 @@ import { YStack } from '@tamagui/stacks';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, TouchableOpacity } from 'react-native';
+import { Alert, Image, TouchableOpacity } from 'react-native';
 import { apiService } from '../services/apiService';
 
 // Replaced custom StyledInput with Tamagui Input for proper theming
@@ -19,6 +19,7 @@ export default function Login() {
   const [kullaniciKod, setKullaniciKod] = useState('');
   const [sifre, setSifre] = useState('');
   const [loading, setLoading] = useState(false);
+  const [companyLogo, setCompanyLogo] = useState<string | null>(null);
 
   const getTextFromEvent = (e: any) => e?.nativeEvent?.text ?? e?.target?.value ?? '';
 
@@ -30,9 +31,13 @@ export default function Login() {
     try {
       const savedCompanyInfo = await AsyncStorage.getItem('companyInfo');
       const savedCompanyKey = await AsyncStorage.getItem('companyKey');
+      const savedCompanyLogo = await AsyncStorage.getItem('companyLogo');
 
       if (savedCompanyInfo && savedCompanyKey) {
         setStep('auth');
+        if (savedCompanyLogo) {
+          setCompanyLogo(savedCompanyLogo);
+        }
       }
     } catch (error) {
       console.error('Error checking company info:', error);
@@ -54,11 +59,7 @@ export default function Login() {
       const companyInfo = await apiService.getCompanyInfo(companyKey.trim());
 
       const isValidCompany =
-        !!companyInfo &&
-        typeof companyInfo.siraNo === 'number' &&
-        companyInfo.siraNo > 0 &&
-        typeof companyInfo.firmaAdi === 'string' &&
-        companyInfo.firmaAdi.trim().length > 0;
+        !!companyInfo && typeof companyInfo.siraNo === 'number' && companyInfo.siraNo > 0 && typeof companyInfo.firmaAdi === 'string' && companyInfo.firmaAdi.trim().length > 0;
 
       if (!isValidCompany) {
         throw new Error(t('companyInfoError'));
@@ -66,6 +67,89 @@ export default function Login() {
 
       await AsyncStorage.setItem('companyInfo', JSON.stringify(companyInfo));
       await AsyncStorage.setItem('companyKey', companyKey.trim());
+
+      // Fetch company logo if logoId exists
+      if (companyInfo?.logoId) {
+        try {
+          const requestPayload = {
+            photoId: companyInfo.logoId,
+            fileName: 'logo',
+            extension: '.png',
+          };
+          console.log('Fetching company logo with request:', requestPayload);
+
+          const logoData = await apiService.getClientAssets(companyInfo.logoId, 'logo', '.png');
+
+          console.log('Logo data received, type:', typeof logoData);
+          console.log('Logo data is ArrayBuffer:', logoData instanceof ArrayBuffer);
+
+          if (logoData) {
+            // Detect image format from data
+            const uint8Array = new Uint8Array(logoData);
+            const header = Array.from(uint8Array.slice(0, 12))
+              .map((b) => b.toString(16).padStart(2, '0'))
+              .join(' ');
+            console.log('Image header:', header);
+
+            // Determine MIME type based on header
+            let mimeType = 'image/png';
+            if (header.includes('52 49 46 46')) {
+              // RIFF (WebP)
+              mimeType = 'image/webp';
+            } else if (header.startsWith('89 50 4e 47')) {
+              // PNG
+              mimeType = 'image/png';
+            } else if (header.startsWith('ff d8 ff')) {
+              // JPEG
+              mimeType = 'image/jpeg';
+            }
+            console.log('Detected MIME type:', mimeType);
+
+            // Convert ArrayBuffer to base64 (React Native compatible way)
+            // Convert Uint8Array to base64 string manually
+            const base64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+            let base64 = '';
+            const bytes = uint8Array;
+            const len = bytes.length;
+
+            for (let i = 0; i < len; i += 3) {
+              const a = bytes[i];
+              const b = i + 1 < len ? bytes[i + 1] : 0;
+              const c = i + 2 < len ? bytes[i + 2] : 0;
+
+              const bitmap = (a << 16) | (b << 8) | c;
+
+              base64 += base64Chars[(bitmap >> 18) & 63];
+              base64 += base64Chars[(bitmap >> 12) & 63];
+              base64 += i + 1 < len ? base64Chars[(bitmap >> 6) & 63] : '=';
+              base64 += i + 2 < len ? base64Chars[bitmap & 63] : '=';
+            }
+
+            const base64String = base64;
+            const logoUri = `data:${mimeType};base64,${base64String}`;
+
+            console.log('Converted ArrayBuffer to base64');
+            console.log('Base64 string length:', base64String.length);
+            console.log('Base64 preview (first 50 chars):', base64String.substring(0, 50));
+
+            await AsyncStorage.setItem('companyLogo', logoUri);
+            setCompanyLogo(logoUri);
+            console.log('Logo successfully saved to state and AsyncStorage');
+          } else {
+            console.log('No logo data received from API');
+          }
+        } catch (logoError: any) {
+          console.error('Error fetching company logo:', logoError);
+          console.error('Logo error details:', {
+            message: logoError?.message,
+            status: logoError?.response?.status,
+            data: logoError?.response?.data,
+          });
+          // Logo hatası ana işlemi engellemez
+        }
+      } else {
+        console.log('No logoId in company info');
+      }
 
       setStep('auth');
       Alert.alert(t('success'), t('companyInfoSuccess'));
@@ -109,6 +193,8 @@ export default function Login() {
     try {
       await AsyncStorage.removeItem('companyInfo');
       await AsyncStorage.removeItem('companyKey');
+      await AsyncStorage.removeItem('companyLogo');
+      setCompanyLogo(null);
       setStep('company');
     } catch (error) {
       console.error('Error removing company info:', error);
@@ -147,9 +233,12 @@ export default function Login() {
                 onChange={(e) => setCompanyKeyInput(getTextFromEvent(e))}
                 placeholder={t('enterCompanyKey')}
                 autoCapitalize="none"
-                size="$3"
+                size="$4"
                 borderRadius="$3"
                 width="100%"
+                minHeight={50}
+                paddingVertical="$3"
+                maxFontSizeMultiplier={1.3}
               />
             </YStack>
 
@@ -167,6 +256,25 @@ export default function Login() {
   return (
     <Stack flex={1} justifyContent="center" padding="$4" backgroundColor="$background">
       <YStack space="$4" alignItems="center">
+        {companyLogo ? (
+          <Image
+            source={{ uri: companyLogo }}
+            style={{
+              width: 200,
+              height: 100,
+              resizeMode: 'contain',
+              marginBottom: 1,
+            }}
+            onLoad={() => console.log('✅ Logo image loaded successfully')}
+            onError={(error) => console.error('❌ Logo image load error:', error.nativeEvent.error)}
+          />
+        ) : (
+          <YStack width={200} height={100} marginBottom={1} borderWidth={2} borderColor="$gray8" borderStyle="dashed" alignItems="center" justifyContent="center" borderRadius="$3">
+            <Text color="$gray10" fontSize="$2">
+              Logo
+            </Text>
+          </YStack>
+        )}
         <Text fontSize="$8" color="$color" fontWeight="bold" marginBottom="$6" fontFamily="SF Pro Text">
           {t('login')}
         </Text>
@@ -180,9 +288,12 @@ export default function Login() {
             onChange={(e) => setKullaniciKod(getTextFromEvent(e))}
             placeholder={t('enterUserCode')}
             autoCapitalize="none"
-            size="$3"
+            size="$4"
             borderRadius="$3"
             width="100%"
+            minHeight={50}
+            paddingVertical="$3"
+            maxFontSizeMultiplier={1.3}
           />
         </YStack>
 
@@ -190,7 +301,7 @@ export default function Login() {
           <Text fontSize="$5" color="$color" fontWeight="500" fontFamily="SF Pro Text">
             {t('password')}
           </Text>
-          <Input value={sifre} onChange={(e) => setSifre(getTextFromEvent(e))} placeholder={t('enterPassword')} type="password" size="$3" borderRadius="$3" width="100%" />
+          <Input value={sifre} onChange={(e) => setSifre(getTextFromEvent(e))} placeholder={t('enterPassword')} type="password" size="$4" borderRadius="$3" width="100%" minHeight={50} paddingVertical="$3" maxFontSizeMultiplier={1.3} />
         </YStack>
 
         <Button size="$4" backgroundColor="$green10" width="100%" onPress={handleLogin} disabled={loading}>
