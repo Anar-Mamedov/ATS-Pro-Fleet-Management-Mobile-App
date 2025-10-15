@@ -139,5 +139,6 @@
   "delete": "Sil",
   "documentDeleted": "Sənəd silindi",
   "documentDeleteError": "Sənəd silinərkən xəta baş verdi",
-  "documentsLoadError": "Sənədlər yüklənərkən xəta baş verdi"
+  "documentsLoadError": "Sənədlər yüklənərkən xəta baş verdi",
+  "addMorePhotos": "Daha Çox Fotoşəkil Əlavə Et"
 }

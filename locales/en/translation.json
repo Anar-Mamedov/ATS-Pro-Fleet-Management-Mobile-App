@@ -155,5 +155,6 @@
   "delete": "Delete",
   "documentDeleted": "Document deleted",
   "documentDeleteError": "Error deleting document",
-  "documentsLoadError": "Error loading documents"
+  "documentsLoadError": "Error loading documents",
+  "addMorePhotos": "Add More Photos"
 }

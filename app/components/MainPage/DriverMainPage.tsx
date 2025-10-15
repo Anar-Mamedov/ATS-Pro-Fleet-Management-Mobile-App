@@ -11,9 +11,9 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, RefreshControl, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { apiService } from '../../../services/apiService';
+import DocumentUpload from '../../../ui/components/DocumentUpload';
 import { FormattedDate } from '../../../ui/components/FormattedDate';
 import ResimUpload from '../../../ui/components/ResimUpload';
-import DocumentUpload from '../../../ui/components/DocumentUpload';
 import ReportAProblem from './components/ReportAProblem';
 
 export default function DriverMainPage() {
@@ -208,7 +208,7 @@ export default function DriverMainPage() {
           </YStack>
 
           <XStack padding="$4" gap="$3" width="100%" flexWrap="wrap">
-            <Button
+            {/* <Button
               backgroundColor="$blue10"
               flexBasis="48%"
               onPress={() => {}}
@@ -233,7 +233,7 @@ export default function DriverMainPage() {
               <Button.Text color="white" fontSize="$5">
                 {t('yakitGirisi')}
               </Button.Text>
-            </Button>
+            </Button> */}
             <Button
               backgroundColor="$red10"
               flexBasis="48%"
@@ -425,7 +425,14 @@ export default function DriverMainPage() {
           backdropComponent={(backdropProps) => <BottomSheetBackdrop {...backdropProps} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.4} pressBehavior="close" />}
           backgroundStyle={{ backgroundColor: themeName === 'dark' ? '#1C1C1E' : '#FFFFFF' }}
         >
-          <ReportAProblem aracId={firstVehicle?.aracId || 0} talepEdenId={userId} onSuccess={closeFaultSheet} mode="ariza" />
+          <ReportAProblem
+            aracId={firstVehicle?.aracId || 0}
+            talepEdenId={userId}
+            onSuccess={closeFaultSheet}
+            mode="ariza"
+            initialLocationId={firstVehicle?.lokasyonId}
+            initialLocationName={firstVehicle?.lokasyon}
+          />
         </BottomSheetModal>
 
         {/* Talep Bildir Bottom Sheet */}
@@ -440,7 +447,14 @@ export default function DriverMainPage() {
           backdropComponent={(backdropProps) => <BottomSheetBackdrop {...backdropProps} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.4} pressBehavior="close" />}
           backgroundStyle={{ backgroundColor: themeName === 'dark' ? '#1C1C1E' : '#FFFFFF' }}
         >
-          <ReportAProblem aracId={firstVehicle?.aracId || 0} talepEdenId={userId} onSuccess={closeRequestSheet} mode="talep" />
+          <ReportAProblem
+            aracId={firstVehicle?.aracId || 0}
+            talepEdenId={userId}
+            onSuccess={closeRequestSheet}
+            mode="talep"
+            initialLocationId={firstVehicle?.lokasyonId}
+            initialLocationName={firstVehicle?.lokasyon}
+          />
         </BottomSheetModal>
 
         {/* Araç Belgeleri Bottom Sheet */}
