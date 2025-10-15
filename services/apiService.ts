@@ -51,6 +51,21 @@ export const apiService = {
     return response.data;
   },
 
+  getClientAssets: async (photoId: number, fileName: string, extension: string) => {
+    const response = await axiosInstance.post(
+      '/ClientInfo/GetClientAssets',
+      {
+        photoId: photoId,
+        fileName: fileName,
+        extension: extension,
+      },
+      {
+        responseType: 'arraybuffer',
+      }
+    );
+    return response.data;
+  },
+
   // Auth endpoints
   login: async (kullaniciKod: string, sifre: string, firmaSifre: string) => {
     const response = await axiosInstance.post('/Login?isMobileClient=true', {
