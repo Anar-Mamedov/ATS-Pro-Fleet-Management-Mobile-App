@@ -94,7 +94,7 @@ export default function DriverMainPage() {
   }, [getUserInfo, getDriverDashboardCardSection, getDashboardReminder]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: themeName === 'dark' ? '#111111' : 'hsl(0, 0%, 94.1%)' }} edges={['top', 'left', 'right', 'bottom']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: themeName === 'dark' ? '#111111' : 'hsl(0, 0%, 94.1%)' }} edges={['top', 'left', 'right']}>
       <Stack flex={1} backgroundColor="$background">
         <ScrollView contentContainerStyle={{ paddingBottom: bottomPad }} nestedScrollEnabled refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
           <Pressable onPress={openSheet} style={{ alignSelf: 'flex-start' }}>
