@@ -18,13 +18,7 @@ function ThemeBars() {
   const { themeName } = useThemeController();
   useEffect(() => {
     if (Platform.OS === 'android') {
-      NavigationBar.setStyle(themeName === 'dark' ? 'light' : 'dark');
-      // Make Android gesture/navigation bar transparent so content shows behind it
-      // (iOS home indicator color can't be changed in Expo)
-      try {
-        // @ts-ignore - setBackgroundColor works with color names like 'transparent'
-        NavigationBar.setBackgroundColorAsync('transparent');
-      } catch {}
+      NavigationBar.setButtonStyleAsync(themeName === 'dark' ? 'light' : 'dark');
     }
   }, [themeName]);
   return <StatusBar style={themeName === 'dark' ? 'light' : 'dark'} />;

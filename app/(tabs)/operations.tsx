@@ -104,7 +104,7 @@ export default function OperationsTab() {
   };
 
   return (
-    <SafeAreaView edges={['top', 'left', 'right', 'bottom']} style={{ flex: 1, backgroundColor: themeName === 'dark' ? '#000000' : '#FFFFFF' }}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: themeName === 'dark' ? '#000000' : '#FFFFFF' }}>
       <Stack flex={1} backgroundColor="$background">
         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: bottomPad }}>
           <YStack padding="$4" space="$3">

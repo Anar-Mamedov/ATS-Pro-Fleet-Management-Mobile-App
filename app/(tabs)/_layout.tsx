@@ -1,95 +1,64 @@
+import { useThemeController } from '@/config/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Platform, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const TAB_BAR_HEIGHT = 65;
-const TAB_BAR_BOTTOM_SPACING = 16;
+const TAB_BAR_BASE_HEIGHT = 60;
+const TAB_BAR_BOTTOM_PADDING = 12;
 
-function CustomTabBar({ state, descriptors, navigation }: any) {
-  const insets = useSafeAreaInsets();
-
-  return (
-    <View
-      style={{
-        position: 'absolute',
-        left: 80,
-        right: 80,
-        height: TAB_BAR_HEIGHT,
-        bottom: Math.max(insets.bottom, TAB_BAR_BOTTOM_SPACING),
-        backgroundColor: '#1a1a1a',
-        borderRadius: 40,
-        paddingHorizontal: 0,
-        paddingTop: 14,
-        paddingBottom: Platform.select({ ios: 16, android: 14, default: 16 }),
-        borderWidth: 1,
-        borderColor: '#ffffffff',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOpacity: 0.2,
-        shadowOffset: { width: 0, height: 6 },
-        shadowRadius: 16,
-        elevation: 10,
-      }}
-    >
-      {state.routes.map((route: any) => {
-        const isFocused = state.index === state.routes.findIndex((r: any) => r.key === route.key);
-        const onPress = () => {
-          const event = navigation.emit({
-            type: 'tabPress',
-            target: route.key,
-            canPreventDefault: true,
-          });
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
-          }
-        };
-
-        const options = descriptors[route.key]?.options || {};
-        const icon = options.tabBarIcon as any;
-
-        return (
-          <TouchableOpacity
-            key={route.key}
-            accessibilityRole="button"
-            accessibilityState={isFocused ? { selected: true } : {}}
-            onPress={onPress}
-            style={{ flex: 1, alignItems: 'center' }}
-          >
-            <View
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 9999,
-                overflow: 'hidden',
-                backgroundColor: isFocused ? '#FFFFFF' : 'transparent',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              {icon ? icon({ color: isFocused ? '#000000' : '#FFFFFF', size: 24, focused: isFocused }) : null}
-            </View>
-          </TouchableOpacity>
-        );
-      })}
-    </View>
-  );
-}
+const TAB_BAR_THEMES = {
+  light: {
+    background: '#FFFFFF',
+    border: 'rgba(0,0,0,0.06)',
+    active: '#00AEEF',
+    inactive: '#7A7F8C',
+    shadow: '#000',
+  },
+  dark: {
+    background: '#0E1117',
+    border: 'rgba(255,255,255,0.08)',
+    active: '#00AEEF',
+    inactive: '#8D94A1',
+    shadow: '#000',
+  },
+} as const;
 
 export default function TabLayout() {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
+  const { themeName } = useThemeController();
+  const palette = TAB_BAR_THEMES[themeName];
 
   return (
     <Tabs
-      tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={{
-        tabBarActiveTintColor: '#ff8000',
-        tabBarInactiveTintColor: '#8E8E93',
-        tabBarStyle: { display: 'none' },
         headerShown: false,
+        tabBarShowLabel: true,
+        tabBarHideOnKeyboard: true,
+        tabBarActiveTintColor: palette.active,
+        tabBarInactiveTintColor: palette.inactive,
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+          marginBottom: 6,
+        },
+        tabBarItemStyle: {
+          paddingTop: 6,
+        },
+        tabBarStyle: {
+          backgroundColor: palette.background,
+          borderTopColor: palette.border,
+          borderTopWidth: 1,
+          height: TAB_BAR_BASE_HEIGHT + insets.bottom,
+          paddingBottom: Math.max(insets.bottom, TAB_BAR_BOTTOM_PADDING),
+          paddingTop: 10,
+          shadowColor: palette.shadow,
+          shadowOpacity: 0.35,
+          shadowOffset: { width: 0, height: -4 },
+          shadowRadius: 16,
+          elevation: 30,
+        },
       }}
     >
       <Tabs.Screen
