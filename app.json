@@ -11,7 +11,7 @@
     "jsEngine": "hermes",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.ATS-Pro-Mobile-App"
+      "bundleIdentifier": "com.orjinyazilim.atspro"
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +19,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.ATSProMobileApp",
+      "package": "com.orjinyazilim.atspro",
       "versionCode": 1,
       "usesCleartextTraffic": true,
       "permissions": ["android.permission.CAMERA", "android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.RECORD_AUDIO"]
