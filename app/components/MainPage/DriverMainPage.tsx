@@ -5,10 +5,13 @@ import { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetModal, BottomSheet
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button } from '@tamagui/button';
 import { Stack, Text } from '@tamagui/core';
+import { Input } from '@tamagui/input';
 import { XStack, YStack } from '@tamagui/stacks';
+import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Pressable, RefreshControl, ScrollView } from 'react-native';
+import { Alert, Pressable, RefreshControl, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { apiService } from '../../../services/apiService';
 import DocumentUpload from '../../../ui/components/DocumentUpload';
@@ -70,12 +73,15 @@ export default function DriverMainPage() {
   const requestSheetRef = useRef<BottomSheetModal>(null);
   const docsSheetRef = useRef<BottomSheetModal>(null);
   const photosSheetRef = useRef<BottomSheetModal>(null);
+  const kmUpdateSheetRef = useRef<BottomSheetModal>(null);
   const openFaultSheet = () => faultSheetRef.current?.present();
   const closeFaultSheet = () => faultSheetRef.current?.dismiss();
   const openRequestSheet = () => requestSheetRef.current?.present();
   const closeRequestSheet = () => requestSheetRef.current?.dismiss();
   const openDocsSheet = () => docsSheetRef.current?.present();
   const openPhotosSheet = () => photosSheetRef.current?.present();
+  const openKmUpdateSheet = () => kmUpdateSheetRef.current?.present();
+  const closeKmUpdateSheet = () => kmUpdateSheetRef.current?.dismiss();
 
   useEffect(() => {
     if (firstVehicle) {
@@ -123,19 +129,21 @@ export default function DriverMainPage() {
           <YStack justifyContent="flex-start" alignItems="flex-start" padding="$4" gap="$3">
             <YStack width="100%" backgroundColor="$color1" borderWidth={1} borderColor="$gray4" borderRadius="$5" padding="$3" gap="$3">
               <XStack gap="$3">
-                <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
-                  <XStack alignItems="center" space="$3">
-                    <MaterialIcons name="speed" size={24} color="#007AFF" />
-                    <YStack flex={1}>
-                      <Text fontSize="$5" fontWeight="600" color="$color" numberOfLines={1} ellipsizeMode="tail">
-                        {firstVehicle?.guncelKm} km
-                      </Text>
-                      <Text color="$color" opacity={0.7} numberOfLines={1}>
-                        {t('guncelKm')}
-                      </Text>
-                    </YStack>
-                  </XStack>
-                </YStack>
+                <Pressable onPress={openKmUpdateSheet} style={{ flex: 1 }}>
+                  <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
+                    <XStack alignItems="center" space="$3">
+                      <MaterialIcons name="speed" size={24} color="#007AFF" />
+                      <YStack flex={1}>
+                        <Text fontSize="$5" fontWeight="600" color="$color" numberOfLines={1} ellipsizeMode="tail">
+                          {firstVehicle?.guncelKm} km
+                        </Text>
+                        <Text color="$color" opacity={0.7} numberOfLines={1}>
+                          {t('guncelKm')}
+                        </Text>
+                      </YStack>
+                    </XStack>
+                  </YStack>
+                </Pressable>
                 <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2">
                   <ScrollView
                     horizontal
@@ -162,7 +170,11 @@ export default function DriverMainPage() {
                     <XStack alignItems="center" space="$3" style={{ width: maintenanceCardWidth || 1 }}>
                       <MaterialIcons name="event" size={24} color="#007AFF" />
                       <YStack flex={1}>
-                        <FormattedDate value={firstVehicle?.hedefTarih ?? ''} format="L" textProps={{ fontSize: '$5', fontWeight: '600', numberOfLines: 1, ellipsizeMode: 'tail' }} />
+                        <FormattedDate
+                          value={firstVehicle?.hedefTarih ?? ''}
+                          format="L"
+                          textProps={{ fontSize: '$5', fontWeight: '600', numberOfLines: 1, ellipsizeMode: 'tail' }}
+                        />
                         <Text color="$color" opacity={0.7} numberOfLines={1}>
                           {t('bakimZamani')}
                         </Text>
@@ -194,7 +206,8 @@ export default function DriverMainPage() {
                           {firstVehicle?.ortalamaTuketim}
                         </Text>
                         <Text fontSize="$5" color="$color" opacity={0.7} flexShrink={0}>
-                          {' '}{t('fuelConsumptionUnit')}
+                          {' '}
+                          {t('fuelConsumptionUnit')}
                         </Text>
                       </XStack>
                       <Text color="$color" opacity={0.7} numberOfLines={1}>
@@ -507,7 +520,155 @@ export default function DriverMainPage() {
             </YStack>
           </BottomSheetView>
         </BottomSheetModal>
+
+        {/* Kilometre Güncelleme Bottom Sheet */}
+        <KmUpdateBottomSheet
+          sheetRef={kmUpdateSheetRef}
+          themeName={themeName}
+          firstVehicle={firstVehicle}
+          userId={userId}
+          onSuccess={() => {
+            closeKmUpdateSheet();
+            getDriverDashboardCardSection();
+          }}
+        />
       </Stack>
     </SafeAreaView>
+  );
+}
+
+// Km Update Bottom Sheet Component
+function KmUpdateBottomSheet({
+  sheetRef,
+  themeName,
+  firstVehicle,
+  userId,
+  onSuccess,
+}: {
+  sheetRef: React.RefObject<BottomSheetModal | null>;
+  themeName: string;
+  firstVehicle: any;
+  userId: number;
+  onSuccess: () => void;
+}) {
+  const { t } = useTranslation();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    defaultValues: {
+      yeniKm: '',
+    },
+  });
+
+  useEffect(() => {
+    if (firstVehicle?.guncelKm) {
+      reset({ yeniKm: String(firstVehicle.guncelKm) });
+    }
+  }, [firstVehicle?.guncelKm, reset]);
+
+  const onSubmit = async (data: { yeniKm: string }) => {
+    const yeniKm = parseFloat(data.yeniKm);
+    const eskiKm = firstVehicle?.guncelKm || 0;
+
+    if (yeniKm < eskiKm) {
+      Alert.alert(t('error'), t('kmCannotBeLessThanCurrent'));
+      return;
+    }
+
+    try {
+      const now = dayjs();
+      const kmLogData = {
+        kmAracId: firstVehicle?.aracId,
+        tarih: now.format(),
+        saat: now.format('HH:mm'),
+        eskiKm,
+        yeniKm,
+        kaynak: 'GÜNCELLEME',
+        lokasyonId: firstVehicle?.lokasyonId || 0,
+        surucuId: userId,
+      };
+
+      console.log('Sending km log data:', JSON.stringify(kmLogData, null, 2));
+
+      await apiService.addKmLog(kmLogData);
+
+      Alert.alert(t('success'), t('kmUpdatedSuccessfully'));
+      onSuccess();
+    } catch (error: any) {
+      console.error('Km update error:', error);
+      console.error('Error response:', error.response?.data);
+      Alert.alert(t('error'), error.response?.data?.message || t('kmUpdateFailed'));
+    }
+  };
+
+  return (
+    <BottomSheetModal
+      ref={sheetRef}
+      index={0}
+      snapPoints={['40%']}
+      enablePanDownToClose
+      handleIndicatorStyle={{ backgroundColor: themeName === 'dark' ? '#9BA1A6' : '#A1A1AA' }}
+      backdropComponent={(backdropProps) => <BottomSheetBackdrop {...backdropProps} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.4} pressBehavior="close" />}
+      backgroundStyle={{ backgroundColor: themeName === 'dark' ? '#1C1C1E' : '#FFFFFF' }}
+    >
+      <BottomSheetView style={{ flex: 1, paddingHorizontal: 16 }}>
+        <YStack gap="$4">
+          <Text fontSize="$6" fontWeight="600" textAlign="center" color="$color">
+            {t('updateKm')}
+          </Text>
+
+          <YStack gap="$2">
+            <Text fontSize="$4" color="$color" opacity={0.7}>
+              {t('currentKm')}: {firstVehicle?.guncelKm} km
+            </Text>
+
+            <YStack gap="$2">
+              <Text fontSize="$4" fontWeight="600" color="$color">
+                {t('newKm')}
+              </Text>
+              <Controller
+                control={control}
+                name="yeniKm"
+                rules={{
+                  required: t('required'),
+                  validate: (value) => {
+                    const num = parseFloat(value);
+                    if (isNaN(num)) return t('invalidNumber');
+                    if (num < (firstVehicle?.guncelKm || 0)) return t('kmCannotBeLessThanCurrent');
+                    return true;
+                  },
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    keyboardType="numeric"
+                    placeholder={t('enterNewKm')}
+                    size="$4"
+                    borderWidth={1}
+                    borderColor={errors.yeniKm ? '$red10' : '$gray4'}
+                  />
+                )}
+              />
+              {errors.yeniKm && (
+                <Text fontSize="$3" color="$red10">
+                  {errors.yeniKm.message}
+                </Text>
+              )}
+            </YStack>
+          </YStack>
+
+          <Button backgroundColor="$blue10" onPress={handleSubmit(onSubmit)} pressTheme={false} hoverTheme={false} pressStyle={{ backgroundColor: '$blue10', opacity: 0.85 }}>
+            <Button.Text color="white" fontSize="$5">
+              {t('apply')}
+            </Button.Text>
+          </Button>
+        </YStack>
+      </BottomSheetView>
+    </BottomSheetModal>
   );
 }

@@ -173,5 +173,15 @@
   "documentDeleted": "Doküman silindi",
   "documentDeleteError": "Doküman silinirken hata oluştu",
   "documentsLoadError": "Dokümanlar yüklenirken hata oluştu",
-  "addMorePhotos": "Daha Fazla Fotoğraf Ekle"
+  "addMorePhotos": "Daha Fazla Fotoğraf Ekle",
+  "updateKm": "Kilometre Güncelle",
+  "currentKm": "Mevcut Km",
+  "newKm": "Yeni Km",
+  "enterNewKm": "Yeni kilometre girin",
+  "kmCannotBeLessThanCurrent": "Yeni kilometre değeri mevcut değerden küçük olamaz!",
+  "kmUpdatedSuccessfully": "Kilometre başarıyla güncellendi",
+  "kmUpdateFailed": "Kilometre güncellenirken hata oluştu",
+  "apply": "Uygula",
+  "required": "Bu alan zorunludur",
+  "invalidNumber": "Geçersiz sayı"
 }
