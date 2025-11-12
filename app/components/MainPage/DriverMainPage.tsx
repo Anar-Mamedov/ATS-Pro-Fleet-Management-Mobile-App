@@ -126,11 +126,11 @@ export default function DriverMainPage() {
                 <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
                   <XStack alignItems="center" space="$3">
                     <MaterialIcons name="speed" size={24} color="#007AFF" />
-                    <YStack>
-                      <Text fontSize="$5" fontWeight="600" color="$color">
+                    <YStack flex={1}>
+                      <Text fontSize="$5" fontWeight="600" color="$color" numberOfLines={1} ellipsizeMode="tail">
                         {firstVehicle?.guncelKm} km
                       </Text>
-                      <Text color="$color" opacity={0.7}>
+                      <Text color="$color" opacity={0.7} numberOfLines={1}>
                         {t('guncelKm')}
                       </Text>
                     </YStack>
@@ -149,11 +149,11 @@ export default function DriverMainPage() {
                   >
                     <XStack alignItems="center" space="$3" style={{ width: maintenanceCardWidth || 1 }}>
                       <MaterialIcons name="build" size={24} color="#007AFF" />
-                      <YStack>
-                        <Text fontSize="$5" fontWeight="600" color="$color">
+                      <YStack flex={1}>
+                        <Text fontSize="$5" fontWeight="600" color="$color" numberOfLines={1} ellipsizeMode="tail">
                           {firstVehicle?.hedefKm} km
                         </Text>
-                        <Text color="$color" opacity={0.7}>
+                        <Text color="$color" opacity={0.7} numberOfLines={1}>
                           {t('bakimZamani')}
                         </Text>
                       </YStack>
@@ -161,9 +161,9 @@ export default function DriverMainPage() {
 
                     <XStack alignItems="center" space="$3" style={{ width: maintenanceCardWidth || 1 }}>
                       <MaterialIcons name="event" size={24} color="#007AFF" />
-                      <YStack>
-                        <FormattedDate value={firstVehicle?.hedefTarih ?? ''} format="L" textProps={{ fontSize: '$5', fontWeight: '600' }} />
-                        <Text color="$color" opacity={0.7}>
+                      <YStack flex={1}>
+                        <FormattedDate value={firstVehicle?.hedefTarih ?? ''} format="L" textProps={{ fontSize: '$5', fontWeight: '600', numberOfLines: 1, ellipsizeMode: 'tail' }} />
+                        <Text color="$color" opacity={0.7} numberOfLines={1}>
                           {t('bakimZamani')}
                         </Text>
                       </YStack>
@@ -175,11 +175,11 @@ export default function DriverMainPage() {
                 <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$5" padding="$2" gap="$2">
                   <XStack alignItems="center" space="$3">
                     <MaterialIcons name="policy" size={24} color="#007AFF" />
-                    <YStack>
-                      <Text fontSize="$5" fontWeight="600" color="$color">
+                    <YStack flex={1}>
+                      <Text fontSize="$5" fontWeight="600" color="$color" numberOfLines={1} ellipsizeMode="tail">
                         <FormattedDate value={firstVehicle?.sonSigortaTarih ?? ''} format="L" textProps={{ fontSize: '$5', fontWeight: '600' }} />
                       </Text>
-                      <Text color="$color" opacity={0.7}>
+                      <Text color="$color" opacity={0.7} numberOfLines={1}>
                         {t('sigortaBitis')}
                       </Text>
                     </YStack>
@@ -188,16 +188,16 @@ export default function DriverMainPage() {
                 <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$5" padding="$2" gap="$2">
                   <XStack alignItems="center" space="$3">
                     <MaterialIcons name="local-gas-station" size={24} color="#007AFF" />
-                    <YStack>
-                      <XStack>
-                        <Text fontSize="$5" fontWeight="600" color="$color" numberOfLines={1} ellipsizeMode="tail" maxWidth={60}>
+                    <YStack flex={1}>
+                      <XStack flexShrink={1}>
+                        <Text fontSize="$5" fontWeight="600" color="$color" numberOfLines={1} ellipsizeMode="tail" flexShrink={1}>
                           {firstVehicle?.ortalamaTuketim}
                         </Text>
-                        <Text fontSize="$5" color="$color" opacity={0.7}>
-                          {t('fuelConsumptionUnit')}
+                        <Text fontSize="$5" color="$color" opacity={0.7} flexShrink={0}>
+                          {' '}{t('fuelConsumptionUnit')}
                         </Text>
                       </XStack>
-                      <Text color="$color" opacity={0.7}>
+                      <Text color="$color" opacity={0.7} numberOfLines={1}>
                         {t('yakitTuketimi')}
                       </Text>
                     </YStack>
