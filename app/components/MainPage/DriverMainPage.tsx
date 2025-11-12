@@ -1,11 +1,10 @@
 import { useThemeController } from '@/config/theme';
 import { useBottomBarPadding } from '@/ui/components/useBottomBarPadding';
 import { MaterialIcons } from '@expo/vector-icons';
-import { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetModal, BottomSheetScrollView, BottomSheetTextInput, BottomSheetView } from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button } from '@tamagui/button';
 import { Stack, Text } from '@tamagui/core';
-import { Input } from '@tamagui/input';
 import { XStack, YStack } from '@tamagui/stacks';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -607,15 +606,18 @@ function KmUpdateBottomSheet({
   return (
     <BottomSheetModal
       ref={sheetRef}
+      snapPoints={['33%', '90%']}
       index={0}
-      snapPoints={['40%']}
       enablePanDownToClose
+      keyboardBehavior="extend"
+      keyboardBlurBehavior="restore"
+      android_keyboardInputMode="adjustResize"
       handleIndicatorStyle={{ backgroundColor: themeName === 'dark' ? '#9BA1A6' : '#A1A1AA' }}
       backdropComponent={(backdropProps) => <BottomSheetBackdrop {...backdropProps} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.4} pressBehavior="close" />}
       backgroundStyle={{ backgroundColor: themeName === 'dark' ? '#1C1C1E' : '#FFFFFF' }}
     >
-      <BottomSheetView style={{ flex: 1, paddingHorizontal: 16 }}>
-        <YStack gap="$4">
+      <BottomSheetScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }} keyboardShouldPersistTaps="handled">
+        <YStack gap="$4" paddingTop="$2">
           <Text fontSize="$6" fontWeight="600" textAlign="center" color="$color">
             {t('updateKm')}
           </Text>
@@ -642,15 +644,21 @@ function KmUpdateBottomSheet({
                   },
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
-                  <Input
+                  <BottomSheetTextInput
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
                     keyboardType="numeric"
                     placeholder={t('enterNewKm')}
-                    size="$4"
-                    borderWidth={1}
-                    borderColor={errors.yeniKm ? '$red10' : '$gray4'}
+                    style={{
+                      backgroundColor: themeName === 'dark' ? '#2C2C2E' : '#F2F2F7',
+                      borderWidth: 1,
+                      borderColor: errors.yeniKm ? '#FF3B30' : themeName === 'dark' ? '#3A3A3C' : '#C6C6C8',
+                      borderRadius: 8,
+                      padding: 12,
+                      fontSize: 16,
+                      color: themeName === 'dark' ? '#FFFFFF' : '#000000',
+                    }}
                   />
                 )}
               />
@@ -662,13 +670,20 @@ function KmUpdateBottomSheet({
             </YStack>
           </YStack>
 
-          <Button backgroundColor="$blue10" onPress={handleSubmit(onSubmit)} pressTheme={false} hoverTheme={false} pressStyle={{ backgroundColor: '$blue10', opacity: 0.85 }}>
+          <Button
+            backgroundColor="$blue10"
+            onPress={handleSubmit(onSubmit)}
+            pressTheme={false}
+            hoverTheme={false}
+            pressStyle={{ backgroundColor: '$blue10', opacity: 0.85 }}
+            marginBottom={20}
+          >
             <Button.Text color="white" fontSize="$5">
               {t('apply')}
             </Button.Text>
           </Button>
         </YStack>
-      </BottomSheetView>
+      </BottomSheetScrollView>
     </BottomSheetModal>
   );
 }
