@@ -140,5 +140,15 @@
   "documentDeleted": "Sənəd silindi",
   "documentDeleteError": "Sənəd silinərkən xəta baş verdi",
   "documentsLoadError": "Sənədlər yüklənərkən xəta baş verdi",
-  "addMorePhotos": "Daha Çox Fotoşəkil Əlavə Et"
+  "addMorePhotos": "Daha Çox Fotoşəkil Əlavə Et",
+  "updateKm": "Kilometri Yenilə",
+  "currentKm": "Mövcud Km",
+  "newKm": "Yeni Km",
+  "enterNewKm": "Yeni kilometr daxil edin",
+  "kmCannotBeLessThanCurrent": "Yeni kilometr dəyəri mövcud dəyərdən kiçik ola bilməz!",
+  "kmUpdatedSuccessfully": "Kilometr uğurla yeniləndi",
+  "kmUpdateFailed": "Kilometr yenilənərkən xəta baş verdi",
+  "apply": "Tətbiq Et",
+  "required": "Bu sahə məcburidir",
+  "invalidNumber": "Yanlış nömrə"
 }

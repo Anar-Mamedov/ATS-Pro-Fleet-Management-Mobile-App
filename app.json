@@ -11,7 +11,7 @@
     "jsEngine": "hermes",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.ATS-Pro-Mobile-App"
+      "bundleIdentifier": "com.orjinyazilim.atspro"
     },
     "android": {
       "adaptiveIcon": {
@@ -19,15 +19,10 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.ATSProMobileApp",
+      "package": "com.orjinyazilim.atspro",
       "versionCode": 1,
       "usesCleartextTraffic": true,
-      "permissions": [
-        "android.permission.CAMERA",
-        "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.RECORD_AUDIO"
-      ]
+      "permissions": ["android.permission.CAMERA", "android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.RECORD_AUDIO"]
     },
     "web": {
       "bundler": "metro",
@@ -42,7 +37,11 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#ffffff",
+          "dark": {
+            "image": "./assets/images/splash-icon-white.png",
+            "backgroundColor": "#000000"
+          }
         }
       ],
       "expo-secure-store",

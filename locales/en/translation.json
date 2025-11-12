@@ -156,5 +156,15 @@
   "documentDeleted": "Document deleted",
   "documentDeleteError": "Error deleting document",
   "documentsLoadError": "Error loading documents",
-  "addMorePhotos": "Add More Photos"
+  "addMorePhotos": "Add More Photos",
+  "updateKm": "Update Kilometers",
+  "currentKm": "Current Km",
+  "newKm": "New Km",
+  "enterNewKm": "Enter new kilometers",
+  "kmCannotBeLessThanCurrent": "New kilometers cannot be less than current value!",
+  "kmUpdatedSuccessfully": "Kilometers updated successfully",
+  "kmUpdateFailed": "Error updating kilometers",
+  "apply": "Apply",
+  "required": "This field is required",
+  "invalidNumber": "Invalid number"
 }

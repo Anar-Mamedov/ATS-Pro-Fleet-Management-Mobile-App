@@ -1,3 +1,4 @@
+import { useThemeController } from '@/config/theme';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button } from '@tamagui/button';
@@ -7,13 +8,15 @@ import { YStack } from '@tamagui/stacks';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Image, TouchableOpacity } from 'react-native';
+import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { apiService } from '../services/apiService';
 
 // Replaced custom StyledInput with Tamagui Input for proper theming
 
 export default function Login() {
   const { t } = useTranslation();
+  const { themeName } = useThemeController();
   const [step, setStep] = useState<'company' | 'auth'>('company');
   const [companyKey, setCompanyKeyInput] = useState('');
   const [kullaniciKod, setKullaniciKod] = useState('');
@@ -204,34 +207,112 @@ export default function Login() {
 
   if (step === 'company') {
     return (
-      <Stack flex={1} backgroundColor="$background">
-        <TouchableOpacity
-          onPress={handleBackToWelcome}
-          style={{
-            position: 'absolute',
-            top: 50,
-            left: 20,
-            zIndex: 1,
-            padding: 8,
-          }}
-        >
-          <Ionicons name="arrow-back" size={24} color="#0A84FF" />
-        </TouchableOpacity>
+      <SafeAreaView style={{ flex: 1, backgroundColor: themeName === 'dark' ? '#000000' : '#F0F0F0' }} edges={['top']}>
+        <Stack flex={1} backgroundColor="$background">
+          <TouchableOpacity
+            onPress={handleBackToWelcome}
+            style={{
+              position: 'absolute',
+              top: 10,
+              left: 20,
+              zIndex: 1,
+              padding: 8,
+            }}
+          >
+            <Ionicons name="arrow-back" size={24} color="#0A84FF" />
+          </TouchableOpacity>
 
-        <Stack flex={1} justifyContent="center" padding="$4">
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+          >
+            <ScrollView
+              contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 16 }}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
+            <YStack space="$4" alignItems="center">
+              <Text fontSize="$8" color="$color" fontWeight="bold" marginBottom="$6" fontFamily="SF Pro Text">
+                {t('companyLogin')}
+              </Text>
+
+              <YStack width="100%" space="$3">
+                <Text fontSize="$5" color="$color" fontWeight="500" fontFamily="SF Pro Text">
+                  {t('companyKey')}
+                </Text>
+                <Input
+                  value={companyKey}
+                  onChange={(e) => setCompanyKeyInput(getTextFromEvent(e))}
+                  placeholder={t('enterCompanyKey')}
+                  autoCapitalize="none"
+                  size="$4"
+                  borderRadius="$3"
+                  width="100%"
+                  minHeight={50}
+                  paddingVertical="$3"
+                  maxFontSizeMultiplier={1.3}
+                />
+              </YStack>
+
+              <Button size="$4" backgroundColor="$blue10" width="100%" onPress={handleCompanySubmit} disabled={loading}>
+                <Text color="$color" fontWeight="400" fontSize="$4" fontFamily="SF Pro Text">
+                  {loading ? t('checking') : t('continue')}
+                </Text>
+              </Button>
+            </YStack>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </Stack>
+    </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: themeName === 'dark' ? '#000000' : '#F0F0F0' }} edges={['top']}>
+      <Stack flex={1} backgroundColor="$background">
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        >
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 16 }}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
           <YStack space="$4" alignItems="center">
+            {companyLogo ? (
+              <Image
+                source={{ uri: companyLogo }}
+                style={{
+                  width: 200,
+                  height: 100,
+                  resizeMode: 'contain',
+                  marginBottom: 1,
+                }}
+                onLoad={() => console.log('✅ Logo image loaded successfully')}
+                onError={(error) => console.error('❌ Logo image load error:', error.nativeEvent.error)}
+              />
+            ) : (
+              <YStack width={200} height={100} marginBottom={1} borderWidth={2} borderColor="$gray8" borderStyle="dashed" alignItems="center" justifyContent="center" borderRadius="$3">
+                <Text color="$gray10" fontSize="$2">
+                  Logo
+                </Text>
+              </YStack>
+            )}
             <Text fontSize="$8" color="$color" fontWeight="bold" marginBottom="$6" fontFamily="SF Pro Text">
-              {t('companyLogin')}
+              {t('login')}
             </Text>
 
             <YStack width="100%" space="$3">
               <Text fontSize="$5" color="$color" fontWeight="500" fontFamily="SF Pro Text">
-                {t('companyKey')}
+                {t('userCode')}
               </Text>
               <Input
-                value={companyKey}
-                onChange={(e) => setCompanyKeyInput(getTextFromEvent(e))}
-                placeholder={t('enterCompanyKey')}
+                value={kullaniciKod}
+                onChange={(e) => setKullaniciKod(getTextFromEvent(e))}
+                placeholder={t('enterUserCode')}
                 autoCapitalize="none"
                 size="$4"
                 borderRadius="$3"
@@ -242,80 +323,28 @@ export default function Login() {
               />
             </YStack>
 
-            <Button size="$4" backgroundColor="$blue10" width="100%" onPress={handleCompanySubmit} disabled={loading}>
+            <YStack width="100%" space="$3">
+              <Text fontSize="$5" color="$color" fontWeight="500" fontFamily="SF Pro Text">
+                {t('password')}
+              </Text>
+              <Input value={sifre} onChange={(e) => setSifre(getTextFromEvent(e))} placeholder={t('enterPassword')} type="password" size="$4" borderRadius="$3" width="100%" minHeight={50} paddingVertical="$3" maxFontSizeMultiplier={1.3} />
+            </YStack>
+
+            <Button size="$4" backgroundColor="$green10" width="100%" onPress={handleLogin} disabled={loading}>
               <Text color="$color" fontWeight="400" fontSize="$4" fontFamily="SF Pro Text">
-                {loading ? t('checking') : t('continue')}
+                {loading ? t('loggingIn') : t('login')}
+              </Text>
+            </Button>
+
+            <Button size="$3" variant="outlined" marginTop="$4" onPress={handleChangeCompany}>
+              <Text color="$blue10" fontFamily="SF Pro Text">
+                {t('changeCompany')}
               </Text>
             </Button>
           </YStack>
-        </Stack>
-      </Stack>
-    );
-  }
-
-  return (
-    <Stack flex={1} justifyContent="center" padding="$4" backgroundColor="$background">
-      <YStack space="$4" alignItems="center">
-        {companyLogo ? (
-          <Image
-            source={{ uri: companyLogo }}
-            style={{
-              width: 200,
-              height: 100,
-              resizeMode: 'contain',
-              marginBottom: 1,
-            }}
-            onLoad={() => console.log('✅ Logo image loaded successfully')}
-            onError={(error) => console.error('❌ Logo image load error:', error.nativeEvent.error)}
-          />
-        ) : (
-          <YStack width={200} height={100} marginBottom={1} borderWidth={2} borderColor="$gray8" borderStyle="dashed" alignItems="center" justifyContent="center" borderRadius="$3">
-            <Text color="$gray10" fontSize="$2">
-              Logo
-            </Text>
-          </YStack>
-        )}
-        <Text fontSize="$8" color="$color" fontWeight="bold" marginBottom="$6" fontFamily="SF Pro Text">
-          {t('login')}
-        </Text>
-
-        <YStack width="100%" space="$3">
-          <Text fontSize="$5" color="$color" fontWeight="500" fontFamily="SF Pro Text">
-            {t('userCode')}
-          </Text>
-          <Input
-            value={kullaniciKod}
-            onChange={(e) => setKullaniciKod(getTextFromEvent(e))}
-            placeholder={t('enterUserCode')}
-            autoCapitalize="none"
-            size="$4"
-            borderRadius="$3"
-            width="100%"
-            minHeight={50}
-            paddingVertical="$3"
-            maxFontSizeMultiplier={1.3}
-          />
-        </YStack>
-
-        <YStack width="100%" space="$3">
-          <Text fontSize="$5" color="$color" fontWeight="500" fontFamily="SF Pro Text">
-            {t('password')}
-          </Text>
-          <Input value={sifre} onChange={(e) => setSifre(getTextFromEvent(e))} placeholder={t('enterPassword')} type="password" size="$4" borderRadius="$3" width="100%" minHeight={50} paddingVertical="$3" maxFontSizeMultiplier={1.3} />
-        </YStack>
-
-        <Button size="$4" backgroundColor="$green10" width="100%" onPress={handleLogin} disabled={loading}>
-          <Text color="$color" fontWeight="400" fontSize="$4" fontFamily="SF Pro Text">
-            {loading ? t('loggingIn') : t('login')}
-          </Text>
-        </Button>
-
-        <Button size="$3" variant="outlined" marginTop="$4" onPress={handleChangeCompany}>
-          <Text color="$blue10" fontFamily="SF Pro Text">
-            {t('changeCompany')}
-          </Text>
-        </Button>
-      </YStack>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </Stack>
+  </SafeAreaView>
   );
 }

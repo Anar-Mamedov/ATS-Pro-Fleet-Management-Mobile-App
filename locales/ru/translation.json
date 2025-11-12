@@ -140,5 +140,15 @@
   "documentDeleted": "Документ удален",
   "documentDeleteError": "Ошибка удаления документа",
   "documentsLoadError": "Ошибка загрузки документов",
-  "addMorePhotos": "Добавить еще фотографии"
+  "addMorePhotos": "Добавить еще фотографии",
+  "updateKm": "Обновить километраж",
+  "currentKm": "Текущий км",
+  "newKm": "Новый км",
+  "enterNewKm": "Введите новый километраж",
+  "kmCannotBeLessThanCurrent": "Новый километраж не может быть меньше текущего!",
+  "kmUpdatedSuccessfully": "Километраж успешно обновлен",
+  "kmUpdateFailed": "Ошибка обновления километража",
+  "apply": "Применить",
+  "required": "Это поле обязательно",
+  "invalidNumber": "Неверное число"
 }

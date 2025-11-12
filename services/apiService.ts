@@ -411,4 +411,19 @@ export const apiService = {
       return { success: true };
     }
   },
+
+  // KmLog endpoints
+  addKmLog: async (kmLogData: {
+    kmAracId: number;
+    tarih: string;
+    saat: string;
+    eskiKm: number;
+    yeniKm: number;
+    kaynak: string;
+    lokasyonId: number;
+    surucuId: number;
+  }) => {
+    const response = await axiosInstance.post('/KmLog/AddKmLog', [kmLogData]);
+    return response.data;
+  },
 };

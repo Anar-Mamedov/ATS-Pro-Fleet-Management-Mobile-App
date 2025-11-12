@@ -8,11 +8,17 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_BASE_URL": "https://api.atspro.com.tr/api"
       }
     },
     "production": {
       "android": {
-        "buildType": "apk"
+        "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_BASE_URL": "https://api.atspro.com.tr/api"
       }
     }
   }
