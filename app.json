@@ -9,9 +9,19 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "jsEngine": "hermes",
+    "primaryColor": "#007AFF",
+    "description": "ATS Pro - Fleet management application for drivers and managers. Track vehicles, manage maintenance, reports and documents.",
+    "privacy": "https://atspro.com.tr/privacy-policy",
+    "githubUrl": "https://github.com/Anar-Mamedov/ATS-Pro-Fleet-Management-Mobile-App.git",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.orjinyazilim.atspro"
+      "bundleIdentifier": "com.orjinyazilim.atspro",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Uygulama kameranızı kullanmak için izin gerekiyor.",
+        "NSPhotoLibraryUsageDescription": "Uygulama fotoğraflarınıza erişmek için izin gerekiyor.",
+        "NSMicrophoneUsageDescription": "Uygulama mikrofonunuzu kullanmak için izin gerekiyor."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -60,6 +70,13 @@
           "cameraPermission": "Uygulama kameranızı kullanmak için izin gerekiyor.",
           "microphonePermission": "Uygulama mikrofonunuzu kullanmak için izin gerekiyor.",
           "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-network-security-config",
+        {
+          "networkSecurityConfig": "./plugins/network_security_config.xml",
+          "enable": true
         }
       ]
     ],
