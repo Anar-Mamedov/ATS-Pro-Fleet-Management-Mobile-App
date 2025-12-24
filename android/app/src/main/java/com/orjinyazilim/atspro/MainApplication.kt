@@ -1,4 +1,4 @@
-package com.anonymous.ATSProMobileApp
+package com.orjinyazilim.atspro
 
 import android.app.Application
 import android.content.res.Configuration

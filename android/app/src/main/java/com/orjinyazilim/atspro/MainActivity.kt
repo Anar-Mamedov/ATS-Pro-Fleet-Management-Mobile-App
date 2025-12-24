@@ -1,4 +1,4 @@
-package com.anonymous.ATSProMobileApp
+package com.orjinyazilim.atspro
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
