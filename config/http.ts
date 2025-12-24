@@ -49,6 +49,19 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async (error) => {
+    // Detaylı network error logging (Xiaomi/Oppo debug için)
+    if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+      console.error('Network Error Details:', {
+        message: error.message,
+        code: error.code,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+          baseURL: error.config?.baseURL,
+        },
+      });
+    }
+
     if (error.response && error.response.status === 401) {
       if (!isHandlingUnauthorized) {
         isHandlingUnauthorized = true;

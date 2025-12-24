@@ -78,7 +78,8 @@
           "networkSecurityConfig": "./plugins/network_security_config.xml",
           "enable": true
         }
-      ]
+      ],
+      "./plugins/copy-sectigo-cert.js"
     ],
     "experiments": {
       "typedRoutes": true
