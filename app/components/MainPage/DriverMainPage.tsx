@@ -204,13 +204,9 @@ export default function DriverMainPage() {
                         <Text fontSize="$5" fontWeight="600" color="$color" numberOfLines={1} ellipsizeMode="tail" flexShrink={1}>
                           {firstVehicle?.ortalamaTuketim}
                         </Text>
-                        <Text fontSize="$5" color="$color" opacity={0.7} flexShrink={0}>
-                          {' '}
-                          {t('fuelConsumptionUnit')}
-                        </Text>
                       </XStack>
                       <Text color="$color" opacity={0.7} numberOfLines={1}>
-                        {t('yakitTuketimi')}
+                        {t('fuelConsumptionUnit')}
                       </Text>
                     </YStack>
                   </XStack>
