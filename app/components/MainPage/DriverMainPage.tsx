@@ -161,7 +161,7 @@ export default function DriverMainPage() {
                           {firstVehicle?.hedefKm} km
                         </Text>
                         <Text color="$color" opacity={0.7} numberOfLines={1}>
-                          {t('bakimZamani')}
+                          {t('bakimKm')}
                         </Text>
                       </YStack>
                     </XStack>
