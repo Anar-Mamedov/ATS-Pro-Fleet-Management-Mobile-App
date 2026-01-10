@@ -183,5 +183,6 @@
   "kmUpdateFailed": "Kilometre güncellenirken hata oluştu",
   "apply": "Uygula",
   "required": "Bu alan zorunludur",
-  "invalidNumber": "Geçersiz sayı"
+  "invalidNumber": "Geçersiz sayı",
+  "bakimKm": "Bakım km"
 }

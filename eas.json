@@ -9,6 +9,9 @@
       "android": {
         "buildType": "apk"
       },
+      "ios": {
+        "simulator": true
+      },
       "env": {
         "EXPO_PUBLIC_BASE_URL": "https://api.atspro.com.tr/api"
       }
@@ -19,6 +22,18 @@
       },
       "env": {
         "EXPO_PUBLIC_BASE_URL": "https://api.atspro.com.tr/api"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "YOUR_APPLE_ID_EMAIL@example.com",
+        "ascAppId": "PLACEHOLDER_ASC_APP_ID",
+        "appleTeamId": "PLACEHOLDER_TEAM_ID"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./google-services.json"
       }
     }
   }

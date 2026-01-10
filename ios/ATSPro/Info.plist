@@ -28,7 +28,7 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>atspromobileapp</string>
-          <string>com.anonymous.ATS-Pro-Mobile-App</string>
+          <string>com.orjinyazilim.atspro</string>
         </array>
       </dict>
       <dict>

@@ -120,23 +120,27 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({ refId, refGroup, editab
         .join('');
       const base64 = btoa(binary);
 
-      const fileUri = `${FileSystem.cacheDirectory}${doc.dosyaAd}`;
+      const fileName = getFileNameWithExtension(doc);
+      const mimeType = getMimeType(doc.dosyaUzanti);
 
-      await FileSystem.writeAsStringAsync(fileUri, base64, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-
-      if (Platform.OS === 'android' || Platform.OS === 'ios') {
-        const canShare = await Sharing.isAvailableAsync();
-        if (canShare) {
-          await Sharing.shareAsync(fileUri, {
-            mimeType: getMimeType(doc.dosyaUzanti),
-            dialogTitle: doc.dosyaAd,
-            UTI: doc.dosyaUzanti,
-          });
-        } else {
+      if (Platform.OS === 'android') {
+        const savedToDownloads = await saveDocumentToDownloads(fileName, mimeType, base64);
+        if (savedToDownloads) {
           Alert.alert(t('success'), t('documentDownloaded') || 'Doküman indirildi');
+          return;
         }
+      }
+
+      const fileUri = await saveToAppDirectory(fileName, base64);
+      const canShare = await Sharing.isAvailableAsync();
+      if (canShare) {
+        await Sharing.shareAsync(fileUri, {
+          mimeType,
+          dialogTitle: fileName,
+          UTI: doc.dosyaUzanti,
+        });
+      } else {
+        Alert.alert(t('success'), t('documentDownloaded') || 'Doküman indirildi');
       }
     } catch (error: any) {
       console.error('Error downloading document:', error);
@@ -192,6 +196,52 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({ refId, refGroup, editab
       png: 'image/png',
     };
     return mimeTypes[ext] || 'application/octet-stream';
+  };
+
+  const normalizeExtension = (extension: string) => {
+    if (!extension) return '';
+    return extension.startsWith('.') ? extension : `.${extension}`;
+  };
+
+  const sanitizeFileName = (fileName: string) => fileName.replace(/[\\/:*?"<>|]/g, '_').trim();
+
+  const getFileNameWithExtension = (doc: Document) => {
+    const extension = normalizeExtension(doc.dosyaUzanti);
+    const rawName = doc.dosyaAd || `document-${doc.tbDosyaId}`;
+    const sanitizedName = sanitizeFileName(rawName);
+    const safeName = sanitizedName.length > 0 ? sanitizedName : `document-${doc.tbDosyaId}`;
+    const hasExtension = /\.[^./\\]+$/.test(safeName);
+    if (!extension || hasExtension) {
+      return safeName;
+    }
+    return `${safeName}${extension}`;
+  };
+
+  const saveToAppDirectory = async (fileName: string, base64: string) => {
+    const fileUri = `${FileSystem.documentDirectory}${fileName}`;
+    await FileSystem.writeAsStringAsync(fileUri, base64, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+    return fileUri;
+  };
+
+  const saveDocumentToDownloads = async (fileName: string, mimeType: string, base64: string) => {
+    try {
+      const { StorageAccessFramework } = FileSystem;
+      const downloadDirUri = StorageAccessFramework.getUriForDirectoryInRoot('Download');
+      const permissions = await StorageAccessFramework.requestDirectoryPermissionsAsync(downloadDirUri);
+      if (!permissions.granted) {
+        return false;
+      }
+      const downloadUri = await StorageAccessFramework.createFileAsync(permissions.directoryUri, fileName, mimeType);
+      await StorageAccessFramework.writeAsStringAsync(downloadUri, base64, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      return true;
+    } catch (error) {
+      console.error('Error saving document to downloads:', error);
+      return false;
+    }
   };
 
   return (
