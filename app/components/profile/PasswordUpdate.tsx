@@ -12,7 +12,7 @@ export default function PasswordUpdate() {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   const handleSave = () => {
     if (!currentPassword || !newPassword || !confirmPassword) {

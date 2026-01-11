@@ -3,7 +3,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Text, View } from '@tamagui/core';
 import { YStack } from '@tamagui/stacks';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Image, Modal, TouchableOpacity } from 'react-native';
 import { apiService } from '../../../services/apiService';
@@ -35,22 +35,41 @@ interface UserInfo {
   defRsmId: number;
 }
 
+const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+};
+
 export default function ProfileUserInfo() {
   const { t } = useTranslation();
   const { themeName } = useThemeController();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [photoLoading, setPhotoLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [isDriver, setIsDriver] = useState(false);
 
-  useEffect(() => {
-    fetchUserInfo();
+  const fetchProfilePhoto = useCallback(async (photoId: number, extension: string, fileName: string) => {
+    try {
+      const photoArrayBuffer = await apiService.downloadPhotoById(photoId, extension, fileName);
+
+      if (photoArrayBuffer) {
+        const base64String = arrayBufferToBase64(photoArrayBuffer);
+        const mimeType = extension.replace('.', '');
+        setProfilePhoto(`data:image/${mimeType};base64,${base64String}`);
+      }
+    } catch (error: any) {
+      console.error('Error fetching profile photo:', error);
+      // Fotoğraf yüklenemezse sessizce devam et, hata gösterme
+    }
   }, []);
 
-  const fetchUserInfo = async () => {
+  const fetchUserInfo = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -87,36 +106,11 @@ export default function ProfileUserInfo() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [fetchProfilePhoto, t]);
 
-  const fetchProfilePhoto = async (photoId: number, extension: string, fileName: string) => {
-    try {
-      setPhotoLoading(true);
-      const photoArrayBuffer = await apiService.downloadPhotoById(photoId, extension, fileName);
-
-      if (photoArrayBuffer) {
-        // ArrayBuffer'ı base64'e çevir
-        const base64String = arrayBufferToBase64(photoArrayBuffer);
-        const mimeType = extension.replace('.', '');
-        setProfilePhoto(`data:image/${mimeType};base64,${base64String}`);
-      }
-    } catch (error: any) {
-      console.error('Error fetching profile photo:', error);
-      // Fotoğraf yüklenemezse sessizce devam et, hata gösterme
-    } finally {
-      setPhotoLoading(false);
-    }
-  };
-
-  // ArrayBuffer'ı base64'e çeviren yardımcı fonksiyon
-  const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
-    const bytes = new Uint8Array(buffer);
-    let binary = '';
-    for (let i = 0; i < bytes.byteLength; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    return btoa(binary);
-  };
+  useEffect(() => {
+    fetchUserInfo();
+  }, [fetchUserInfo]);
 
   // Resim yükleme başarılı olduğunda çağrılacak
   const handleUploadSuccess = (photoUri: string) => {

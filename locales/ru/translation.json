@@ -82,6 +82,7 @@
   "damageNumber": "Номер повреждения",
   "enterDamageNumber": "Введите номер повреждения",
   "problemDate": "Дата проблемы",
+  "requestDate": "Дата запроса",
   "selectDate": "Выберите дату",
   "description": "Описание",
   "describeProblem": "Опишите проблему",

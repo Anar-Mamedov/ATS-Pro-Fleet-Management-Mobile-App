@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button } from '@tamagui/button';
 import { Text, View } from '@tamagui/core';
 import { XStack, YStack } from '@tamagui/stacks';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, StyleSheet, TextInput } from 'react-native';
 
@@ -27,11 +27,7 @@ export default function PersoneInformationUpdate({ onSuccess }: PersoneInformati
     message: string;
   } | null>(null);
 
-  useEffect(() => {
-    fetchUserInfo();
-  }, []);
-
-  const fetchUserInfo = async () => {
+  const fetchUserInfo = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -55,7 +51,11 @@ export default function PersoneInformationUpdate({ onSuccess }: PersoneInformati
     } finally {
       setLoading(false);
     }
-  };
+  }, [t]);
+
+  useEffect(() => {
+    fetchUserInfo();
+  }, [fetchUserInfo]);
 
   const handleSave = async () => {
     try {

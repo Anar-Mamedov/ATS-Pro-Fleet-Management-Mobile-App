@@ -163,6 +163,7 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess, mode = 'ariza'
   };
 
   const isDarkMode = themeName === 'dark';
+  const dateLabel = isTalepMode ? t('requestDate') || 'Talep Tarihi' : t('problemDate');
 
   return (
     <BottomSheetScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
@@ -182,7 +183,7 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess, mode = 'ariza'
           required
         />
 
-        <DatePicker control={control} name="problemDate" label={t('problemDate')} placeholder={t('selectDate')} error={errors.problemDate?.message} required />
+        <DatePicker control={control} name="problemDate" label={dateLabel} placeholder={t('selectDate')} error={errors.problemDate?.message} required />
 
         <YStack gap="$2">
           <Text fontSize="$3" fontWeight="600">
