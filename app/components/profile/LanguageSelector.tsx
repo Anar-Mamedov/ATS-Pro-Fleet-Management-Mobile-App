@@ -8,14 +8,6 @@ import { SvgXml } from 'react-native-svg';
 import { changeLanguage } from '../../../config/i18n';
 import { useThemeController } from '../../../config/theme';
 
-// Flag SVG imports - we'll use require for SVG files
-const flagSvgs = {
-  tr: require('../../../assets/images/Turkey.svg'),
-  en: require('../../../assets/images/English.svg'),
-  ru: require('../../../assets/images/Russian.svg'),
-  az: require('../../../assets/images/Azerbaijan.svg'),
-};
-
 interface Language {
   code: string;
   name: string;
@@ -48,10 +40,13 @@ export default function LanguageSelector() {
   }, []);
 
   // Handle language change
-  const handleLanguageChange = useCallback((languageCode: string) => {
-    changeLanguage(languageCode);
-    handleCloseBottomSheet();
-  }, []);
+  const handleLanguageChange = useCallback(
+    (languageCode: string) => {
+      changeLanguage(languageCode);
+      handleCloseBottomSheet();
+    },
+    [handleCloseBottomSheet]
+  );
 
   // Backdrop component for darkening background
   const renderBackdrop = useCallback((props: any) => <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} opacity={0.5} pressBehavior="close" />, []);
