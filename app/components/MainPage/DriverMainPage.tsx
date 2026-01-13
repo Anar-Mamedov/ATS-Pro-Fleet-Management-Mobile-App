@@ -150,7 +150,7 @@ export default function DriverMainPage() {
                     {firstVehicle.plaka}
                   </Text>
                   <XStack alignItems="center" space="$1">
-                    <Text fontSize="$5" color="$color" opacity={0.8} numberOfLines={1} ellipsizeMode="tail" maxWidth={100}>
+                    <Text fontSize="$5" color="$color" opacity={0.8} numberOfLines={1} ellipsizeMode="tail" maxWidth={180}>
                       {firstVehicle.model}
                     </Text>
                     <Text fontSize="$5" color="$color" opacity={0.8}>
