@@ -71,6 +71,7 @@
   "personalInfoUpdated": "Личная информация обновлена",
   "updateError": "Ошибка обновления",
   "fuelConsumptionUnit": "л/100 км",
+  "sonKmTarihi": "Дата последнего км",
   "yakitLimiti": "Лимит топлива",
   "yakitKayitlari": "Записи топлива",
   "miktar": "Количество",

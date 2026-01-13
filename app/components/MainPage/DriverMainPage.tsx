@@ -902,6 +902,18 @@ function KmUpdateBottomSheet({
             <Text fontSize="$4" color="$color" opacity={0.7}>
               {t('currentKm')}: {firstVehicle?.guncelKm} km
             </Text>
+            <XStack alignItems="center" gap="$2">
+              <Text fontSize="$4" color="$color" opacity={0.7}>
+                {t('sonKmTarihi')}:
+              </Text>
+              {firstVehicle?.sonKmTarih ? (
+                <FormattedDate value={firstVehicle.sonKmTarih} format="L" textProps={{ fontSize: '$4', color: '$color', opacity: 0.7 }} />
+              ) : (
+                <Text fontSize="$4" color="$color" opacity={0.7}>
+                  -
+                </Text>
+              )}
+            </XStack>
 
             <YStack gap="$2">
               <Text fontSize="$4" fontWeight="600" color="$color">
