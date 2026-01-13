@@ -283,6 +283,13 @@ export const apiService = {
     return response.data;
   },
 
+  // Fuel endpoints
+  getFuelListByVehicleId: async (vehicleIds: number[], diff: number, setPointId: number, parameter: string = '') => {
+    const encodedParameter = encodeURIComponent(parameter);
+    const response = await axiosInstance.post(`/Fuel/GetFuelListByVehicleId?diff=${diff}&setPointId=${setPointId}&parameter=${encodedParameter}`, vehicleIds);
+    return response.data;
+  },
+
   // Numerator endpoints
   getModuleCodeByCode: async (code: string) => {
     const response = await axiosInstance.get(`/Numbering/GetModuleCodeByCode?code=${code}`);
