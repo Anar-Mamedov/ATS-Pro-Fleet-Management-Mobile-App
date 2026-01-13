@@ -25,12 +25,40 @@ export default function DriverMainPage() {
   const [aracIds, setAracIds] = useState<number[]>([]);
   const [vehicleData, setVehicleData] = useState<any>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [inspectionCardWidth, setInspectionCardWidth] = useState<number>(0);
   const [maintenanceCardWidth, setMaintenanceCardWidth] = useState<number>(0);
+  const [insuranceCardWidth, setInsuranceCardWidth] = useState<number>(0);
   const [reminderData, setReminderData] = useState<any>(null);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [userId, setUserId] = useState<number>(0);
 
   const firstVehicle = Array.isArray(vehicleData) && vehicleData.length > 0 ? vehicleData[selectedIndex] : null;
+  const inspectionItems = useMemo(
+    (): { key: string; label: string; value: string | null | undefined; icon: keyof typeof MaterialIcons.glyphMap }[] => [
+      { key: 'muayene', label: t('muayene'), value: firstVehicle?.muayeneTarih, icon: 'assignment' },
+      { key: 'egzoz', label: t('egzoz'), value: firstVehicle?.egzosTarih, icon: 'science' },
+      { key: 'sozlesme', label: t('sozlesme'), value: firstVehicle?.sozlesmeTarih, icon: 'description' },
+      { key: 'vergi', label: t('vergi'), value: firstVehicle?.vergiTarih, icon: 'request-quote' },
+      { key: 'takograf', label: t('takograf'), value: firstVehicle?.takografTarih, icon: 'speed' },
+    ],
+    [firstVehicle, t]
+  );
+  const insuranceItems = useMemo((): { sigorta: string; bitisTarih: string | null; siraNo?: number }[] => {
+    if (Array.isArray(firstVehicle?.sigortalar) && firstVehicle.sigortalar.length > 0) {
+      return firstVehicle.sigortalar;
+    }
+    return [{ sigorta: t('sigorta'), bitisTarih: null }];
+  }, [firstVehicle, t]);
+  const fuelLimitValue = firstVehicle?.yakitLimiti;
+  const fuelLimitDisplay = fuelLimitValue === null || fuelLimitValue === undefined ? '-' : String(fuelLimitValue);
+  const renderCardDate = (value: string | null | undefined) =>
+    value ? (
+      <FormattedDate value={value} format="L" textProps={{ fontSize: '$5', fontWeight: '600', numberOfLines: 1, ellipsizeMode: 'tail' }} />
+    ) : (
+      <Text fontSize="$5" fontWeight="600" color="$color" numberOfLines={1} ellipsizeMode="tail">
+        -
+      </Text>
+    );
 
   const getUserInfo = useCallback(async () => {
     const id = await AsyncStorage.getItem('id');
@@ -183,18 +211,32 @@ export default function DriverMainPage() {
                 </YStack>
               </XStack>
               <XStack gap="$3">
-                <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$5" padding="$2" gap="$2">
-                  <XStack alignItems="center" space="$3">
-                    <MaterialIcons name="policy" size={24} color="#007AFF" />
-                    <YStack flex={1}>
-                      <Text fontSize="$5" fontWeight="600" color="$color" numberOfLines={1} ellipsizeMode="tail">
-                        <FormattedDate value={firstVehicle?.sonSigortaTarih ?? ''} format="L" textProps={{ fontSize: '$5', fontWeight: '600' }} />
-                      </Text>
-                      <Text color="$color" opacity={0.7} numberOfLines={1}>
-                        {t('sigortaBitis')}
-                      </Text>
-                    </YStack>
-                  </XStack>
+                <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$5" padding="$2">
+                  <ScrollView
+                    horizontal
+                    pagingEnabled
+                    showsHorizontalScrollIndicator={false}
+                    scrollEventThrottle={16}
+                    style={{ width: '100%' }}
+                    onLayout={(e) => setInsuranceCardWidth(e.nativeEvent.layout.width)}
+                  >
+                    {insuranceItems.map((item, index) => (
+                      <XStack
+                        key={item.siraNo ? String(item.siraNo) : `${item.sigorta}-${index}`}
+                        alignItems="center"
+                        space="$3"
+                        style={{ width: insuranceCardWidth || 1 }}
+                      >
+                        <MaterialIcons name="policy" size={24} color="#007AFF" />
+                        <YStack flex={1}>
+                          {renderCardDate(item.bitisTarih)}
+                          <Text color="$color" opacity={0.7} numberOfLines={1} ellipsizeMode="tail">
+                            {item.sigorta}
+                          </Text>
+                        </YStack>
+                      </XStack>
+                    ))}
+                  </ScrollView>
                 </YStack>
                 <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$5" padding="$2" gap="$2">
                   <XStack alignItems="center" space="$3">
@@ -207,6 +249,43 @@ export default function DriverMainPage() {
                       </XStack>
                       <Text color="$color" opacity={0.7} numberOfLines={1}>
                         {t('fuelConsumptionUnit')}
+                      </Text>
+                    </YStack>
+                  </XStack>
+                </YStack>
+              </XStack>
+              <XStack gap="$3">
+                <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2">
+                  <ScrollView
+                    horizontal
+                    pagingEnabled
+                    showsHorizontalScrollIndicator={false}
+                    scrollEventThrottle={16}
+                    style={{ width: '100%' }}
+                    onLayout={(e) => setInspectionCardWidth(e.nativeEvent.layout.width)}
+                  >
+                    {inspectionItems.map((item) => (
+                      <XStack key={item.key} alignItems="center" space="$3" style={{ width: inspectionCardWidth || 1 }}>
+                        <MaterialIcons name={item.icon} size={24} color="#007AFF" />
+                        <YStack flex={1}>
+                          {renderCardDate(item.value)}
+                          <Text color="$color" opacity={0.7} numberOfLines={1} ellipsizeMode="tail">
+                            {item.label}
+                          </Text>
+                        </YStack>
+                      </XStack>
+                    ))}
+                  </ScrollView>
+                </YStack>
+                <YStack flex={1} borderWidth={1} borderColor="$gray4" borderRadius="$3" padding="$2" gap="$2">
+                  <XStack alignItems="center" space="$3">
+                    <MaterialIcons name="local-gas-station" size={24} color="#007AFF" />
+                    <YStack flex={1}>
+                      <Text fontSize="$5" fontWeight="600" color="$color" numberOfLines={1} ellipsizeMode="tail">
+                        {fuelLimitDisplay}
+                      </Text>
+                      <Text color="$color" opacity={0.7} numberOfLines={1}>
+                        {t('yakitLimiti')}
                       </Text>
                     </YStack>
                   </XStack>
