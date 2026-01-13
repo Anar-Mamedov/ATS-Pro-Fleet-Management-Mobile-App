@@ -42,6 +42,8 @@ const TalepTuru: React.FC<TalepTuruProps> = ({ control, name, rules, placeholder
       { value: 'lastik', label: t('lastik') },
       { value: 'aksesuar', label: t('aksesuar') },
       { value: 'yakit', label: t('yakit') },
+      { value: 'bakim', label: t('bakim') },
+      { value: 'arac', label: t('arac') },
     ],
     [t]
   );

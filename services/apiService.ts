@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system/legacy';
 import { FileSystemUploadType } from 'expo-file-system/legacy';
 import { Platform } from 'react-native';
+import dayjs from '../config/dayjs';
 import { axiosInstance } from '../config/http';
 
 type UploadablePhoto = FormData | {
@@ -41,6 +42,24 @@ const extractFilePart = (payload: UploadablePhoto, fieldName: string = 'images')
     return null;
   }
   return payload;
+};
+
+const buildDriverDashboardLimitType = (referenceDate = dayjs()) => {
+  const weekStart = referenceDate.startOf('week');
+  const weekEnd = referenceDate.endOf('week');
+  const monthStart = referenceDate.startOf('month');
+  const monthEnd = referenceDate.endOf('month');
+  const yearStart = referenceDate.startOf('year');
+  const yearEnd = referenceDate.endOf('year');
+
+  return {
+    haftalikBaslangicTarih: weekStart.toISOString(),
+    haftalikBitisTarih: weekEnd.toISOString(),
+    aylikBaslangicTarih: monthStart.toISOString(),
+    aylikBitisTarih: monthEnd.toISOString(),
+    yillikBaslangicTarih: yearStart.toISOString(),
+    yillikBitisTarih: yearEnd.toISOString(),
+  };
 };
 
 // API servis fonksiyonları
@@ -250,13 +269,24 @@ export const apiService = {
 
   // Driver Dashboard endpoints
   getDriverDashboardCardSection: async (vehicleIds: number[]) => {
-    const response = await axiosInstance.post('/DriverDashboard/GetDriverDashboardCardSection', vehicleIds);
+    const payload = {
+      VIds: vehicleIds,
+      limitType: buildDriverDashboardLimitType(),
+    };
+    const response = await axiosInstance.post('/DriverDashboard/GetDriverDashboardCardSection', payload);
     return response.data;
   },
 
   // Driver Reminder endpoints
   getDashboardReminder: async (vId: number) => {
     const response = await axiosInstance.get(`/MobileDashboard/GetDashboardReminder?vId=${vId}`);
+    return response.data;
+  },
+
+  // Fuel endpoints
+  getFuelListByVehicleId: async (vehicleIds: number[], diff: number, setPointId: number, parameter: string = '') => {
+    const encodedParameter = encodeURIComponent(parameter);
+    const response = await axiosInstance.post(`/Fuel/GetFuelListByVehicleId?diff=${diff}&setPointId=${setPointId}&parameter=${encodedParameter}`, vehicleIds);
     return response.data;
   },
 
