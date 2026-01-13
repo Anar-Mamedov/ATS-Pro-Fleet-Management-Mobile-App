@@ -1,8 +1,12 @@
 import { useThemeController } from '@/config/theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Image, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { apiService } from '@/services/apiService';
 
 const TAB_BAR_BASE_HEIGHT = 60;
 const TAB_BAR_BOTTOM_PADDING = 12;
@@ -29,6 +33,78 @@ export default function TabLayout() {
   const insets = useSafeAreaInsets();
   const { themeName } = useThemeController();
   const palette = TAB_BAR_THEMES[themeName];
+  const [profilePhotoUri, setProfilePhotoUri] = useState<string | null>(null);
+
+  const arrayBufferToBase64 = useCallback((buffer: ArrayBuffer): string => {
+    const bytes = new Uint8Array(buffer);
+    let binary = '';
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  }, []);
+
+  const loadProfilePhoto = useCallback(async () => {
+    try {
+      const userId = await AsyncStorage.getItem('id');
+      if (!userId) {
+        setProfilePhotoUri(null);
+        return;
+      }
+      const userData = await apiService.getUserInfoById(userId);
+      if (userData?.defPhotoInfo?.tbResimId) {
+        const photoArrayBuffer = await apiService.downloadPhotoById(
+          userData.defPhotoInfo.tbResimId,
+          userData.defPhotoInfo.rsmUzanti,
+          userData.defPhotoInfo.rsmAd
+        );
+        if (photoArrayBuffer) {
+          const base64String = arrayBufferToBase64(photoArrayBuffer);
+          const mimeType = userData.defPhotoInfo.rsmUzanti.replace('.', '');
+          setProfilePhotoUri(`data:image/${mimeType};base64,${base64String}`);
+          return;
+        }
+      }
+      setProfilePhotoUri(null);
+    } catch (error) {
+      console.error('Profile tab photo load failed:', error);
+      setProfilePhotoUri(null);
+    }
+  }, [arrayBufferToBase64]);
+
+  useEffect(() => {
+    loadProfilePhoto();
+  }, [loadProfilePhoto]);
+
+  const renderProfileIcon = useCallback(
+    ({ color, size }: { color: string; size: number }) => {
+      const imageSize = size + 4;
+      const containerStyle = {
+        width: imageSize,
+        height: imageSize,
+        borderRadius: imageSize / 2,
+        borderWidth: 2,
+        borderColor: color,
+        overflow: 'hidden' as const,
+        alignItems: 'center' as const,
+        justifyContent: 'center' as const,
+        backgroundColor: palette.background,
+      };
+      if (!profilePhotoUri) {
+        return (
+          <View style={containerStyle}>
+            <Ionicons name="person" size={size} color={color} />
+          </View>
+        );
+      }
+      return (
+        <View style={containerStyle}>
+          <Image source={{ uri: profilePhotoUri }} style={{ width: '100%', height: '100%', borderRadius: imageSize / 2 }} resizeMode="cover" />
+        </View>
+      );
+    },
+    [palette.background, profilePhotoUri]
+  );
 
   return (
     <Tabs
@@ -86,7 +162,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: t('profile'),
-          tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => renderProfileIcon({ color, size }),
         }}
       />
     </Tabs>
