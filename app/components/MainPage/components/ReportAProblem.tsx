@@ -51,7 +51,7 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess, mode = 'ariza'
     defaultValues: {
       arizaNo: '',
       problemDate: new Date(),
-      oncelik: '',
+      oncelik: 'orta',
       talepTuru: '',
       lokasyon: initialLocationName || '',
       description: '',
