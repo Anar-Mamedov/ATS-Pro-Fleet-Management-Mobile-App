@@ -183,7 +183,9 @@ export default function Login() {
       await AsyncStorage.setItem('token', loginData.accessToken);
       await AsyncStorage.setItem('id', loginData.siraNo.toString());
 
-      Alert.alert(t('success'), `${t('welcomeUser')} ${loginData.isim} ${loginData.soyAd}`);
+      const fullName = [loginData.isim, loginData.soyAd].filter((part) => typeof part === 'string' && part.trim().length > 0).join(' ');
+      const welcomeMessage = fullName ? `${t('welcomeUser')} ${fullName}` : t('welcomeUser');
+      Alert.alert(t('success'), welcomeMessage);
       router.replace('/');
     } catch (error: any) {
       Alert.alert(t('error'), error.message || t('loginFailed'));
