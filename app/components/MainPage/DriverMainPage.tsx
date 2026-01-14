@@ -17,8 +17,8 @@ import { apiService } from '../../../services/apiService';
 import DocumentUpload from '../../../ui/components/DocumentUpload';
 import { FormattedDate } from '../../../ui/components/FormattedDate';
 import ResimUpload from '../../../ui/components/ResimUpload';
-import ReportAProblem from './components/ReportAProblem';
 import FuelListBottomSheet from './components/FuelListBottomSheet';
+import ReportAProblem from './components/ReportAProblem';
 
 const CARD_INDEX_STORAGE_KEYS = {
   maintenance: 'driver_dashboard_card_index_maintenance',
@@ -411,12 +411,7 @@ export default function DriverMainPage() {
                     onMomentumScrollEnd={handleInsuranceMomentumEnd}
                   >
                     {insuranceItems.map((item, index) => (
-                      <XStack
-                        key={item.siraNo ? String(item.siraNo) : `${item.sigorta}-${index}`}
-                        alignItems="center"
-                        space="$3"
-                        style={{ width: insuranceCardWidth || 1 }}
-                      >
+                      <XStack key={item.siraNo ? String(item.siraNo) : `${item.sigorta}-${index}`} alignItems="center" space="$3" style={{ width: insuranceCardWidth || 1 }}>
                         <MaterialIcons name="policy" size={24} color="#007AFF" />
                         <YStack flex={1}>
                           {renderCardDate(item.bitisTarih)}
@@ -573,7 +568,7 @@ export default function DriverMainPage() {
             <YStack padding="$4" gap="$2">
               <YStack backgroundColor="$color1" borderWidth={1} borderColor="$gray4" borderRadius="$5" padding="$3" gap="$3">
                 <Text fontSize="$6" fontWeight="700" color="$color">
-                  {t('tasks')}
+                  {t('reminder')}
                 </Text>
                 <YStack gap="$2">
                   {(reminderData as { category: string; count: number }[])
@@ -789,12 +784,7 @@ export default function DriverMainPage() {
           </BottomSheetView>
         </BottomSheetModal>
 
-        <FuelListBottomSheet
-          sheetRef={fuelSheetRef}
-          themeName={themeName}
-          vehicleId={firstVehicle?.aracId}
-          reloadToken={fuelReloadToken}
-        />
+        <FuelListBottomSheet sheetRef={fuelSheetRef} themeName={themeName} vehicleId={firstVehicle?.aracId} reloadToken={fuelReloadToken} />
 
         {/* Kilometre Güncelleme Bottom Sheet */}
         <KmUpdateBottomSheet

@@ -51,7 +51,7 @@ export default function ManagerMainPage() {
         {/* Yönetici özel butonları */}
         <YStack space="$3" width="100%" maxWidth={300}>
           <Button backgroundColor="$blue10" color="white" size="$4" onPress={testApiCall} disabled={loading}>
-            {loading ? t('loading') : 'Tüm Görevler'}
+            {loading ? t('loading') : t('allReminders')}
           </Button>
 
           <Button backgroundColor="$green10" color="white" size="$4">
