@@ -1,4 +1,6 @@
 import { useThemeController } from '@/config/theme';
+import { apiService } from '@/services/apiService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button } from '@tamagui/button';
 import { Text, View } from '@tamagui/core';
 import { YStack } from '@tamagui/stacks';
@@ -12,9 +14,9 @@ export default function PasswordUpdate() {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
       Alert.alert(t('error'), t('fillAllFields'));
       return;
@@ -25,13 +27,57 @@ export default function PasswordUpdate() {
       return;
     }
 
-    if (newPassword.length < 6) {
-      Alert.alert(t('error'), t('passwordTooShort'));
-      return;
-    }
+    setLoading(true);
+    try {
+      const userIdStr = await AsyncStorage.getItem('id');
+      if (!userIdStr) {
+        Alert.alert(t('error'), t('userIdNotFound'));
+        return;
+      }
 
-    // TODO: Implement password update API call
-    console.log('Updating password...');
+      const loginResponseStr = await AsyncStorage.getItem('loginResponse');
+      let userTypeId = '1'; // Default Admin
+      if (loginResponseStr) {
+        const loginResponse = JSON.parse(loginResponseStr);
+        if (loginResponse.isDriver) {
+          userTypeId = '2'; // Driver
+        }
+      }
+
+      const userId = parseInt(userIdStr, 10);
+      const requestData = {
+        userId: userId,
+        previousPassword: currentPassword,
+        updatedPassword: newPassword,
+        userTypeId: userTypeId,
+      };
+
+      console.log('Password update request:', requestData);
+      const response = await apiService.modifyUserPassword(requestData);
+      console.log('Password update response:', response);
+
+      if (response.statusCode === 403) {
+        Alert.alert(t('error'), t('passwordUpdateFailIncorrect'));
+      } else if (response.statusCode === 202) {
+        Alert.alert(t('success'), t('passwordUpdateSuccess'));
+        // Clear fields on success
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+      } else {
+        // Fallback for other status codes
+        if (response.status) {
+          Alert.alert(t('success'), response.message || t('operationSuccessful'));
+        } else {
+          Alert.alert(t('error'), response.message || t('operationFailed'));
+        }
+      }
+    } catch (error: any) {
+      console.error('Password update error:', error);
+      Alert.alert(t('error'), error.message || t('operationFailed'));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

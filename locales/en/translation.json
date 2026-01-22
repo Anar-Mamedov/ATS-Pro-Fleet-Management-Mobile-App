@@ -182,5 +182,8 @@
   "kmUpdateFailed": "Error updating kilometers",
   "apply": "Apply",
   "required": "This field is required",
-  "invalidNumber": "Invalid number"
+  "invalidNumber": "Invalid number",
+  "onlyDriverLogin": "You can only log in with a driver account.",
+  "passwordUpdateSuccess": "Update Successful",
+  "passwordUpdateFailIncorrect": "Update Failed. You entered your old password incorrectly."
 }
