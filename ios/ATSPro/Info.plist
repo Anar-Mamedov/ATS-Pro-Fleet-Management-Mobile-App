@@ -39,7 +39,9 @@
       </dict>
     </array>
     <key>CFBundleVersion</key>
-    <string>1</string>
+    <string>2</string>
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
     <key>LSMinimumSystemVersion</key>
     <string>12.0</string>
     <key>LSRequiresIPhoneOS</key>
@@ -52,13 +54,17 @@
       <true/>
     </dict>
     <key>NSCameraUsageDescription</key>
-    <string>Uygulama kameranızı kullanmak için izin gerekiyor.</string>
+    <string>Araç fotoğrafları çekmek ve hasar/evrak bildirimlerine eklemek için kamera erişimi gerekir (ör. araç hasarı fotoğrafı).</string>
     <key>NSFaceIDUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your Face ID biometric data.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Uygulama araç konumu ve ilgili işlemler için konumunuza erişir.</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>Uygulama mikrofonunuzu kullanmak için izin gerekiyor.</string>
+    <string>Allow $(PRODUCT_NAME) to access your microphone</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Çektiğiniz araç fotoğraflarını ve eklediğiniz belgeleri galerinizde saklamak için kaydetme izni gerekir.</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>Uygulama fotoğraflarınıza erişmek için izin gerekiyor.</string>
+    <string>Galerinizden araç fotoğrafları ve belgeleri seçip talep/rapor kaydına eklemek için fotoğraf arşivine erişim gerekir.</string>
     <key>NSUserActivityTypes</key>
     <array>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
@@ -82,10 +88,10 @@
     </array>
     <key>UISupportedInterfaceOrientations~ipad</key>
     <array>
-      <string>UIInterfaceOrientationPortrait</string>
-      <string>UIInterfaceOrientationPortraitUpsideDown</string>
       <string>UIInterfaceOrientationLandscapeLeft</string>
       <string>UIInterfaceOrientationLandscapeRight</string>
+      <string>UIInterfaceOrientationPortrait</string>
+      <string>UIInterfaceOrientationPortraitUpsideDown</string>
     </array>
     <key>UIUserInterfaceStyle</key>
     <string>Automatic</string>

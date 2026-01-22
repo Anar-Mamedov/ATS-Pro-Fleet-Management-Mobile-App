@@ -1,7 +1,7 @@
 {
   "cli": {
     "version": ">= 13.2.0",
-    "appVersionSource": "remote"
+    "appVersionSource": "local"
   },
   "build": {
     "preview": {
@@ -21,16 +21,17 @@
         "buildType": "app-bundle"
       },
       "env": {
-        "EXPO_PUBLIC_BASE_URL": "https://api.atspro.com.tr/api"
+        "EXPO_PUBLIC_BASE_URL": "https://api.atspro.com.tr/api",
+        "EXPO_NO_DOCTOR": "1"
       }
     }
   },
   "submit": {
     "production": {
       "ios": {
-        "appleId": "YOUR_APPLE_ID_EMAIL@example.com",
-        "ascAppId": "PLACEHOLDER_ASC_APP_ID",
-        "appleTeamId": "PLACEHOLDER_TEAM_ID"
+        "appleId": "erhan.cevik55@gmail.com",
+        "ascAppId": "6757866482",
+        "appleTeamId": "R598Z9NZW4"
       },
       "android": {
         "serviceAccountKeyPath": "./google-services.json"
