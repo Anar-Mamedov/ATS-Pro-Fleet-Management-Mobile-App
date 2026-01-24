@@ -23,7 +23,8 @@
       "env": {
         "EXPO_PUBLIC_BASE_URL": "https://api.atspro.com.tr/api",
         "EXPO_NO_DOCTOR": "1"
-      }
+      },
+      "channel": "production"
     }
   },
   "submit": {
