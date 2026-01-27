@@ -21,13 +21,18 @@ export default function Login() {
   const [companyKey, setCompanyKeyInput] = useState('');
   const [kullaniciKod, setKullaniciKod] = useState('');
   const [sifre, setSifre] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [companyLogo, setCompanyLogo] = useState<string | null>(null);
 
   const getTextFromEvent = (e: any) => e?.nativeEvent?.text ?? e?.target?.value ?? '';
+  const isDarkMode = themeName === 'dark';
+  const rememberMeKey = 'rememberMe';
+  const rememberedCredentialsKey = 'rememberedCredentials';
 
   useEffect(() => {
     checkCompanyInfo();
+    loadRememberedCredentials();
   }, []);
 
   const checkCompanyInfo = async () => {
@@ -44,6 +49,27 @@ export default function Login() {
       }
     } catch (error) {
       console.error('Error checking company info:', error);
+    }
+  };
+
+  const loadRememberedCredentials = async () => {
+    try {
+      const rememberMeValue = await AsyncStorage.getItem(rememberMeKey);
+      if (rememberMeValue === 'true') {
+        setRememberMe(true);
+        const savedCredentials = await AsyncStorage.getItem(rememberedCredentialsKey);
+        if (savedCredentials) {
+          const parsedCredentials = JSON.parse(savedCredentials) as { kullaniciKod?: string; sifre?: string };
+          if (typeof parsedCredentials.kullaniciKod === 'string') {
+            setKullaniciKod(parsedCredentials.kullaniciKod);
+          }
+          if (typeof parsedCredentials.sifre === 'string') {
+            setSifre(parsedCredentials.sifre);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error loading remembered credentials:', error);
     }
   };
 
@@ -187,6 +213,20 @@ export default function Login() {
       await AsyncStorage.setItem('loginResponse', JSON.stringify(loginData));
       await AsyncStorage.setItem('token', loginData.accessToken);
       await AsyncStorage.setItem('id', loginData.siraNo.toString());
+
+      if (rememberMe) {
+        await AsyncStorage.setItem(rememberMeKey, 'true');
+        await AsyncStorage.setItem(
+          rememberedCredentialsKey,
+          JSON.stringify({
+            kullaniciKod: kullaniciKod.trim(),
+            sifre: sifre.trim(),
+          }),
+        );
+      } else {
+        await AsyncStorage.removeItem(rememberMeKey);
+        await AsyncStorage.removeItem(rememberedCredentialsKey);
+      }
 
       const fullName = [loginData.isim, loginData.soyAd].filter((part) => typeof part === 'string' && part.trim().length > 0).join(' ');
       const welcomeMessage = fullName ? `${t('welcomeUser')} ${fullName}` : t('welcomeUser');
@@ -341,6 +381,32 @@ export default function Login() {
                   maxFontSizeMultiplier={1.3}
                 />
               </YStack>
+
+              <TouchableOpacity
+                onPress={() => setRememberMe((previous) => !previous)}
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingVertical: 4,
+                }}
+              >
+                <Stack
+                  width={22}
+                  height={22}
+                  borderRadius={6}
+                  borderWidth={1.5}
+                  borderColor={isDarkMode ? '#3A3A3C' : '#C7C7CC'}
+                  backgroundColor={rememberMe ? '#0A84FF' : 'transparent'}
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  {rememberMe ? <Ionicons name="checkmark" size={16} color="#FFFFFF" /> : null}
+                </Stack>
+                <Text marginLeft="$3" color="$color" fontSize="$4" fontFamily="SF Pro Text">
+                  {t('rememberMe')}
+                </Text>
+              </TouchableOpacity>
 
               <Button size="$4" backgroundColor="$green10" width="100%" onPress={handleLogin} disabled={loading}>
                 <Text color="$color" fontWeight="400" fontSize="$4" fontFamily="SF Pro Text">

@@ -24,6 +24,7 @@
   "userCode": "User Code",
   "enterUserCode": "Enter your user code",
   "enterPassword": "Enter your password",
+  "rememberMe": "Remember me",
   "loggingIn": "Logging in...",
   "changeCompany": "Change Company",
   "enterCompanyKeyError": "Enter company key",

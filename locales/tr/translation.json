@@ -24,6 +24,7 @@
   "userCode": "Kullanıcı Kodu",
   "enterUserCode": "Kullanıcı kodunuzu girin",
   "enterPassword": "Şifrenizi girin",
+  "rememberMe": "Beni hatırla",
   "loggingIn": "Giriş Yapılıyor...",
   "changeCompany": "Firma Değiştir",
   "enterCompanyKeyError": "Firma anahtarını girin",

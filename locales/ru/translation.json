@@ -24,6 +24,7 @@
   "userCode": "Код пользователя",
   "enterUserCode": "Введите код пользователя",
   "enterPassword": "Введите пароль",
+  "rememberMe": "Запомнить меня",
   "loggingIn": "Вход...",
   "changeCompany": "Сменить компанию",
   "enterCompanyKeyError": "Введите ключ компании",
