@@ -36,6 +36,10 @@ function UpdatePrompt() {
       return;
     }
 
+    if (__DEV__) {
+      return;
+    }
+
     if (!Updates.isEnabled || Platform.OS === 'web') {
       return;
     }
@@ -69,8 +73,10 @@ function UpdatePrompt() {
           { cancelable: false },
         );
       }
-    } catch (error) {
-      console.error('Error checking OTA update:', error);
+    } catch (error: any) {
+      if (error?.code !== 'ERR_NOT_AVAILABLE_IN_DEV_CLIENT') {
+        console.error('Error checking OTA update:', error);
+      }
     } finally {
       checkingRef.current = false;
     }
