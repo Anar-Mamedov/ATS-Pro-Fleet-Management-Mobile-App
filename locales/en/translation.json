@@ -190,5 +190,10 @@
   "invalidNumber": "Invalid number",
   "onlyDriverLogin": "You can only log in with a driver account.",
   "passwordUpdateSuccess": "Update Successful",
-  "passwordUpdateFailIncorrect": "Update Failed. You entered your old password incorrectly."
+  "passwordUpdateFailIncorrect": "Update Failed. You entered your old password incorrectly.",
+  "maintenanceServiceManagement": "Maintenance & Service Management",
+  "serviceOperations": "Service Operations",
+  "fleetManagement": "Fleet Management",
+  "penalty": "Penalty",
+  "noPenaltyFound": "Penalty record not found"
 }

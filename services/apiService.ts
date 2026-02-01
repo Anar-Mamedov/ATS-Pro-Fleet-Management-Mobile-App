@@ -454,4 +454,11 @@ export const apiService = {
     const response = await axiosInstance.post('/KmLog/AddKmLog', [kmLogData]);
     return response.data;
   },
+
+  // Vehicle Fines endpoints
+  getVehicleFinesListByVehicleId: async (vehicleIds: number[], diff: number, setPointId: number, parameter: string = '') => {
+    const encodedParameter = encodeURIComponent(parameter);
+    const response = await axiosInstance.post(`/VehicleFines/GetVehicleFinesListByVehicleId?diff=${diff}&setPointId=${setPointId}&parameter=${encodedParameter}`, vehicleIds);
+    return response.data;
+  },
 };

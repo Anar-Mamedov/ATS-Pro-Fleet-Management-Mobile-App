@@ -1,12 +1,13 @@
 import 'react-native-reanimated';
 
+import { VehicleProvider } from '@/app/context/VehicleContext';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { TamaguiProvider } from '@tamagui/core';
 import { PortalProvider } from '@tamagui/portal';
 import * as NavigationBar from 'expo-navigation-bar';
-import * as Updates from 'expo-updates';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import * as Updates from 'expo-updates';
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, AppState, Platform } from 'react-native';
@@ -70,7 +71,7 @@ function UpdatePrompt() {
               },
             },
           ],
-          { cancelable: false },
+          { cancelable: false }
         );
       }
     } catch (error: any) {
@@ -98,45 +99,47 @@ function UpdatePrompt() {
 
 export default function RootLayout() {
   return (
-    <SafeAreaProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <TamaguiProvider config={config}>
-          <PortalProvider>
-            <ThemeProvider>
-              <ThemeBars />
-              <UpdatePrompt />
-              <BottomSheetModalProvider>
-                <Stack>
-                  <Stack.Screen
-                    name="index"
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="welcome"
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="login"
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="(tabs)"
-                    options={{
-                      headerShown: false,
-                    }}
-                  />
-                </Stack>
-              </BottomSheetModalProvider>
-            </ThemeProvider>
-          </PortalProvider>
-        </TamaguiProvider>
-      </GestureHandlerRootView>
-    </SafeAreaProvider>
+    <VehicleProvider>
+      <SafeAreaProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <TamaguiProvider config={config}>
+            <PortalProvider>
+              <ThemeProvider>
+                <ThemeBars />
+                <UpdatePrompt />
+                <BottomSheetModalProvider>
+                  <Stack>
+                    <Stack.Screen
+                      name="index"
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="welcome"
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="login"
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="(tabs)"
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+                  </Stack>
+                </BottomSheetModalProvider>
+              </ThemeProvider>
+            </PortalProvider>
+          </TamaguiProvider>
+        </GestureHandlerRootView>
+      </SafeAreaProvider>
+    </VehicleProvider>
   );
 }

@@ -171,5 +171,9 @@
   "kmUpdateFailed": "Kilometr yenilənərkən xəta baş verdi",
   "apply": "Tətbiq Et",
   "required": "Bu sahə məcburidir",
-  "invalidNumber": "Yanlış nömrə"
+  "invalidNumber": "Yanlış nömrə",
+  "maintenanceServiceManagement": "Baxım və Servis İdarəetməsi",
+  "serviceOperations": "Servis Əməliyyatları",
+  "fleetManagement": "Filo İdarəetməsi",
+  "penalty": "Cərimə"
 }

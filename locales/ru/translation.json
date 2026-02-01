@@ -171,5 +171,9 @@
   "kmUpdateFailed": "Ошибка обновления километража",
   "apply": "Применить",
   "required": "Это поле обязательно",
-  "invalidNumber": "Неверное число"
+  "invalidNumber": "Неверное число",
+  "maintenanceServiceManagement": "Управление ТО и Сервисом",
+  "serviceOperations": "Сервисные операции",
+  "fleetManagement": "Управление автопарком",
+  "penalty": "Штраф"
 }

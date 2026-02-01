@@ -202,5 +202,10 @@
   "bakimKm": "Bakım km",
   "onlyDriverLogin": "Yalnızca sürücü hesabı ile giriş yapabilirsiniz.",
   "passwordUpdateSuccess": "Güncelleme Başarılı",
-  "passwordUpdateFailIncorrect": "Güncelleme Başarısız. Eski şifrenizi yanlış girdiniz."
+  "passwordUpdateFailIncorrect": "Güncelleme Başarısız. Eski şifrenizi yanlış girdiniz.",
+  "maintenanceServiceManagement": "Bakım & Servis Yönetimi",
+  "serviceOperations": "Servis İşlemleri",
+  "fleetManagement": "Filo Yönetimi",
+  "penalty": "Ceza",
+  "noPenaltyFound": "Ceza kayıdı bulunamadı"
 }

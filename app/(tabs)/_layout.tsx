@@ -145,7 +145,6 @@ export default function TabLayout() {
         options={{
           title: t('operations'),
           tabBarIcon: ({ color, size }) => <Ionicons name="briefcase" size={size} color={color} />,
-          href: null,
         }}
       />
       <Tabs.Screen
