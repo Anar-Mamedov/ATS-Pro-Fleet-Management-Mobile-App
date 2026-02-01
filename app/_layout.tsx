@@ -1,6 +1,6 @@
 import 'react-native-reanimated';
 
-import { VehicleProvider } from '@/app/context/VehicleContext';
+import { VehicleProvider } from '@/context/VehicleContext';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { TamaguiProvider } from '@tamagui/core';
 import { PortalProvider } from '@tamagui/portal';

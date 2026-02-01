@@ -14,20 +14,22 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, ListRenderItem, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-// Define the shape of the data based on the user's JSON response
-interface VehicleFine {
+interface ServiceOperation {
   siraNo: number;
-  plaka: string;
   aracId: number;
+  plaka: string;
   tarih: string;
   saat: string;
-  cezaTuru: string;
-  tutar: number;
-  lokasyon: string;
+  servisTipi: string;
+  servisTanimi: string;
+  km: number;
+  toplam: number;
   surucuIsim: string;
+  islemiYapanText?: string;
+  aciklama?: string;
 }
 
-export default function PenaltiesScreen() {
+export default function ServiceOperationsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const theme = useTheme();
@@ -35,15 +37,21 @@ export default function PenaltiesScreen() {
   const bottomPad = useBottomBarPadding();
   const { selectedVehicleId } = useVehicleContext();
 
-  const [loading, setLoading] = useState(false); // General loading (refresh/initial)
-  const [loadingMore, setLoadingMore] = useState(false); // Loading for infinite scroll
-  const [dataSource, setDataSource] = useState<VehicleFine[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [dataSource, setDataSource] = useState<ServiceOperation[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [search, setSearch] = useState('');
 
   // Initial fetch
   useEffect(() => {
-    fetchData(true);
+    if (selectedVehicleId) {
+      fetchData(true);
+    } else {
+      setDataSource([]);
+      setHasMore(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedVehicleId]);
 
   const fetchData = async (reset: boolean = false, searchTerm: string = search) => {
@@ -57,21 +65,27 @@ export default function PenaltiesScreen() {
       setLoadingMore(true);
     }
 
+    if (!selectedVehicleId) {
+      setDataSource([]);
+      setHasMore(false);
+      setLoading(false);
+      setLoadingMore(false);
+      return;
+    }
+
     try {
       let currentSetPointId = 0;
       let diff = 0;
 
       if (reset) {
-        // Initial load or refresh or search
         currentSetPointId = 0;
         diff = 0;
       } else {
-        // Load more (next page)
         currentSetPointId = dataSource[dataSource.length - 1]?.siraNo || 0;
         diff = 1;
       }
 
-      const response = await apiService.getVehicleFinesListByVehicleId(selectedVehicleId ? [selectedVehicleId] : [], diff, currentSetPointId, searchTerm);
+      const response = await apiService.getVehicleServicesByVehicleIds(selectedVehicleId ? [selectedVehicleId] : [], diff, currentSetPointId, searchTerm);
 
       const newData = response.list || [];
 
@@ -79,8 +93,7 @@ export default function PenaltiesScreen() {
         setDataSource(newData);
         setHasMore(newData.length > 0);
       } else {
-        // Filter out potential duplicates just in case, though API shouldn't return them if logic is correct
-        const uniqueNewData = newData.filter((newItem: VehicleFine) => !dataSource.some((existingItem) => existingItem.siraNo === newItem.siraNo));
+        const uniqueNewData = newData.filter((newItem: ServiceOperation) => !dataSource.some((existingItem) => existingItem.siraNo === newItem.siraNo));
 
         if (uniqueNewData.length > 0) {
           setDataSource((prev) => [...prev, ...uniqueNewData]);
@@ -90,7 +103,7 @@ export default function PenaltiesScreen() {
         }
       }
     } catch (error) {
-      console.error('Error fetching fines:', error);
+      console.error('Error fetching service operations:', error);
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -107,7 +120,7 @@ export default function PenaltiesScreen() {
     }
   };
 
-  const renderItem: ListRenderItem<VehicleFine> = ({ item }) => {
+  const renderItem: ListRenderItem<ServiceOperation> = ({ item }) => {
     return (
       <YStack backgroundColor="$backgroundStrong" borderRadius="$4" padding="$4" marginBottom="$3" borderWidth={1} borderColor="$borderColor" elevation={2}>
         <XStack justifyContent="space-between" alignItems="center" marginBottom="$2">
@@ -115,32 +128,39 @@ export default function PenaltiesScreen() {
             {item.plaka}
           </Text>
           <Text fontSize="$3" color="$midGray">
-            {dayjs(item.tarih).format('DD.MM.YYYY')} - {item.saat}
+            {dayjs(item.tarih).format('DD.MM.YYYY')}
           </Text>
         </XStack>
 
-        <Text fontSize="$4" color="$color" marginBottom="$2" numberOfLines={2}>
-          {item.cezaTuru}
+        <Text fontSize="$4" fontWeight="bold" color="$color" marginBottom="$1">
+          {item.servisTanimi || item.servisTipi}
         </Text>
+        {item.aciklama ? (
+          <Text fontSize="$3" color="$midGray" marginBottom="$2" numberOfLines={2}>
+            {item.aciklama}
+          </Text>
+        ) : null}
 
-        <XStack justifyContent="space-between" alignItems="flex-end">
+        <XStack justifyContent="space-between" alignItems="flex-end" marginTop="$2">
           <YStack>
-            <XStack alignItems="center" space="$2" marginBottom="$1">
-              <Ionicons name="location-outline" size={16} color={theme.color?.get()} />
-              <Text fontSize="$3" color="$midGray">
-                {item.lokasyon}
-              </Text>
-            </XStack>
+            {item.islemiYapanText ? (
+              <XStack alignItems="center" space="$2" marginBottom="$1">
+                <Ionicons name="construct-outline" size={16} color={theme.color?.get()} />
+                <Text fontSize="$3" color="$midGray">
+                  {item.islemiYapanText}
+                </Text>
+              </XStack>
+            ) : null}
             <XStack alignItems="center" space="$2">
-              <Ionicons name="person-outline" size={16} color={theme.color?.get()} />
+              <Ionicons name="speedometer-outline" size={16} color={theme.color?.get()} />
               <Text fontSize="$3" color="$midGray">
-                {item.surucuIsim}
+                {item.km} km
               </Text>
             </XStack>
           </YStack>
 
-          <Text fontSize="$5" fontWeight="bold" color="$red10">
-            {item.tutar} TL
+          <Text fontSize="$5" fontWeight="bold" color="$blue10">
+            {item.toplam} TL
           </Text>
         </XStack>
       </YStack>
@@ -164,7 +184,7 @@ export default function PenaltiesScreen() {
         <XStack paddingHorizontal="$4" paddingVertical="$3" alignItems="center" space="$3" borderBottomWidth={1} borderBottomColor="$borderColor">
           <Button size="$3" chromeless icon={<Ionicons name="arrow-back" size={24} color={theme.color?.get()} />} onPress={() => router.back()} />
           <Text fontSize="$6" fontWeight="bold" color="$color">
-            {t('penalty')}
+            {t('serviceOperations')}
           </Text>
         </XStack>
 
@@ -210,9 +230,9 @@ export default function PenaltiesScreen() {
           ListEmptyComponent={
             !loading ? (
               <YStack alignItems="center" marginTop="$10" space="$4">
-                <Ionicons name="document-text-outline" size={64} color={theme.color?.get() || '#C7C7CC'} />
+                <Ionicons name="construct-outline" size={64} color={theme.color?.get() || '#C7C7CC'} />
                 <Text fontSize="$5" color="$midGray">
-                  {t('noPenaltyFound')}
+                  {t('noServiceRecordFound')}
                 </Text>
               </YStack>
             ) : null

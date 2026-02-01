@@ -461,4 +461,20 @@ export const apiService = {
     const response = await axiosInstance.post(`/VehicleFines/GetVehicleFinesListByVehicleId?diff=${diff}&setPointId=${setPointId}&parameter=${encodedParameter}`, vehicleIds);
     return response.data;
   },
+
+  // Vehicle Services endpoints
+  getVehicleServicesByVehicleIds: async (vehicleIds: number[], diff: number, setPointId: number, parameter: string = '') => {
+    const encodedParameter = encodeURIComponent(parameter);
+    const url = `/VehicleServices/GetVehicleServicesByVehicleIds?diff=${diff}&setPointId=${setPointId}&parameter=${encodedParameter}`;
+    const payload = {
+      vIds: vehicleIds,
+      filter: {
+        lokasyonIds: [],
+        servisNedeniIds: [],
+        servisTanimIds: [],
+      },
+    };
+    const response = await axiosInstance.post(url, payload);
+    return response.data;
+  },
 };

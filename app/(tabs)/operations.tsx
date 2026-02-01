@@ -124,7 +124,7 @@ export default function OperationsTab() {
           id: 'service-operations',
           title: t('serviceOperations'),
           icon: 'build' as const,
-          onPress: () => console.log('Navigate to Service Operations'),
+          onPress: () => router.push('/operations/service-operations'),
         },
       ],
     },
