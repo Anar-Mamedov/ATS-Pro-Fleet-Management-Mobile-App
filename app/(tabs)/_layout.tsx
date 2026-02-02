@@ -1,12 +1,12 @@
 import { useThemeController } from '@/config/theme';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { apiService } from '@/services/apiService';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Tabs } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { apiService } from '@/services/apiService';
 
 const TAB_BAR_BASE_HEIGHT = 60;
 const TAB_BAR_BOTTOM_PADDING = 12;
@@ -53,11 +53,7 @@ export default function TabLayout() {
       }
       const userData = await apiService.getUserInfoById(userId);
       if (userData?.defPhotoInfo?.tbResimId) {
-        const photoArrayBuffer = await apiService.downloadPhotoById(
-          userData.defPhotoInfo.tbResimId,
-          userData.defPhotoInfo.rsmUzanti,
-          userData.defPhotoInfo.rsmAd
-        );
+        const photoArrayBuffer = await apiService.downloadPhotoById(userData.defPhotoInfo.tbResimId, userData.defPhotoInfo.rsmUzanti, userData.defPhotoInfo.rsmAd);
         if (photoArrayBuffer) {
           const base64String = arrayBufferToBase64(photoArrayBuffer);
           const mimeType = userData.defPhotoInfo.rsmUzanti.replace('.', '');
@@ -156,6 +152,7 @@ export default function TabLayout() {
         options={{
           title: t('notifications'),
           tabBarIcon: ({ color, size }) => <Ionicons name="notifications" size={size} color={color} />,
+          href: null,
         }}
       />
       <Tabs.Screen

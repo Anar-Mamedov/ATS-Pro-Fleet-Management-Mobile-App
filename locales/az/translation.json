@@ -2,6 +2,10 @@
   "welcome": "Xoş Gəlmisiniz",
   "login": "Daxil Ol",
   "logout": "Çıxış Et",
+  "updateAvailableTitle": "Yeni Yeniləmə",
+  "updateAvailableBody": "Yeni versiya mövcuddur. İndi yeniləmək istəyirsiniz?",
+  "updateNow": "Yenilə",
+  "later": "Daha sonra",
   "email": "E-poçt",
   "password": "Şifrə",
   "home": "Ana Səhifə",
@@ -24,6 +28,7 @@
   "userCode": "İstifadəçi Kodu",
   "enterUserCode": "İstifadəçi kodunuzu daxil edin",
   "enterPassword": "Şifrənizi daxil edin",
+  "rememberMe": "Məni xatırla",
   "loggingIn": "Daxil olunur...",
   "changeCompany": "Şirkət Dəyiş",
   "enterCompanyKeyError": "Şirkət açarını daxil edin",
@@ -166,5 +171,9 @@
   "kmUpdateFailed": "Kilometr yenilənərkən xəta baş verdi",
   "apply": "Tətbiq Et",
   "required": "Bu sahə məcburidir",
-  "invalidNumber": "Yanlış nömrə"
+  "invalidNumber": "Yanlış nömrə",
+  "maintenanceServiceManagement": "Baxım və Servis İdarəetməsi",
+  "serviceOperations": "Servis Əməliyyatları",
+  "fleetManagement": "Filo İdarəetməsi",
+  "penalty": "Cərimə"
 }

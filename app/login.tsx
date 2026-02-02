@@ -21,13 +21,18 @@ export default function Login() {
   const [companyKey, setCompanyKeyInput] = useState('');
   const [kullaniciKod, setKullaniciKod] = useState('');
   const [sifre, setSifre] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [companyLogo, setCompanyLogo] = useState<string | null>(null);
 
   const getTextFromEvent = (e: any) => e?.nativeEvent?.text ?? e?.target?.value ?? '';
+  const isDarkMode = themeName === 'dark';
+  const rememberMeKey = 'rememberMe';
+  const rememberedCredentialsKey = 'rememberedCredentials';
 
   useEffect(() => {
     checkCompanyInfo();
+    loadRememberedCredentials();
   }, []);
 
   const checkCompanyInfo = async () => {
@@ -44,6 +49,27 @@ export default function Login() {
       }
     } catch (error) {
       console.error('Error checking company info:', error);
+    }
+  };
+
+  const loadRememberedCredentials = async () => {
+    try {
+      const rememberMeValue = await AsyncStorage.getItem(rememberMeKey);
+      if (rememberMeValue === 'true') {
+        setRememberMe(true);
+        const savedCredentials = await AsyncStorage.getItem(rememberedCredentialsKey);
+        if (savedCredentials) {
+          const parsedCredentials = JSON.parse(savedCredentials) as { kullaniciKod?: string; sifre?: string };
+          if (typeof parsedCredentials.kullaniciKod === 'string') {
+            setKullaniciKod(parsedCredentials.kullaniciKod);
+          }
+          if (typeof parsedCredentials.sifre === 'string') {
+            setSifre(parsedCredentials.sifre);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error loading remembered credentials:', error);
     }
   };
 
@@ -179,9 +205,28 @@ export default function Login() {
 
       const loginData = await apiService.login(kullaniciKod.trim(), sifre.trim(), savedCompanyKey);
 
+      if (!loginData.isDriver) {
+        Alert.alert(t('warning'), t('onlyDriverLogin'));
+        return;
+      }
+
       await AsyncStorage.setItem('loginResponse', JSON.stringify(loginData));
       await AsyncStorage.setItem('token', loginData.accessToken);
       await AsyncStorage.setItem('id', loginData.siraNo.toString());
+
+      if (rememberMe) {
+        await AsyncStorage.setItem(rememberMeKey, 'true');
+        await AsyncStorage.setItem(
+          rememberedCredentialsKey,
+          JSON.stringify({
+            kullaniciKod: kullaniciKod.trim(),
+            sifre: sifre.trim(),
+          }),
+        );
+      } else {
+        await AsyncStorage.removeItem(rememberMeKey);
+        await AsyncStorage.removeItem(rememberedCredentialsKey);
+      }
 
       const fullName = [loginData.isim, loginData.soyAd].filter((part) => typeof part === 'string' && part.trim().length > 0).join(' ');
       const welcomeMessage = fullName ? `${t('welcomeUser')} ${fullName}` : t('welcomeUser');
@@ -224,29 +269,91 @@ export default function Login() {
             <Ionicons name="arrow-back" size={24} color="#0A84FF" />
           </TouchableOpacity>
 
-          <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-          >
-            <ScrollView
-              contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 16 }}
-              keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator={false}
-            >
+          <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+            <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 16 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+              <YStack space="$4" alignItems="center">
+                <Text fontSize="$8" color="$color" fontWeight="bold" marginBottom="$6" fontFamily="SF Pro Text">
+                  {t('companyLogin')}
+                </Text>
+
+                <YStack width="100%" space="$3">
+                  <Text fontSize="$5" color="$color" fontWeight="500" fontFamily="SF Pro Text">
+                    {t('companyKey')}
+                  </Text>
+                  <Input
+                    value={companyKey}
+                    onChange={(e) => setCompanyKeyInput(getTextFromEvent(e))}
+                    placeholder={t('enterCompanyKey')}
+                    autoCapitalize="none"
+                    size="$4"
+                    borderRadius="$3"
+                    width="100%"
+                    minHeight={50}
+                    paddingVertical="$3"
+                    maxFontSizeMultiplier={1.3}
+                  />
+                </YStack>
+
+                <Button size="$4" backgroundColor="$blue10" width="100%" onPress={handleCompanySubmit} disabled={loading}>
+                  <Text color="$color" fontWeight="400" fontSize="$4" fontFamily="SF Pro Text">
+                    {loading ? t('checking') : t('continue')}
+                  </Text>
+                </Button>
+              </YStack>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </Stack>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: themeName === 'dark' ? '#000000' : '#F0F0F0' }} edges={['top']}>
+      <Stack flex={1} backgroundColor="$background">
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+          <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 16 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
             <YStack space="$4" alignItems="center">
+              {companyLogo ? (
+                <Image
+                  source={{ uri: companyLogo }}
+                  style={{
+                    width: 200,
+                    height: 100,
+                    resizeMode: 'contain',
+                    marginBottom: 1,
+                  }}
+                  onLoad={() => console.log('✅ Logo image loaded successfully')}
+                  onError={(error) => console.error('❌ Logo image load error:', error.nativeEvent.error)}
+                />
+              ) : (
+                <YStack
+                  width={200}
+                  height={100}
+                  marginBottom={1}
+                  borderWidth={2}
+                  borderColor="$gray8"
+                  borderStyle="dashed"
+                  alignItems="center"
+                  justifyContent="center"
+                  borderRadius="$3"
+                >
+                  <Text color="$gray10" fontSize="$2">
+                    Logo
+                  </Text>
+                </YStack>
+              )}
               <Text fontSize="$8" color="$color" fontWeight="bold" marginBottom="$6" fontFamily="SF Pro Text">
-                {t('companyLogin')}
+                {t('login')}
               </Text>
 
               <YStack width="100%" space="$3">
                 <Text fontSize="$5" color="$color" fontWeight="500" fontFamily="SF Pro Text">
-                  {t('companyKey')}
+                  {t('userCode')}
                 </Text>
                 <Input
-                  value={companyKey}
-                  onChange={(e) => setCompanyKeyInput(getTextFromEvent(e))}
-                  placeholder={t('enterCompanyKey')}
+                  value={kullaniciKod}
+                  onChange={(e) => setKullaniciKod(getTextFromEvent(e))}
+                  placeholder={t('enterUserCode')}
                   autoCapitalize="none"
                   size="$4"
                   borderRadius="$3"
@@ -257,9 +364,59 @@ export default function Login() {
                 />
               </YStack>
 
-              <Button size="$4" backgroundColor="$blue10" width="100%" onPress={handleCompanySubmit} disabled={loading}>
+              <YStack width="100%" space="$3">
+                <Text fontSize="$5" color="$color" fontWeight="500" fontFamily="SF Pro Text">
+                  {t('password')}
+                </Text>
+                <Input
+                  value={sifre}
+                  onChange={(e) => setSifre(getTextFromEvent(e))}
+                  placeholder={t('enterPassword')}
+                  type="password"
+                  size="$4"
+                  borderRadius="$3"
+                  width="100%"
+                  minHeight={50}
+                  paddingVertical="$3"
+                  maxFontSizeMultiplier={1.3}
+                />
+              </YStack>
+
+              <TouchableOpacity
+                onPress={() => setRememberMe((previous) => !previous)}
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingVertical: 4,
+                }}
+              >
+                <Stack
+                  width={22}
+                  height={22}
+                  borderRadius={6}
+                  borderWidth={1.5}
+                  borderColor={isDarkMode ? '#3A3A3C' : '#C7C7CC'}
+                  backgroundColor={rememberMe ? '#0A84FF' : 'transparent'}
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  {rememberMe ? <Ionicons name="checkmark" size={16} color="#FFFFFF" /> : null}
+                </Stack>
+                <Text marginLeft="$3" color="$color" fontSize="$4" fontFamily="SF Pro Text">
+                  {t('rememberMe')}
+                </Text>
+              </TouchableOpacity>
+
+              <Button size="$4" backgroundColor="$green10" width="100%" onPress={handleLogin} disabled={loading}>
                 <Text color="$color" fontWeight="400" fontSize="$4" fontFamily="SF Pro Text">
-                  {loading ? t('checking') : t('continue')}
+                  {loading ? t('loggingIn') : t('login')}
+                </Text>
+              </Button>
+
+              <Button size="$3" variant="outlined" marginTop="$4" onPress={handleChangeCompany}>
+                <Text color="$blue10" fontFamily="SF Pro Text">
+                  {t('changeCompany')}
                 </Text>
               </Button>
             </YStack>
@@ -267,86 +424,5 @@ export default function Login() {
         </KeyboardAvoidingView>
       </Stack>
     </SafeAreaView>
-    );
-  }
-
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: themeName === 'dark' ? '#000000' : '#F0F0F0' }} edges={['top']}>
-      <Stack flex={1} backgroundColor="$background">
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-        >
-          <ScrollView
-            contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 16 }}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-          <YStack space="$4" alignItems="center">
-            {companyLogo ? (
-              <Image
-                source={{ uri: companyLogo }}
-                style={{
-                  width: 200,
-                  height: 100,
-                  resizeMode: 'contain',
-                  marginBottom: 1,
-                }}
-                onLoad={() => console.log('✅ Logo image loaded successfully')}
-                onError={(error) => console.error('❌ Logo image load error:', error.nativeEvent.error)}
-              />
-            ) : (
-              <YStack width={200} height={100} marginBottom={1} borderWidth={2} borderColor="$gray8" borderStyle="dashed" alignItems="center" justifyContent="center" borderRadius="$3">
-                <Text color="$gray10" fontSize="$2">
-                  Logo
-                </Text>
-              </YStack>
-            )}
-            <Text fontSize="$8" color="$color" fontWeight="bold" marginBottom="$6" fontFamily="SF Pro Text">
-              {t('login')}
-            </Text>
-
-            <YStack width="100%" space="$3">
-              <Text fontSize="$5" color="$color" fontWeight="500" fontFamily="SF Pro Text">
-                {t('userCode')}
-              </Text>
-              <Input
-                value={kullaniciKod}
-                onChange={(e) => setKullaniciKod(getTextFromEvent(e))}
-                placeholder={t('enterUserCode')}
-                autoCapitalize="none"
-                size="$4"
-                borderRadius="$3"
-                width="100%"
-                minHeight={50}
-                paddingVertical="$3"
-                maxFontSizeMultiplier={1.3}
-              />
-            </YStack>
-
-            <YStack width="100%" space="$3">
-              <Text fontSize="$5" color="$color" fontWeight="500" fontFamily="SF Pro Text">
-                {t('password')}
-              </Text>
-              <Input value={sifre} onChange={(e) => setSifre(getTextFromEvent(e))} placeholder={t('enterPassword')} type="password" size="$4" borderRadius="$3" width="100%" minHeight={50} paddingVertical="$3" maxFontSizeMultiplier={1.3} />
-            </YStack>
-
-            <Button size="$4" backgroundColor="$green10" width="100%" onPress={handleLogin} disabled={loading}>
-              <Text color="$color" fontWeight="400" fontSize="$4" fontFamily="SF Pro Text">
-                {loading ? t('loggingIn') : t('login')}
-              </Text>
-            </Button>
-
-            <Button size="$3" variant="outlined" marginTop="$4" onPress={handleChangeCompany}>
-              <Text color="$blue10" fontFamily="SF Pro Text">
-                {t('changeCompany')}
-              </Text>
-            </Button>
-          </YStack>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </Stack>
-  </SafeAreaView>
   );
 }

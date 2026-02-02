@@ -1,4 +1,5 @@
 import { useThemeController } from '@/config/theme';
+import { useVehicleContext } from '@/context/VehicleContext';
 import { useBottomBarPadding } from '@/ui/components/useBottomBarPadding';
 import { MaterialIcons } from '@expo/vector-icons';
 import { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetModal, BottomSheetScrollView, BottomSheetTextInput, BottomSheetView } from '@gorhom/bottom-sheet';
@@ -51,7 +52,17 @@ export default function DriverMainPage() {
   const [inspectionIndex, setInspectionIndex] = useState<number>(0);
   const [insuranceIndex, setInsuranceIndex] = useState<number>(0);
 
+  const { setSelectedVehicleId } = useVehicleContext();
+
   const firstVehicle = Array.isArray(vehicleData) && vehicleData.length > 0 ? vehicleData[selectedIndex] : null;
+
+  useEffect(() => {
+    if (firstVehicle?.aracId) {
+      setSelectedVehicleId(firstVehicle.aracId);
+    } else {
+      setSelectedVehicleId(null);
+    }
+  }, [firstVehicle, setSelectedVehicleId]);
   const inspectionItems = useMemo(
     (): { key: string; label: string; value: string | null | undefined; icon: keyof typeof MaterialIcons.glyphMap }[] => [
       { key: 'muayene', label: t('muayene'), value: firstVehicle?.muayeneTarih, icon: 'assignment' },

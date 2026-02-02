@@ -2,6 +2,10 @@
   "welcome": "Добро пожаловать",
   "login": "Войти",
   "logout": "Выйти",
+  "updateAvailableTitle": "Доступно обновление",
+  "updateAvailableBody": "Доступна новая версия. Обновить сейчас?",
+  "updateNow": "Обновить",
+  "later": "Позже",
   "email": "Электронная почта",
   "password": "Пароль",
   "home": "Главная",
@@ -24,6 +28,7 @@
   "userCode": "Код пользователя",
   "enterUserCode": "Введите код пользователя",
   "enterPassword": "Введите пароль",
+  "rememberMe": "Запомнить меня",
   "loggingIn": "Вход...",
   "changeCompany": "Сменить компанию",
   "enterCompanyKeyError": "Введите ключ компании",
@@ -166,5 +171,9 @@
   "kmUpdateFailed": "Ошибка обновления километража",
   "apply": "Применить",
   "required": "Это поле обязательно",
-  "invalidNumber": "Неверное число"
+  "invalidNumber": "Неверное число",
+  "maintenanceServiceManagement": "Управление ТО и Сервисом",
+  "serviceOperations": "Сервисные операции",
+  "fleetManagement": "Управление автопарком",
+  "penalty": "Штраф"
 }

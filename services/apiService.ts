@@ -5,11 +5,13 @@ import { Platform } from 'react-native';
 import dayjs from '../config/dayjs';
 import { axiosInstance } from '../config/http';
 
-type UploadablePhoto = FormData | {
-  uri: string;
-  name: string;
-  type: string;
-};
+type UploadablePhoto =
+  | FormData
+  | {
+      uri: string;
+      name: string;
+      type: string;
+    };
 
 const resolveUploadUrl = (path: string): string => {
   const base = axiosInstance.defaults.baseURL || '';
@@ -191,6 +193,11 @@ export const apiService = {
 
   updateUserInfo: async (userData: { isDriver: boolean; siraNo: number; kullaniciKod: string; isim: string; aktif: boolean; soyAd: string; email: string; telefon: string }) => {
     const response = await axiosInstance.post('/User/UpdateUserInfo', userData);
+    return response.data;
+  },
+
+  modifyUserPassword: async (passwordData: { userId: number; previousPassword: string; updatedPassword: string; userTypeId: string }) => {
+    const response = await axiosInstance.post('/Profile/ModifyUserPassword', passwordData);
     return response.data;
   },
 
@@ -443,17 +450,31 @@ export const apiService = {
   },
 
   // KmLog endpoints
-  addKmLog: async (kmLogData: {
-    kmAracId: number;
-    tarih: string;
-    saat: string;
-    eskiKm: number;
-    yeniKm: number;
-    kaynak: string;
-    lokasyonId: number;
-    surucuId: number;
-  }) => {
+  addKmLog: async (kmLogData: { kmAracId: number; tarih: string; saat: string; eskiKm: number; yeniKm: number; kaynak: string; lokasyonId: number; surucuId: number }) => {
     const response = await axiosInstance.post('/KmLog/AddKmLog', [kmLogData]);
+    return response.data;
+  },
+
+  // Vehicle Fines endpoints
+  getVehicleFinesListByVehicleId: async (vehicleIds: number[], diff: number, setPointId: number, parameter: string = '') => {
+    const encodedParameter = encodeURIComponent(parameter);
+    const response = await axiosInstance.post(`/VehicleFines/GetVehicleFinesListByVehicleId?diff=${diff}&setPointId=${setPointId}&parameter=${encodedParameter}`, vehicleIds);
+    return response.data;
+  },
+
+  // Vehicle Services endpoints
+  getVehicleServicesByVehicleIds: async (vehicleIds: number[], diff: number, setPointId: number, parameter: string = '') => {
+    const encodedParameter = encodeURIComponent(parameter);
+    const url = `/VehicleServices/GetVehicleServicesByVehicleIds?diff=${diff}&setPointId=${setPointId}&parameter=${encodedParameter}`;
+    const payload = {
+      vIds: vehicleIds,
+      filter: {
+        lokasyonIds: [],
+        servisNedeniIds: [],
+        servisTanimIds: [],
+      },
+    };
+    const response = await axiosInstance.post(url, payload);
     return response.data;
   },
 };

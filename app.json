@@ -2,7 +2,7 @@
   "expo": {
     "name": "ATS Pro",
     "slug": "ATS-Pro-Mobile-App",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "atspromobileapp",
@@ -11,16 +11,23 @@
     "jsEngine": "hermes",
     "primaryColor": "#007AFF",
     "description": "ATS Pro - Fleet management application for drivers and managers. Track vehicles, manage maintenance, reports and documents.",
-    "privacy": "https://atspro.com.tr/privacy-policy",
     "githubUrl": "https://github.com/Anar-Mamedov/ATS-Pro-Fleet-Management-Mobile-App.git",
+    "updates": {
+      "url": "https://u.expo.dev/a833e92e-525a-46e3-ac3d-199e55743a38"
+    },
+    "runtimeVersion": "1.0.1",
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.orjinyazilim.atspro",
-      "buildNumber": "1",
+      "buildNumber": "2",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
       "infoPlist": {
-        "NSCameraUsageDescription": "Uygulama kameranızı kullanmak için izin gerekiyor.",
-        "NSPhotoLibraryUsageDescription": "Uygulama fotoğraflarınıza erişmek için izin gerekiyor.",
-        "NSMicrophoneUsageDescription": "Uygulama mikrofonunuzu kullanmak için izin gerekiyor."
+        "NSCameraUsageDescription": "Araç fotoğrafları çekmek ve hasar/evrak bildirimlerine eklemek için kamera erişimi gerekir (ör. araç hasarı fotoğrafı).",
+        "NSPhotoLibraryUsageDescription": "Galerinizden araç fotoğrafları ve belgeleri seçip talep/rapor kaydına eklemek için fotoğraf arşivine erişim gerekir.",
+        "NSPhotoLibraryAddUsageDescription": "Çektiğiniz araç fotoğraflarını ve eklediğiniz belgeleri galerinizde saklamak için kaydetme izni gerekir.",
+        "NSLocationWhenInUseUsageDescription": "Uygulama araç konumu ve ilgili işlemler için konumunuza erişir."
       }
     },
     "android": {
@@ -31,7 +38,6 @@
       "edgeToEdgeEnabled": true,
       "package": "com.orjinyazilim.atspro",
       "versionCode": 1,
-      "usesCleartextTraffic": true,
       "permissions": ["android.permission.CAMERA", "android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.RECORD_AUDIO"]
     },
     "web": {
@@ -60,15 +66,14 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Uygulama fotoğraflarınıza erişmek için izin gerekiyor.",
-          "cameraPermission": "Uygulama kameranızı kullanmak için izin gerekiyor."
+          "photosPermission": "Galerinizden araç fotoğrafları ve belgeleri seçip talep/rapor kaydına eklemek için fotoğraf arşivine erişim gerekir.",
+          "cameraPermission": "Araç fotoğrafları çekmek ve hasar/evrak bildirimlerine eklemek için kamera erişimi gerekir (ör. araç hasarı fotoğrafı)."
         }
       ],
       [
         "expo-camera",
         {
-          "cameraPermission": "Uygulama kameranızı kullanmak için izin gerekiyor.",
-          "microphonePermission": "Uygulama mikrofonunuzu kullanmak için izin gerekiyor.",
+          "cameraPermission": "Araç fotoğrafları çekmek ve hasar/evrak bildirimlerine eklemek için kamera erişimi gerekir (ör. araç hasarı fotoğrafı).",
           "recordAudioAndroid": false
         }
       ],
@@ -79,6 +84,7 @@
           "enable": true
         }
       ],
+      "./plugins/disable-user-script-sandboxing.js",
       "./plugins/copy-sectigo-cert.js"
     ],
     "experiments": {
