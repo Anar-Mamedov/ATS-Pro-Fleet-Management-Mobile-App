@@ -1,11 +1,10 @@
-import { useThemeController } from '@/config/theme';
 import { Pencil } from '@tamagui/lucide-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Text, View } from '@tamagui/core';
+import { Stack, Text, styled, getVariable, useTheme } from '@tamagui/core';
 import { YStack } from '@tamagui/stacks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Image, Modal, Pressable, StyleSheet } from 'react-native';
+import { Alert, Image, Modal, Pressable, StyleSheet, View } from 'react-native';
 import { apiService } from '../../../services/apiService';
 import UploadPhoto from './UploadPhoto';
 
@@ -44,16 +43,55 @@ const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
   return btoa(binary);
 };
 
+// Styled components using standard Tamagui theme tokens
+const Container = styled(Stack, {
+  padding: 16,
+  width: '100%',
+});
+
+const CenterContainer = styled(Stack, {
+  padding: 16,
+  alignItems: 'center',
+  justifyContent: 'center',
+});
+
+const AvatarFrame = styled(Stack, {
+  width: 100,
+  height: 100,
+  borderRadius: 50,
+  backgroundColor: '$borderColor',
+  alignItems: 'center',
+  justifyContent: 'center',
+  overflow: 'hidden',
+});
+
+const UserName = styled(Text, {
+  fontSize: 24,
+  fontWeight: '700',
+  color: '$color',
+  textAlign: 'center',
+});
+
+const ModalContent = styled(Stack, {
+  backgroundColor: '$backgroundStrong',
+  borderRadius: 20,
+  padding: 20,
+  width: '90%',
+  maxWidth: 400,
+});
+
 export default function ProfileUserInfo() {
   const { t } = useTranslation();
-  const { themeName } = useThemeController();
-  const isDark = themeName === 'dark';
+  const theme = useTheme();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [isDriver, setIsDriver] = useState(false);
+
+  // For non-Tamagui components
+  const accentBg = getVariable(theme.accentBackground);
 
   const fetchProfilePhoto = useCallback(async (photoId: number, extension: string, fileName: string) => {
     try {
@@ -64,8 +102,8 @@ export default function ProfileUserInfo() {
         const mimeType = extension.replace('.', '');
         setProfilePhoto(`data:image/${mimeType};base64,${base64String}`);
       }
-    } catch (error: any) {
-      console.error('Error fetching profile photo:', error);
+    } catch (err: any) {
+      console.error('Error fetching profile photo:', err);
     }
   }, []);
 
@@ -95,10 +133,10 @@ export default function ProfileUserInfo() {
       if (userData.defPhotoInfo && userData.defPhotoInfo.tbResimId) {
         await fetchProfilePhoto(userData.defPhotoInfo.tbResimId, userData.defPhotoInfo.rsmUzanti, userData.defPhotoInfo.rsmAd);
       }
-    } catch (error: any) {
-      console.error('Error fetching user info:', error);
-      setError(error.message || t('userInfoError'));
-      Alert.alert(t('error'), error.message || t('userInfoError'));
+    } catch (err: any) {
+      console.error('Error fetching user info:', err);
+      setError(err.message || t('userInfoError'));
+      Alert.alert(t('error'), err.message || t('userInfoError'));
     } finally {
       setLoading(false);
     }
@@ -114,47 +152,47 @@ export default function ProfileUserInfo() {
     fetchUserInfo();
   };
 
-  const handleUploadError = (error: string) => {
-    console.error('Upload error:', error);
+  const handleUploadError = (err: string) => {
+    console.error('Upload error:', err);
     setShowUploadModal(false);
   };
 
   if (loading) {
     return (
-      <View style={styles.centerContainer}>
-        <Text fontSize="$5" textAlign="center" color={isDark ? '#FFFFFF' : '#18181B'}>
+      <CenterContainer>
+        <Text fontSize="$5" textAlign="center" color="$color">
           {t('loading')}
         </Text>
-      </View>
+      </CenterContainer>
     );
   }
 
   if (error) {
     return (
-      <View style={styles.centerContainer}>
-        <Text fontSize="$5" color="$red10" textAlign="center">
+      <CenterContainer>
+        <Text fontSize="$5" color="$error" textAlign="center">
           {error}
         </Text>
-      </View>
+      </CenterContainer>
     );
   }
 
   if (!userInfo) {
     return (
-      <View style={styles.centerContainer}>
-        <Text fontSize="$5" textAlign="center" color={isDark ? '#FFFFFF' : '#18181B'}>
+      <CenterContainer>
+        <Text fontSize="$5" textAlign="center" color="$color">
           {t('userInfoNotFound')}
         </Text>
-      </View>
+      </CenterContainer>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <Container>
       <YStack gap={24} alignItems="center">
         {/* Profile Photo */}
         <View style={styles.avatarContainer}>
-          <View style={[styles.avatarFrame, { backgroundColor: isDark ? '#2C2C2E' : '#E5E5E7' }]}>
+          <AvatarFrame>
             {profilePhoto ? (
               <Image
                 source={{ uri: profilePhoto }}
@@ -162,38 +200,38 @@ export default function ProfileUserInfo() {
                 resizeMode="cover"
               />
             ) : (
-              <Text fontSize={32} fontWeight="600" color={isDark ? '#FFFFFF' : '#18181B'}>
+              <Text fontSize={32} fontWeight="600" color="$color">
                 {userInfo.isim?.charAt(0) || ''}
                 {userInfo.soyAd?.charAt(0) || ''}
               </Text>
             )}
-          </View>
+          </AvatarFrame>
 
           {/* Edit Badge */}
-          <Pressable onPress={() => setShowUploadModal(true)} style={styles.editBadge}>
+          <Pressable onPress={() => setShowUploadModal(true)} style={[styles.editBadge, { backgroundColor: accentBg }]}>
             <Pencil size={16} color="#FFFFFF" />
           </Pressable>
         </View>
 
         {/* User Name */}
-        <Text style={[styles.userName, { color: isDark ? '#FFFFFF' : '#18181B' }]}>
+        <UserName>
           {userInfo.isim || ''} {userInfo.soyAd || ''}
-        </Text>
+        </UserName>
       </YStack>
 
       {/* Upload Photo Modal */}
       <Modal visible={showUploadModal} transparent={true} animationType="slide" onRequestClose={() => setShowUploadModal(false)}>
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }]}>
+          <ModalContent>
             {/* Modal Header */}
-            <View style={styles.modalHeader}>
-              <Text fontSize="$6" fontWeight="600" color={isDark ? '#FFFFFF' : '#18181B'}>
+            <Stack flexDirection="row" justifyContent="space-between" alignItems="center" marginBottom={20}>
+              <Text fontSize="$6" fontWeight="600" color="$color">
                 {t('upload_photo') || 'Fotoğraf Yükle'}
               </Text>
               <Pressable onPress={() => setShowUploadModal(false)} style={styles.closeButton}>
-                <Text fontSize={24} color={isDark ? '#A1A1AA' : '#666666'}>×</Text>
+                <Text fontSize={24} color="$placeholderColor">×</Text>
               </Pressable>
-            </View>
+            </Stack>
 
             {/* Upload Photo Component */}
             {userInfo && (
@@ -206,35 +244,18 @@ export default function ProfileUserInfo() {
                 onUploadError={handleUploadError}
               />
             )}
-          </View>
+          </ModalContent>
         </View>
       </Modal>
-    </View>
+    </Container>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    width: '100%',
-  },
-  centerContainer: {
-    padding: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   avatarContainer: {
     position: 'relative',
     width: 100,
     height: 100,
-  },
-  avatarFrame: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
   },
   avatarImage: {
     width: 100,
@@ -248,33 +269,14 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: '#0A84FF',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  userName: {
-    fontFamily: 'Inter',
-    fontSize: 24,
-    fontWeight: '700',
-    textAlign: 'center',
   },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  modalContent: {
-    borderRadius: 20,
-    padding: 20,
-    width: '90%',
-    maxWidth: 400,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
   },
   closeButton: {
     padding: 5,

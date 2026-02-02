@@ -4,7 +4,7 @@ import { useBottomBarPadding } from '@/ui/components/useBottomBarPadding';
 import { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetModal, BottomSheetScrollView, BottomSheetTextInput, BottomSheetView } from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button } from '@tamagui/button';
-import { Stack, Text } from '@tamagui/core';
+import { Stack, Text, useTheme, getVariable } from '@tamagui/core';
 import { XStack, YStack } from '@tamagui/stacks';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -30,6 +30,7 @@ export default function DriverMainPage() {
   const { t } = useTranslation();
   const bottomPad = useBottomBarPadding();
   const { themeName } = useThemeController();
+  const theme = useTheme();
   const isDark = themeName === 'dark';
 
   const [aracIds, setAracIds] = useState<number[]>([]);
@@ -177,22 +178,22 @@ export default function DriverMainPage() {
   const fuelLimitValue = firstVehicle?.yakitLimiti;
   const fuelLimitDisplay = fuelLimitValue === null || fuelLimitValue === undefined ? '-' : String(fuelLimitValue);
 
-  // Colors based on theme
+  // Colors from Tamagui theme config using standard keys
   const colors = {
-    bgPage: isDark ? '#0B0B0E' : '#F8F9FA',
-    bgCard: isDark ? '#16161A' : '#FFFFFF',
-    textPrimary: isDark ? '#FAFAF9' : '#1A1A1A',
-    textSecondary: isDark ? '#6B6B70' : '#6B7280',
-    textTertiary: isDark ? '#4A4A50' : '#9CA3AF',
-    borderLight: isDark ? '#2A2A2E' : '#F3F4F6',
-    bgSurface: isDark ? '#1A1A1E' : '#F3F4F6',
-    bluePrimary: '#0066FF',
-    blueTint: '#0066FF14',
-    greenSuccess: '#10B981',
-    redError: '#EF4444',
-    amberWarning: '#F59E0B',
-    purple: '#8B5CF6',
-    orange: '#F97316',
+    bgPage: getVariable(theme.background),
+    bgCard: getVariable(theme.backgroundStrong),
+    bgElevated: getVariable(theme.backgroundElevated),
+    textPrimary: getVariable(theme.color),
+    textSecondary: getVariable(theme.placeholderColor),
+    textTertiary: getVariable(theme.placeholderColor),
+    borderLight: getVariable(theme.borderColor),
+    bluePrimary: getVariable(theme.accentBackground),
+    blueTint: `${getVariable(theme.accentBackground)}14`,
+    greenSuccess: getVariable(theme.success),
+    redError: getVariable(theme.error),
+    amberWarning: getVariable(theme.warning),
+    purple: getVariable(theme.purple),
+    orange: getVariable(theme.orange),
   };
 
   // Reminder icon mapping
@@ -445,7 +446,7 @@ export default function DriverMainPage() {
                           borderBottomWidth={isLast ? 0 : 1}
                           borderBottomColor={colors.borderLight}
                         >
-                          <Stack style={[styles.reminderIconWrapper, { backgroundColor: colors.bgSurface }]}>
+                          <Stack style={[styles.reminderIconWrapper, { backgroundColor: colors.bgElevated }]}>
                             <IconComponent size={18} color={color} />
                           </Stack>
                           <YStack flex={1} gap={2}>
