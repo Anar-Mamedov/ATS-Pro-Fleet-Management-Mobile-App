@@ -36,7 +36,7 @@ const MenuItemLeft = styled(XStack, {
 });
 
 const MenuItemText = styled(Text, {
-  fontSize: 16,
+  fontSize: 15,
   fontWeight: '500',
   color: '$color',
 });
@@ -50,7 +50,7 @@ const LogoutButton = styled(Stack, {
 });
 
 const LogoutText = styled(Text, {
-  fontSize: 16,
+  fontSize: 15,
   fontWeight: '600',
   color: '$error',
 });
@@ -93,7 +93,7 @@ export default function ProfileTab() {
                 <ChevronLeft size={24} color={textColor} />
               </Pressable>
 
-              <Text fontSize="$6" fontWeight="600" color="$color">
+              <Text fontSize={17} fontWeight="600" color="$color">
                 {t('personalInformation')}
               </Text>
             </YStack>
@@ -122,7 +122,7 @@ export default function ProfileTab() {
                 <ChevronLeft size={24} color={textColor} />
               </Pressable>
 
-              <Text fontSize="$6" fontWeight="600" color="$color">
+              <Text fontSize={17} fontWeight="600" color="$color">
                 {t('updatePassword')}
               </Text>
             </YStack>

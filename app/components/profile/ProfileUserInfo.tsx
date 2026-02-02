@@ -66,7 +66,7 @@ const AvatarFrame = styled(Stack, {
 });
 
 const UserName = styled(Text, {
-  fontSize: 24,
+  fontSize: 22,
   fontWeight: '700',
   color: '$color',
   textAlign: 'center',
@@ -200,7 +200,7 @@ export default function ProfileUserInfo() {
                 resizeMode="cover"
               />
             ) : (
-              <Text fontSize={32} fontWeight="600" color="$color">
+              <Text fontSize={28} fontWeight="600" color="$color">
                 {userInfo.isim?.charAt(0) || ''}
                 {userInfo.soyAd?.charAt(0) || ''}
               </Text>
@@ -225,11 +225,11 @@ export default function ProfileUserInfo() {
           <ModalContent>
             {/* Modal Header */}
             <Stack flexDirection="row" justifyContent="space-between" alignItems="center" marginBottom={20}>
-              <Text fontSize="$6" fontWeight="600" color="$color">
+              <Text fontSize={17} fontWeight="600" color="$color">
                 {t('upload_photo') || 'Fotoğraf Yükle'}
               </Text>
               <Pressable onPress={() => setShowUploadModal(false)} style={styles.closeButton}>
-                <Text fontSize={24} color="$placeholderColor">×</Text>
+                <Text fontSize={20} color="$placeholderColor">×</Text>
               </Pressable>
             </Stack>
 

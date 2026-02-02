@@ -97,7 +97,7 @@ export default function LanguageSelector() {
       >
         <BottomSheetView style={{ flex: 1, padding: 20 }}>
           <YStack space="$3">
-            <Text fontSize="$6" fontWeight="600" textAlign="center" marginBottom="$4" color="$color">
+            <Text fontSize={17} fontWeight="600" textAlign="center" marginBottom="$4" color="$color">
               {t('language')}
             </Text>
 
@@ -114,10 +114,10 @@ export default function LanguageSelector() {
                 >
                   <SvgXml xml={getFlagSvg(language.code)} width={32} height={21} />
                   <YStack flex={1}>
-                    <Text fontSize="$5" fontWeight="500" color="$color">
+                    <Text fontSize={15} fontWeight="500" color="$color">
                       {language.nativeName}
                     </Text>
-                    <Text fontSize="$3" color="$color" opacity={0.7}>
+                    <Text fontSize={13} color="$color" opacity={0.7}>
                       {language.name}
                     </Text>
                   </YStack>
