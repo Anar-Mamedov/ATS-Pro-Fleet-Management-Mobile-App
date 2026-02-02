@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Controller, Control } from 'react-hook-form';
-import { XStack, YStack } from '@tamagui/stacks';
+import { useThemeController } from '@/config/theme';
 import { Text } from '@tamagui/core';
 import { Check, ChevronDown } from '@tamagui/lucide-icons';
+import { XStack, YStack } from '@tamagui/stacks';
+import React, { useEffect, useState } from 'react';
+import { Control, Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Modal, Pressable, StyleSheet, TouchableOpacity, ScrollView, Animated } from 'react-native';
-import { useThemeController } from '@/config/theme';
+import { Animated, Modal, Pressable, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface TalepTuruProps {
@@ -38,7 +38,6 @@ const TalepTuru: React.FC<TalepTuruProps> = ({ control, name, rules, placeholder
 
   const requestOptions = React.useMemo(
     () => [
-      { value: 'ariza', label: t('ariza') },
       { value: 'lastik', label: t('lastik') },
       { value: 'aksesuar', label: t('aksesuar') },
       { value: 'yakit', label: t('yakit') },
@@ -59,10 +58,7 @@ const TalepTuru: React.FC<TalepTuruProps> = ({ control, name, rules, placeholder
         return (
           <>
             {/* Trigger Button */}
-            <TouchableOpacity
-              onPress={() => setModalVisible(true)}
-              activeOpacity={0.7}
-            >
+            <TouchableOpacity onPress={() => setModalVisible(true)} activeOpacity={0.7}>
               <XStack
                 alignItems="center"
                 justifyContent="space-between"
@@ -82,16 +78,8 @@ const TalepTuru: React.FC<TalepTuruProps> = ({ control, name, rules, placeholder
             </TouchableOpacity>
 
             {/* Modal */}
-            <Modal
-              visible={modalVisible}
-              transparent={true}
-              animationType="none"
-              onRequestClose={() => setModalVisible(false)}
-            >
-              <Pressable
-                style={styles.modalOverlay}
-                onPress={() => setModalVisible(false)}
-              >
+            <Modal visible={modalVisible} transparent={true} animationType="none" onRequestClose={() => setModalVisible(false)}>
+              <Pressable style={styles.modalOverlay} onPress={() => setModalVisible(false)}>
                 <Animated.View
                   style={[
                     styles.safeArea,
@@ -112,22 +100,11 @@ const TalepTuru: React.FC<TalepTuruProps> = ({ control, name, rules, placeholder
                   >
                     {/* Handle */}
                     <YStack alignItems="center" paddingVertical="$2">
-                      <YStack
-                        width={40}
-                        height={4}
-                        borderRadius="$2"
-                        backgroundColor={isDarkMode ? '#444' : '#ccc'}
-                      />
+                      <YStack width={40} height={4} borderRadius="$2" backgroundColor={isDarkMode ? '#444' : '#ccc'} />
                     </YStack>
 
                     {/* Title */}
-                    <Text
-                      fontSize="$6"
-                      fontWeight="bold"
-                      textAlign="center"
-                      marginBottom="$3"
-                      color={isDarkMode ? '#fff' : '#000'}
-                    >
+                    <Text fontSize="$6" fontWeight="bold" textAlign="center" marginBottom="$3" color={isDarkMode ? '#fff' : '#000'}>
                       {t('talepTuruListesi')}
                     </Text>
 
