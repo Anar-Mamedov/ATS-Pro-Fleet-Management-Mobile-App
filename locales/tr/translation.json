@@ -208,5 +208,7 @@
   "fleetManagement": "Filo Yönetimi",
   "penalty": "Ceza",
   "noPenaltyFound": "Ceza kayıdı bulunamadı",
-  "noServiceRecordFound": "Servis kayıdı bulunamadı"
+  "noServiceRecordFound": "Servis kayıdı bulunamadı",
+  "lightMode": "Aydınlık Mod",
+  "darkMode": "Karanlık Mod"
 }

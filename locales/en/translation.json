@@ -196,5 +196,7 @@
   "fleetManagement": "Fleet Management",
   "penalty": "Penalty",
   "noPenaltyFound": "Penalty record not found",
-  "noServiceRecordFound": "Service record not found"
+  "noServiceRecordFound": "Service record not found",
+  "lightMode": "Light Mode",
+  "darkMode": "Dark Mode"
 }

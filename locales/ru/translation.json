@@ -175,5 +175,7 @@
   "maintenanceServiceManagement": "Управление ТО и Сервисом",
   "serviceOperations": "Сервисные операции",
   "fleetManagement": "Управление автопарком",
-  "penalty": "Штраф"
+  "penalty": "Штраф",
+  "lightMode": "Светлый режим",
+  "darkMode": "Тёмный режим"
 }

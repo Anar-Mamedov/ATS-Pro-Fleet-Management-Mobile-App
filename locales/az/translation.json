@@ -175,5 +175,7 @@
   "maintenanceServiceManagement": "Baxım və Servis İdarəetməsi",
   "serviceOperations": "Servis Əməliyyatları",
   "fleetManagement": "Filo İdarəetməsi",
-  "penalty": "Cərimə"
+  "penalty": "Cərimə",
+  "lightMode": "İşıqlı Mod",
+  "darkMode": "Qaranlıq Mod"
 }
