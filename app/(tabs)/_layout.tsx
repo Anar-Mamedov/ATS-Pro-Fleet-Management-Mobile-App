@@ -1,38 +1,17 @@
-import { useThemeController } from '@/config/theme';
 import { apiService } from '@/services/apiService';
-import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Tabs } from 'expo-router';
+import { Home, Repeat, Bell, User } from '@tamagui/lucide-icons';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, View } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-const TAB_BAR_BASE_HEIGHT = 60;
-const TAB_BAR_BOTTOM_PADDING = 12;
-
-const TAB_BAR_THEMES = {
-  light: {
-    background: '#FFFFFF',
-    border: 'rgba(0,0,0,0.06)',
-    active: '#00AEEF',
-    inactive: '#7A7F8C',
-    shadow: '#000',
-  },
-  dark: {
-    background: '#0E1117',
-    border: 'rgba(255,255,255,0.08)',
-    active: '#00AEEF',
-    inactive: '#8D94A1',
-    shadow: '#000',
-  },
-} as const;
+import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { Text } from '@tamagui/core';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function TabLayout() {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
-  const { themeName } = useThemeController();
-  const palette = TAB_BAR_THEMES[themeName];
   const [profilePhotoUri, setProfilePhotoUri] = useState<string | null>(null);
 
   const arrayBufferToBase64 = useCallback((buffer: ArrayBuffer): string => {
@@ -72,86 +51,30 @@ export default function TabLayout() {
     loadProfilePhoto();
   }, [loadProfilePhoto]);
 
-  const renderProfileIcon = useCallback(
-    ({ color, size }: { color: string; size: number }) => {
-      const imageSize = size + 4;
-      const containerStyle = {
-        width: imageSize,
-        height: imageSize,
-        borderRadius: imageSize / 2,
-        borderWidth: 2,
-        borderColor: color,
-        overflow: 'hidden' as const,
-        alignItems: 'center' as const,
-        justifyContent: 'center' as const,
-        backgroundColor: palette.background,
-      };
-      if (!profilePhotoUri) {
-        return (
-          <View style={containerStyle}>
-            <Ionicons name="person" size={size} color={color} />
-          </View>
-        );
-      }
-      return (
-        <View style={containerStyle}>
-          <Image source={{ uri: profilePhotoUri }} style={{ width: '100%', height: '100%', borderRadius: imageSize / 2 }} resizeMode="cover" />
-        </View>
-      );
-    },
-    [palette.background, profilePhotoUri]
-  );
-
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarShowLabel: true,
         tabBarHideOnKeyboard: true,
-        tabBarActiveTintColor: palette.active,
-        tabBarInactiveTintColor: palette.inactive,
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '600',
-          marginBottom: 6,
-        },
-        tabBarItemStyle: {
-          paddingTop: 6,
-        },
-        tabBarStyle: {
-          backgroundColor: palette.background,
-          borderTopColor: palette.border,
-          borderTopWidth: 1,
-          height: TAB_BAR_BASE_HEIGHT + insets.bottom,
-          paddingBottom: Math.max(insets.bottom, TAB_BAR_BOTTOM_PADDING),
-          paddingTop: 10,
-          shadowColor: palette.shadow,
-          shadowOpacity: 0.35,
-          shadowOffset: { width: 0, height: -4 },
-          shadowRadius: 16,
-          elevation: 30,
-        },
       }}
+      tabBar={(props) => <CustomTabBar {...props} profilePhotoUri={profilePhotoUri} />}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: t('home'),
-          tabBarIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="operations"
         options={{
           title: t('operations'),
-          tabBarIcon: ({ color, size }) => <Ionicons name="briefcase" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="notifications"
         options={{
           title: t('notifications'),
-          tabBarIcon: ({ color, size }) => <Ionicons name="notifications" size={size} color={color} />,
           href: null,
         }}
       />
@@ -159,9 +82,212 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: t('profile'),
-          tabBarIcon: ({ color, size }) => renderProfileIcon({ color, size }),
         }}
       />
     </Tabs>
   );
 }
+
+interface CustomTabBarProps extends BottomTabBarProps {
+  profilePhotoUri: string | null;
+}
+
+function CustomTabBar({ state, descriptors, navigation, profilePhotoUri }: CustomTabBarProps) {
+  const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
+
+  // Filter out hidden tabs
+  const hiddenTabs = ['notifications'];
+  const visibleRoutes = state.routes.filter((route) => !hiddenTabs.includes(route.name));
+
+  const getIcon = (routeName: string, isFocused: boolean) => {
+    const color = isFocused ? '#FFFFFF' : '#8E8E93';
+    const size = isFocused ? 20 : 24;
+
+    switch (routeName) {
+      case 'index':
+        return <Home size={size} color={color} />;
+      case 'operations':
+        return <Repeat size={size} color={color} />;
+      case 'notifications':
+        return <Bell size={size} color={color} />;
+      case 'profile':
+        return <User size={size} color={color} />;
+      default:
+        return <Home size={size} color={color} />;
+    }
+  };
+
+  const getLabel = (routeName: string): string => {
+    switch (routeName) {
+      case 'index':
+        return t('home');
+      case 'operations':
+        return t('operations');
+      case 'notifications':
+        return t('notifications');
+      case 'profile':
+        return t('profile');
+      default:
+        return '';
+    }
+  };
+
+  return (
+    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 20) }]}>
+      <View style={styles.navBarWrapper}>
+        <View style={styles.navBar}>
+        {visibleRoutes.map((route) => {
+          const isFocused = state.index === state.routes.findIndex((r) => r.key === route.key);
+          const label = getLabel(route.name);
+
+          const onPress = () => {
+            const event = navigation.emit({
+              type: 'tabPress',
+              target: route.key,
+              canPreventDefault: true,
+            });
+
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name);
+            }
+          };
+
+          const onLongPress = () => {
+            navigation.emit({
+              type: 'tabLongPress',
+              target: route.key,
+            });
+          };
+
+          // Profile tab with photo
+          if (route.name === 'profile') {
+            return (
+              <Pressable key={route.key} onPress={onPress} onLongPress={onLongPress} style={styles.tabItem}>
+                <View style={styles.iconContainer}>
+                  {isFocused ? (
+                    <LinearGradient colors={['#0A84FF', '#0066CC']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.activeIconWrapper}>
+                      {profilePhotoUri ? (
+                        <Image source={{ uri: profilePhotoUri }} style={styles.profileImage} resizeMode="cover" />
+                      ) : (
+                        <User size={20} color="#FFFFFF" />
+                      )}
+                    </LinearGradient>
+                  ) : profilePhotoUri ? (
+                    <View style={styles.profileImageWrapper}>
+                      <Image source={{ uri: profilePhotoUri }} style={styles.profileImageInactive} resizeMode="cover" />
+                    </View>
+                  ) : (
+                    <User size={24} color="#8E8E93" />
+                  )}
+                </View>
+                <Text numberOfLines={1} style={[styles.label, isFocused ? styles.activeLabel : styles.inactiveLabel]}>{label}</Text>
+              </Pressable>
+            );
+          }
+
+          return (
+            <Pressable key={route.key} onPress={onPress} onLongPress={onLongPress} style={styles.tabItem}>
+              <View style={styles.iconContainer}>
+                {isFocused ? (
+                  <LinearGradient colors={['#0A84FF', '#0066CC']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.activeIconWrapper}>
+                    {getIcon(route.name, true)}
+                  </LinearGradient>
+                ) : (
+                  getIcon(route.name, false)
+                )}
+              </View>
+              <Text numberOfLines={1} style={[styles.label, isFocused ? styles.activeLabel : styles.inactiveLabel]}>{label}</Text>
+            </Pressable>
+          );
+        })}
+        </View>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingTop: 8,
+  },
+  navBarWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  navBar: {
+    flexDirection: 'row',
+    backgroundColor: '#1C1C1E',
+    borderRadius: 24,
+    height: 70,
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: '#2C2C2E',
+    // Shadow
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.38,
+    shadowRadius: 24,
+    elevation: 24,
+  },
+  tabItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    gap: 6,
+    width: 85,
+  },
+  iconContainer: {
+    width: 44,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  activeIconWrapper: {
+    width: 44,
+    height: 32,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    // Glow shadow
+    shadowColor: '#0A84FF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  label: {
+    fontFamily: 'Inter',
+    fontSize: 11,
+  },
+  activeLabel: {
+    color: '#0A84FF',
+    fontWeight: '600',
+  },
+  inactiveLabel: {
+    color: '#8E8E93',
+    fontWeight: '500',
+  },
+  profileImageWrapper: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  profileImage: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+  },
+  profileImageInactive: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+  },
+});
