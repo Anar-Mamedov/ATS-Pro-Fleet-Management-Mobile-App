@@ -4,15 +4,56 @@ import PersoneInformationUpdate from '@/app/components/profile/PersoneInformatio
 import ProfileUserInfo from '@/app/components/profile/ProfileUserInfo';
 import { useThemeController } from '@/config/theme';
 import { useBottomBarPadding } from '@/ui/components/useBottomBarPadding';
-import { Ionicons } from '@expo/vector-icons';
+import { ChevronLeft, ChevronRight, Globe, Lock, Moon, Sun, User } from '@tamagui/lucide-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Stack, Text } from '@tamagui/core';
+import { Stack, Text, styled, getVariable, useTheme } from '@tamagui/core';
 import { XStack, YStack } from '@tamagui/stacks';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Switch, TouchableOpacity } from 'react-native';
+import { Pressable, ScrollView, Switch } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+// Styled components using standard Tamagui theme tokens
+const MenuSection = styled(YStack, {
+  backgroundColor: '$backgroundStrong',
+  borderRadius: 16,
+  overflow: 'hidden',
+});
+
+const MenuItem = styled(XStack, {
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  paddingVertical: 16,
+  paddingHorizontal: 20,
+  borderBottomWidth: 1,
+  borderBottomColor: '$borderColor',
+});
+
+const MenuItemLeft = styled(XStack, {
+  alignItems: 'center',
+  gap: 16,
+});
+
+const MenuItemText = styled(Text, {
+  fontSize: 15,
+  fontWeight: '500',
+  color: '$color',
+});
+
+const LogoutButton = styled(Stack, {
+  backgroundColor: '$backgroundStrong',
+  borderRadius: 16,
+  height: 54,
+  alignItems: 'center',
+  justifyContent: 'center',
+});
+
+const LogoutText = styled(Text, {
+  fontSize: 15,
+  fontWeight: '600',
+  color: '$error',
+});
 
 export default function ProfileTab() {
   const { t } = useTranslation();
@@ -20,6 +61,15 @@ export default function ProfileTab() {
   const [showPasswordUpdate, setShowPasswordUpdate] = useState(false);
   const bottomPad = useBottomBarPadding();
   const { themeName, toggleTheme, isHydrated } = useThemeController();
+  const theme = useTheme();
+  const isDark = themeName === 'dark';
+
+  // For non-Tamagui components (SafeAreaView, Switch)
+  const bgColor = getVariable(theme.background);
+  const borderColor = getVariable(theme.borderColor);
+  const accentBg = getVariable(theme.accentBackground);
+  const textColor = getVariable(theme.color);
+  const mutedColor = getVariable(theme.placeholderColor);
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem('token');
@@ -28,11 +78,11 @@ export default function ProfileTab() {
 
   if (showPersonalInfo) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: themeName === 'dark' ? '#000000' : '#FFFFFF' }} edges={['top', 'bottom', 'left', 'right']}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: bgColor }} edges={['top', 'bottom', 'left', 'right']}>
         <Stack flex={1} backgroundColor="$background">
           <YStack flex={1} padding="$4">
             <YStack marginBottom="$6" position="relative" width="100%" alignItems="center">
-              <TouchableOpacity
+              <Pressable
                 onPress={() => setShowPersonalInfo(false)}
                 style={{
                   position: 'absolute',
@@ -40,10 +90,10 @@ export default function ProfileTab() {
                   zIndex: 1,
                 }}
               >
-                <Ionicons name="arrow-back" size={24} color="#9BA1A6" />
-              </TouchableOpacity>
+                <ChevronLeft size={24} color={textColor} />
+              </Pressable>
 
-              <Text fontSize="$6" fontWeight="600" color="$color">
+              <Text fontSize={17} fontWeight="600" color="$color">
                 {t('personalInformation')}
               </Text>
             </YStack>
@@ -57,11 +107,11 @@ export default function ProfileTab() {
 
   if (showPasswordUpdate) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: themeName === 'dark' ? '#000000' : '#FFFFFF' }} edges={['top', 'bottom', 'left', 'right']}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: bgColor }} edges={['top', 'bottom', 'left', 'right']}>
         <Stack flex={1} backgroundColor="$background">
           <YStack flex={1} padding="$4">
             <YStack marginBottom="$6" position="relative" width="100%" alignItems="center">
-              <TouchableOpacity
+              <Pressable
                 onPress={() => setShowPasswordUpdate(false)}
                 style={{
                   position: 'absolute',
@@ -69,10 +119,10 @@ export default function ProfileTab() {
                   zIndex: 1,
                 }}
               >
-                <Ionicons name="arrow-back" size={24} color="#9BA1A6" />
-              </TouchableOpacity>
+                <ChevronLeft size={24} color={textColor} />
+              </Pressable>
 
-              <Text fontSize="$6" fontWeight="600" color="$color">
+              <Text fontSize={17} fontWeight="600" color="$color">
                 {t('updatePassword')}
               </Text>
             </YStack>
@@ -85,44 +135,81 @@ export default function ProfileTab() {
   }
 
   return (
-    <Stack flex={1} backgroundColor="$background">
-      <YStack flex={1} justifyContent="center" alignItems="center" padding="$4" paddingBottom={bottomPad} space="$4">
-        <ProfileUserInfo />
+    <SafeAreaView style={{ flex: 1, backgroundColor: bgColor }} edges={['top']}>
+      <ScrollView
+        style={{ flex: 1, backgroundColor: bgColor }}
+        contentContainerStyle={{ paddingBottom: bottomPad }}
+        showsVerticalScrollIndicator={false}
+      >
+        <YStack paddingHorizontal={24} paddingBottom={24} gap={32}>
+          {/* Profile Header */}
+          <Stack alignItems="center" width="100%">
+            <ProfileUserInfo />
+          </Stack>
 
-        <XStack justifyContent="space-between" alignItems="center" width="100%" onPress={() => setShowPersonalInfo(true)}>
-          <Text fontSize="$5" marginBottom="$2" color="$color">
-            {t('personalInformation')}
-          </Text>
-          <Ionicons name="chevron-forward" size={20} color="#9BA1A6" />
-        </XStack>
+          {/* Menu Section */}
+          <MenuSection>
+            {/* Personal Information */}
+            <Pressable onPress={() => setShowPersonalInfo(true)}>
+              <MenuItem>
+                <MenuItemLeft>
+                  <User size={22} color={textColor} />
+                  <MenuItemText>{t('personalInformation')}</MenuItemText>
+                </MenuItemLeft>
+                <ChevronRight size={20} color={mutedColor} />
+              </MenuItem>
+            </Pressable>
 
-        <XStack justifyContent="space-between" alignItems="center" width="100%" onPress={() => setShowPasswordUpdate(true)}>
-          <Text fontSize="$5" marginBottom="$2" color="$color">
-            {t('updatePassword')}
-          </Text>
-          <Ionicons name="chevron-forward" size={20} color="#9BA1A6" />
-        </XStack>
+            {/* Update Password */}
+            <Pressable onPress={() => setShowPasswordUpdate(true)}>
+              <MenuItem>
+                <MenuItemLeft>
+                  <Lock size={22} color={textColor} />
+                  <MenuItemText>{t('updatePassword')}</MenuItemText>
+                </MenuItemLeft>
+                <ChevronRight size={20} color={mutedColor} />
+              </MenuItem>
+            </Pressable>
 
-        <XStack justifyContent="space-between" alignItems="center" width="100%">
-          <Text fontSize="$5" fontWeight="600" marginBottom="$2" color="$color">
-            {themeName === 'dark' ? 'Karanlık Mod' : 'Aydınlık Mod'}
-          </Text>
-          <Switch value={themeName === 'dark'} onValueChange={toggleTheme} disabled={!isHydrated} />
-        </XStack>
+            {/* Theme Toggle */}
+            <MenuItem borderBottomWidth={0}>
+              <MenuItemLeft>
+                {isDark ? (
+                  <Moon size={22} color={textColor} />
+                ) : (
+                  <Sun size={22} color={textColor} />
+                )}
+                <MenuItemText>{isDark ? t('darkMode') : t('lightMode')}</MenuItemText>
+              </MenuItemLeft>
+              <Switch
+                value={isDark}
+                onValueChange={toggleTheme}
+                disabled={!isHydrated}
+                trackColor={{ false: borderColor, true: accentBg }}
+                thumbColor="#FFFFFF"
+              />
+            </MenuItem>
+          </MenuSection>
 
-        <XStack justifyContent="space-between" alignItems="center" width="100%">
-          <Text fontSize="$5" fontWeight="600" marginBottom="$2" color="$color">
-            {t('language')}
-          </Text>
+          {/* Language Section */}
+          <MenuSection>
+            <MenuItem borderBottomWidth={0}>
+              <MenuItemLeft>
+                <Globe size={22} color={textColor} />
+                <MenuItemText>{t('language')}</MenuItemText>
+              </MenuItemLeft>
+              <LanguageSelector />
+            </MenuItem>
+          </MenuSection>
 
-          <LanguageSelector />
-        </XStack>
-        <XStack alignItems="center" width="100%" justifyContent="center">
-          <Text color="$red10" onPress={handleLogout} fontSize="$5" fontWeight="700">
-            {t('logout')}
-          </Text>
-        </XStack>
-      </YStack>
-    </Stack>
+          {/* Logout Button */}
+          <Pressable onPress={handleLogout}>
+            <LogoutButton>
+              <LogoutText>{t('logout')}</LogoutText>
+            </LogoutButton>
+          </Pressable>
+        </YStack>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
