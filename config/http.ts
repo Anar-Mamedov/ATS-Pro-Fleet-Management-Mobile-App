@@ -36,7 +36,7 @@ let isHandlingUnauthorized = false;
 axiosInstance.interceptors.request.use(async (config) => {
   const token = await getToken();
 
-  if (token) {
+  if (token && !config.headers.Authorization) {
     config.headers.Authorization = `Bearer ${token}`;
   }
 

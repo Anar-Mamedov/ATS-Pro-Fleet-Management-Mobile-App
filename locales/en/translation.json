@@ -207,9 +207,17 @@
   "manager": "Manager",
   "driver": "Driver",
   "selectUserType": "Select user type",
-  "userNotFoundOrNoEmail": "No email address found linked to this user, please contact your administrator.",
+  "userNotFoundOrNoEmail": "Your user code is incorrect or no email is defined.",
   "enterVerificationCode": "Enter Verification Code",
   "verificationCodeSent": "Verification code sent to your email.",
   "verify": "Verify",
-  "emailSendError": "Failed to send email."
+  "emailSendError": "Failed to send email.",
+  "resendCode": "Resend Code",
+  "timeRemaining": "Time Remaining",
+  "codeExpired": "Code expired",
+  "invalidCode": "Invalid code!",
+  "tooManyAttempts": "Too many attempts!",
+  "codeNotGeneratedOrUsed": "New code is not generated yet or has been used!",
+  "confirmNewPassword": "Re-enter your new password",
+  "passwordResetSuccess": "Your password has been reset successfully."
 }

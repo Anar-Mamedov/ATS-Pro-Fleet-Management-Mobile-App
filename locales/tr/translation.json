@@ -219,9 +219,17 @@
   "manager": "Yönetici",
   "driver": "Sürücü",
   "selectUserType": "Kullanıcı türü seçin",
-  "userNotFoundOrNoEmail": "Bu kullanıcıya bağlı bir eposta adresi bulunamadı lütfen yöneticinizle iletişime geçin.",
+  "userNotFoundOrNoEmail": "Kullanıcı kodunuz yanlış veya bir eposta tanımlanmamış.",
   "enterVerificationCode": "Doğrulama Kodunu Girin",
   "verificationCodeSent": "Doğrulama kodu e-postanıza gönderildi.",
   "verify": "Doğrula",
-  "emailSendError": "E-posta gönderilemedi."
+  "emailSendError": "E-posta gönderilemedi.",
+  "resendCode": "Kodu Tekrar Gönder",
+  "timeRemaining": "Kalan Süre",
+  "codeExpired": "Kodun süresi doldu",
+  "invalidCode": "Geçersiz kod!",
+  "tooManyAttempts": "Çok fazla deneme yapıldı!",
+  "codeNotGeneratedOrUsed": "Yeni kod henüz oluşturulmadı veya zaten kullanıldı!",
+  "confirmNewPassword": "Yeni şifrenizi tekrar girin",
+  "passwordResetSuccess": "Şifreniz başarıyla sıfırlandı."
 }

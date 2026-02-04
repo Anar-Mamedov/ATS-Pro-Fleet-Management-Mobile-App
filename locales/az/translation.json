@@ -186,9 +186,17 @@
   "manager": "İdarəçi",
   "driver": "Sürücü",
   "selectUserType": "İstifadəçi növü seçin",
-  "userNotFoundOrNoEmail": "Bu istifadəçi ilə əlaqəli e-poçt ünvanı tapılmadı, zəhmət olmasa administratorunuzla əlaqə saxlayın.",
+  "userNotFoundOrNoEmail": "İstifadəçi kodunuz səhvdir və ya e-poçt təyin edilməyib.",
   "enterVerificationCode": "Təsdiq Kodunu Daxil Edin",
   "verificationCodeSent": "Təsdiq kodu e-poçtunuza göndərildi.",
   "verify": "Təsdiqlə",
-  "emailSendError": "E-poçt göndərilə bilmədi."
+  "emailSendError": "E-poçt göndərilə bilmədi.",
+  "resendCode": "Kodu Yenidən Göndər",
+  "timeRemaining": "Qalan Vaxt",
+  "codeExpired": "Kodun vaxtı bitdi",
+  "invalidCode": "Yanlış kod!",
+  "tooManyAttempts": "Çox sayda cəhd edildi!",
+  "codeNotGeneratedOrUsed": "Yeni kod hələ yaradılmayıb və ya artıq istifadə edilib!",
+  "confirmNewPassword": "Yeni şifrənizi təkrar daxil edin",
+  "passwordResetSuccess": "Şifrəniz uğurla sıfırlandı."
 }
