@@ -221,7 +221,7 @@ export default function Login() {
           JSON.stringify({
             kullaniciKod: kullaniciKod.trim(),
             sifre: sifre.trim(),
-          }),
+          })
         );
       } else {
         await AsyncStorage.removeItem(rememberMeKey);
@@ -411,6 +411,12 @@ export default function Login() {
               <Button size="$4" backgroundColor="$green10" width="100%" onPress={handleLogin} disabled={loading}>
                 <Text color="$color" fontWeight="400" fontSize="$4" fontFamily="SF Pro Text">
                   {loading ? t('loggingIn') : t('login')}
+                </Text>
+              </Button>
+
+              <Button size="$3" backgroundColor="transparent" marginTop="$4" onPress={() => router.push('/forgot-password')}>
+                <Text color="$gray10" fontFamily="SF Pro Text">
+                  {t('forgotPassword')}
                 </Text>
               </Button>
 

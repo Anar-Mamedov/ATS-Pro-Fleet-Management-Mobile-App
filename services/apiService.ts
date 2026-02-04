@@ -107,6 +107,72 @@ export const apiService = {
     return response.data;
   },
 
+  getUserEmail: async (kullaniciKod: string, userTypeId: number, companyKey: string) => {
+    const response = await axiosInstance.post(
+      '/ForgotPassword/GetUserEmail',
+      {
+        kullaniciKod,
+        userTypeId,
+      },
+      {
+        headers: {
+          Authorization: companyKey,
+        },
+      }
+    );
+    return response.data;
+  },
+
+  getResetCode: async (kullaniciId: number, kullaniciEmail: string, userTypeId: number, companyKey: string) => {
+    const response = await axiosInstance.post(
+      '/ForgotPassword/GetResetCode',
+      {
+        kullaniciId,
+        kullaniciEmail,
+        userTypeId,
+      },
+      {
+        headers: {
+          Authorization: companyKey,
+        },
+      }
+    );
+    return response.data;
+  },
+
+  sendVerificationCode: async (kullaniciKod: string, companyKey: string) => {
+    const response = await axiosInstance.post(
+      '/ForgotPassword/SendVerificationCode',
+      {
+        kullaniciKod,
+      },
+      {
+        headers: {
+          Authorization: companyKey,
+        },
+      }
+    );
+    return response.data;
+  },
+
+  verifyResetCode: async (kullaniciId: number, userTypeId: number, kullaniciEmail: string, kullaniciDogrulamaKod: string, companyKey: string) => {
+    const response = await axiosInstance.post(
+      '/ForgotPassword/VerifyResetCode',
+      {
+        kullaniciId,
+        userTypeId,
+        kullaniciEmail,
+        kullaniciDogrulamaKod,
+      },
+      {
+        headers: {
+          Authorization: companyKey,
+        },
+      }
+    );
+    return response.data;
+  },
+
   // Jobs endpoints
   getJobs: async () => {
     const response = await axiosInstance.get('/jobs');
@@ -198,6 +264,22 @@ export const apiService = {
 
   modifyUserPassword: async (passwordData: { userId: number; previousPassword: string; updatedPassword: string; userTypeId: string }) => {
     const response = await axiosInstance.post('/Profile/ModifyUserPassword', passwordData);
+    return response.data;
+  },
+
+  completePasswordReset: async (userId: number, newPassword: string, accessToken: string) => {
+    const response = await axiosInstance.post(
+      '/Profile/ResetPassword',
+      {
+        userId,
+        updatedPassword: newPassword,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
     return response.data;
   },
 
