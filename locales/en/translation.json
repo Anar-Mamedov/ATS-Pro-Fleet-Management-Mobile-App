@@ -198,5 +198,18 @@
   "noPenaltyFound": "Penalty record not found",
   "noServiceRecordFound": "Service record not found",
   "lightMode": "Light Mode",
-  "darkMode": "Dark Mode"
+  "darkMode": "Dark Mode",
+  "forgotPassword": "Forgot Password",
+  "contactAdmin": "Please contact your administrator.",
+  "info": "Info",
+  "resetPassword": "Reset Password",
+  "userType": "User Type",
+  "manager": "Manager",
+  "driver": "Driver",
+  "selectUserType": "Select user type",
+  "userNotFoundOrNoEmail": "No email address found linked to this user, please contact your administrator.",
+  "enterVerificationCode": "Enter Verification Code",
+  "verificationCodeSent": "Verification code sent to your email.",
+  "verify": "Verify",
+  "emailSendError": "Failed to send email."
 }

@@ -107,6 +107,39 @@ export const apiService = {
     return response.data;
   },
 
+  getUserEmail: async (kullaniciKod: string, userTypeId: number, companyKey: string) => {
+    const response = await axiosInstance.post(
+      '/ForgotPassword/GetUserEmail',
+      {
+        kullaniciKod,
+        userTypeId,
+      },
+      {
+        headers: {
+          Authorization: companyKey,
+        },
+      }
+    );
+    return response.data;
+  },
+
+  getResetCode: async (kullaniciId: number, kullaniciEmail: string, userTypeId: number, companyKey: string) => {
+    const response = await axiosInstance.post(
+      '/ForgotPassword/GetResetCode',
+      {
+        kullaniciId,
+        kullaniciEmail,
+        userTypeId,
+      },
+      {
+        headers: {
+          Authorization: companyKey,
+        },
+      }
+    );
+    return response.data;
+  },
+
   // Jobs endpoints
   getJobs: async () => {
     const response = await axiosInstance.get('/jobs');

@@ -210,5 +210,18 @@
   "noPenaltyFound": "Ceza kayıdı bulunamadı",
   "noServiceRecordFound": "Servis kayıdı bulunamadı",
   "lightMode": "Aydınlık Mod",
-  "darkMode": "Karanlık Mod"
+  "darkMode": "Karanlık Mod",
+  "forgotPassword": "Şifremi Unuttum",
+  "contactAdmin": "Lütfen yöneticinizle iletişime geçin.",
+  "info": "Bilgi",
+  "resetPassword": "Şifremi Sıfırla",
+  "userType": "Kullanıcı Türü",
+  "manager": "Yönetici",
+  "driver": "Sürücü",
+  "selectUserType": "Kullanıcı türü seçin",
+  "userNotFoundOrNoEmail": "Bu kullanıcıya bağlı bir eposta adresi bulunamadı lütfen yöneticinizle iletişime geçin.",
+  "enterVerificationCode": "Doğrulama Kodunu Girin",
+  "verificationCodeSent": "Doğrulama kodu e-postanıza gönderildi.",
+  "verify": "Doğrula",
+  "emailSendError": "E-posta gönderilemedi."
 }

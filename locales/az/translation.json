@@ -177,5 +177,18 @@
   "fleetManagement": "Filo İdarəetməsi",
   "penalty": "Cərimə",
   "lightMode": "İşıqlı Mod",
-  "darkMode": "Qaranlıq Mod"
+  "darkMode": "Qaranlıq Mod",
+  "forgotPassword": "Şifrəmi Unutdum",
+  "contactAdmin": "Zəhmət olmasa administratorunuzla əlaqə saxlayın.",
+  "info": "Məlumat",
+  "resetPassword": "Şifrəmi Sıfırla",
+  "userType": "İstifadəçi Növü",
+  "manager": "İdarəçi",
+  "driver": "Sürücü",
+  "selectUserType": "İstifadəçi növü seçin",
+  "userNotFoundOrNoEmail": "Bu istifadəçi ilə əlaqəli e-poçt ünvanı tapılmadı, zəhmət olmasa administratorunuzla əlaqə saxlayın.",
+  "enterVerificationCode": "Təsdiq Kodunu Daxil Edin",
+  "verificationCodeSent": "Təsdiq kodu e-poçtunuza göndərildi.",
+  "verify": "Təsdiqlə",
+  "emailSendError": "E-poçt göndərilə bilmədi."
 }
