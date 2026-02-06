@@ -207,6 +207,8 @@
   "serviceOperations": "Servis İşlemleri",
   "fleetManagement": "Filo Yönetimi",
   "penalty": "Ceza",
+  "penaltyDescription": "Araç ceza kayıtlarını görüntüle",
+  "serviceOperationsDescription": "Bakım ve servis geçmişi",
   "noPenaltyFound": "Ceza kayıdı bulunamadı",
   "noServiceRecordFound": "Servis kayıdı bulunamadı",
   "lightMode": "Aydınlık Mod",

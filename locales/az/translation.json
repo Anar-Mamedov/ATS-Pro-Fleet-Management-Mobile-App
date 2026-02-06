@@ -176,6 +176,8 @@
   "serviceOperations": "Servis Əməliyyatları",
   "fleetManagement": "Filo İdarəetməsi",
   "penalty": "Cərimə",
+  "penaltyDescription": "Nəqliyyat cərimə qeydlərinə bax",
+  "serviceOperationsDescription": "Təmir və servis tarixçəsi",
   "lightMode": "İşıqlı Mod",
   "darkMode": "Qaranlıq Mod",
   "forgotPassword": "Şifrəmi Unutdum",

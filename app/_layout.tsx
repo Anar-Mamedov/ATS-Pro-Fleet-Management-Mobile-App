@@ -10,12 +10,19 @@ import { StatusBar } from 'expo-status-bar';
 import * as Updates from 'expo-updates';
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, AppState, Platform } from 'react-native';
+import { Alert, AppState, Platform, Text, TextInput } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import '../config/i18n';
 import { ThemeProvider, useThemeController } from '../config/theme';
 import config from '../tamagui.config';
+
+// Sistem font büyütme ayarını maksimum 1.2x ile sınırla
+(Text as any).defaultProps ??= {};
+(Text as any).defaultProps.maxFontSizeMultiplier = 1.2;
+
+(TextInput as any).defaultProps ??= {};
+(TextInput as any).defaultProps.maxFontSizeMultiplier = 1.2;
 
 function ThemeBars() {
   const { themeName } = useThemeController();

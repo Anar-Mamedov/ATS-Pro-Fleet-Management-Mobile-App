@@ -195,6 +195,8 @@
   "serviceOperations": "Service Operations",
   "fleetManagement": "Fleet Management",
   "penalty": "Penalty",
+  "penaltyDescription": "View vehicle penalty records",
+  "serviceOperationsDescription": "Maintenance and service history",
   "noPenaltyFound": "Penalty record not found",
   "noServiceRecordFound": "Service record not found",
   "lightMode": "Light Mode",

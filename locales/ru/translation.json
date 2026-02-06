@@ -176,6 +176,8 @@
   "serviceOperations": "Сервисные операции",
   "fleetManagement": "Управление автопарком",
   "penalty": "Штраф",
+  "penaltyDescription": "Просмотр записей о штрафах",
+  "serviceOperationsDescription": "История обслуживания и ремонта",
   "lightMode": "Светлый режим",
   "darkMode": "Тёмный режим"
 }
