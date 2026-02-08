@@ -11,7 +11,7 @@ import { XStack, YStack } from '@tamagui/stacks';
 import { Stack as ExpoStack, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, FlatList, ListRenderItem, RefreshControl } from 'react-native';
+import { ActivityIndicator, FlatList, ListRenderItem, Pressable, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Define the shape of the data based on the user's JSON response
@@ -109,6 +109,7 @@ export default function PenaltiesScreen() {
 
   const renderItem: ListRenderItem<VehicleFine> = ({ item }) => {
     return (
+      <Pressable onPress={() => router.push({ pathname: '/operations/penalty-detail', params: { siraNo: item.siraNo, plaka: item.plaka, cezaTuru: item.cezaTuru } })}>
       <YStack backgroundColor="$backgroundStrong" borderRadius="$4" padding="$4" marginBottom="$3" borderWidth={1} borderColor="$borderColor" elevation={2}>
         <XStack justifyContent="space-between" alignItems="center" marginBottom="$2">
           <Text fontSize="$5" fontWeight="bold" color="$color">
@@ -144,6 +145,7 @@ export default function PenaltiesScreen() {
           </Text>
         </XStack>
       </YStack>
+      </Pressable>
     );
   };
 
