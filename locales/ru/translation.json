@@ -179,5 +179,9 @@
   "penaltyDescription": "Просмотр записей о штрафах",
   "serviceOperationsDescription": "История обслуживания и ремонта",
   "lightMode": "Светлый режим",
-  "darkMode": "Тёмный режим"
+  "darkMode": "Тёмный режим",
+  "daysLeft": "{{count}} дн. осталось",
+  "today": "Сегодня",
+  "expired": "Просрочено",
+  "fleetManagementSystem": "Система Управления Автопарком"
 }

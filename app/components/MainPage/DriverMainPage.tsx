@@ -21,6 +21,16 @@ import FuelListBottomSheet from './components/FuelListBottomSheet';
 import ReportAProblem from './components/ReportAProblem';
 import { Gauge, Wrench, ShieldCheck, Fuel, CalendarCheck, Droplet, TriangleAlert, MapPin, FileText, Camera, ChevronRight, Calendar } from '@tamagui/lucide-icons';
 
+function getDateStatus(dateValue: string | null | undefined, t: (key: string, options?: any) => string): { label: string; color: string } | null {
+  if (!dateValue) return null;
+  const target = dayjs(dateValue).startOf('day');
+  const now = dayjs().startOf('day');
+  const diff = target.diff(now, 'day');
+  if (diff < 0) return { label: t('expired'), color: '#EF4444' };
+  if (diff === 0) return { label: t('today'), color: '#F59E0B' };
+  return { label: t('daysLeft', { count: diff }), color: '#10B981' };
+}
+
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const HORIZONTAL_PADDING = 20;
 const CARD_GAP = 12;
@@ -354,6 +364,10 @@ export default function DriverMainPage() {
                             <Text style={[styles.cardValue, { color: colors.textPrimary }]}>-</Text>
                           )}
                           <Text style={[styles.cardLabel, { color: colors.textSecondary }]} numberOfLines={1}>{item.label}</Text>
+                          {(() => {
+                            const status = getDateStatus(item.value, t);
+                            return status ? <Text style={[styles.cardStatus, { color: status.color }]}>{status.label}</Text> : null;
+                          })()}
                         </YStack>
                       </XStack>
                     </View>
@@ -383,6 +397,10 @@ export default function DriverMainPage() {
                             <Text style={[styles.cardValue, { color: colors.textPrimary }]}>-</Text>
                           )}
                           <Text style={[styles.cardLabel, { color: colors.textSecondary }]} numberOfLines={1}>{item.sigorta}</Text>
+                          {(() => {
+                            const status = getDateStatus(item.bitisTarih, t);
+                            return status ? <Text style={[styles.cardStatus, { color: status.color }]}>{status.label}</Text> : null;
+                          })()}
                         </YStack>
                       </XStack>
                     </View>
@@ -855,6 +873,11 @@ const styles = StyleSheet.create({
   },
   cardLabel: {
     fontSize: 13,
+    fontFamily: 'Inter',
+  },
+  cardStatus: {
+    fontSize: 11,
+    fontWeight: '600',
     fontFamily: 'Inter',
   },
   actionButton: {

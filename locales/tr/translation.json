@@ -233,5 +233,9 @@
   "tooManyAttempts": "Çok fazla deneme yapıldı!",
   "codeNotGeneratedOrUsed": "Yeni kod henüz oluşturulmadı veya zaten kullanıldı!",
   "confirmNewPassword": "Yeni şifrenizi tekrar girin",
-  "passwordResetSuccess": "Şifreniz başarıyla sıfırlandı."
+  "passwordResetSuccess": "Şifreniz başarıyla sıfırlandı.",
+  "daysLeft": "{{count}} gün kaldı",
+  "today": "Bugün",
+  "expired": "Gecikmiş",
+  "fleetManagementSystem": "Filo Yönetim Sistemi"
 }

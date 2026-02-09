@@ -200,5 +200,9 @@
   "tooManyAttempts": "Çox sayda cəhd edildi!",
   "codeNotGeneratedOrUsed": "Yeni kod hələ yaradılmayıb və ya artıq istifadə edilib!",
   "confirmNewPassword": "Yeni şifrənizi təkrar daxil edin",
-  "passwordResetSuccess": "Şifrəniz uğurla sıfırlandı."
+  "passwordResetSuccess": "Şifrəniz uğurla sıfırlandı.",
+  "daysLeft": "{{count}} gün qaldı",
+  "today": "Bu gün",
+  "expired": "Gecikmiş",
+  "fleetManagementSystem": "Avtomobil Parkı İdarəetmə Sistemi"
 }

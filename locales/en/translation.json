@@ -221,5 +221,9 @@
   "tooManyAttempts": "Too many attempts!",
   "codeNotGeneratedOrUsed": "New code is not generated yet or has been used!",
   "confirmNewPassword": "Re-enter your new password",
-  "passwordResetSuccess": "Your password has been reset successfully."
+  "passwordResetSuccess": "Your password has been reset successfully.",
+  "daysLeft": "{{count}} days left",
+  "today": "Today",
+  "expired": "Expired",
+  "fleetManagementSystem": "Fleet Management System"
 }
