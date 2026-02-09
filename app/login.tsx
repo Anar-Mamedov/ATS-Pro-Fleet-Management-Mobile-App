@@ -290,7 +290,7 @@ export default function Login() {
                     width="100%"
                     minHeight={50}
                     paddingVertical="$3"
-                    maxFontSizeMultiplier={1.3}
+                    maxFontSizeMultiplier={1}
                   />
                 </YStack>
 
@@ -360,7 +360,7 @@ export default function Login() {
                   width="100%"
                   minHeight={50}
                   paddingVertical="$3"
-                  maxFontSizeMultiplier={1.3}
+                  maxFontSizeMultiplier={1}
                 />
               </YStack>
 
@@ -378,7 +378,7 @@ export default function Login() {
                   width="100%"
                   minHeight={50}
                   paddingVertical="$3"
-                  maxFontSizeMultiplier={1.3}
+                  maxFontSizeMultiplier={1}
                 />
               </YStack>
 

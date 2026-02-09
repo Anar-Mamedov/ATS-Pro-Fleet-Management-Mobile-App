@@ -187,7 +187,7 @@ export default function VerifyCode() {
                   width="100%"
                   minHeight={50}
                   paddingVertical="$3"
-                  maxFontSizeMultiplier={1.3}
+                  maxFontSizeMultiplier={1}
                   textAlign="center"
                   style={{ fontSize: 24, letterSpacing: 4 }}
                 />
