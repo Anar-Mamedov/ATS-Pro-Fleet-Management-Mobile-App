@@ -303,35 +303,19 @@ export default function DriverMainPage() {
 
             {/* Row 2 */}
             <XStack gap={12}>
-              <Stack style={[styles.infoCard, { backgroundColor: colors.bgCard, width: CARD_WIDTH, padding: 0, overflow: 'hidden' }]}>
-                <ScrollView
-                  ref={insuranceScrollRef}
-                  horizontal
-                  pagingEnabled
-                  showsHorizontalScrollIndicator={false}
-                  scrollEventThrottle={16}
-                  style={{ width: '100%' }}
-                  onLayout={handleInsuranceLayout}
-                >
-                  {insuranceItems.map((item, index) => (
-                    <View key={item.siraNo ? String(item.siraNo) : `${item.sigorta}-${index}`} style={[styles.sliderPage, { width: insuranceCardWidth || CARD_WIDTH }]}>
-                      <XStack alignItems="center" gap={12}>
-                        <Stack style={[styles.iconWrapper, { backgroundColor: colors.blueTint }]}>
-                          <ShieldCheck size={20} color={colors.bluePrimary} />
-                        </Stack>
-                        <YStack gap={2} flex={1}>
-                          {item.bitisTarih ? (
-                            <FormattedDate value={item.bitisTarih} format="L" textProps={{ style: [styles.cardValue, { color: colors.textPrimary }] }} />
-                          ) : (
-                            <Text style={[styles.cardValue, { color: colors.textPrimary }]}>-</Text>
-                          )}
-                          <Text style={[styles.cardLabel, { color: colors.textSecondary }]} numberOfLines={1}>{item.sigorta}</Text>
-                        </YStack>
-                      </XStack>
-                    </View>
-                  ))}
-                </ScrollView>
-              </Stack>
+              <Pressable style={{ width: CARD_WIDTH }} onPress={openFuelSheet}>
+                <Stack style={[styles.infoCard, { backgroundColor: colors.bgCard }]}>
+                  <XStack alignItems="center" gap={12}>
+                    <Stack style={[styles.iconWrapper, { backgroundColor: colors.blueTint }]}>
+                      <Droplet size={20} color={colors.bluePrimary} />
+                    </Stack>
+                    <YStack gap={2} flex={1}>
+                      <Text style={[styles.cardValue, { color: colors.textPrimary }]}>{fuelLimitDisplay}</Text>
+                      <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>{t('yakitLimiti')}</Text>
+                    </YStack>
+                  </XStack>
+                </Stack>
+              </Pressable>
               <Stack style={[styles.infoCard, { backgroundColor: colors.bgCard, width: CARD_WIDTH }]}>
                 <XStack alignItems="center" gap={12}>
                   <Stack style={[styles.iconWrapper, { backgroundColor: colors.blueTint }]}>
@@ -376,19 +360,35 @@ export default function DriverMainPage() {
                   ))}
                 </ScrollView>
               </Stack>
-              <Pressable style={{ width: CARD_WIDTH }} onPress={openFuelSheet}>
-                <Stack style={[styles.infoCard, { backgroundColor: colors.bgCard }]}>
-                  <XStack alignItems="center" gap={12}>
-                    <Stack style={[styles.iconWrapper, { backgroundColor: colors.blueTint }]}>
-                      <Droplet size={20} color={colors.bluePrimary} />
-                    </Stack>
-                    <YStack gap={2} flex={1}>
-                      <Text style={[styles.cardValue, { color: colors.textPrimary }]}>{fuelLimitDisplay}</Text>
-                      <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>{t('yakitLimiti')}</Text>
-                    </YStack>
-                  </XStack>
-                </Stack>
-              </Pressable>
+              <Stack style={[styles.infoCard, { backgroundColor: colors.bgCard, width: CARD_WIDTH, padding: 0, overflow: 'hidden' }]}>
+                <ScrollView
+                  ref={insuranceScrollRef}
+                  horizontal
+                  pagingEnabled
+                  showsHorizontalScrollIndicator={false}
+                  scrollEventThrottle={16}
+                  style={{ width: '100%' }}
+                  onLayout={handleInsuranceLayout}
+                >
+                  {insuranceItems.map((item, index) => (
+                    <View key={item.siraNo ? String(item.siraNo) : `${item.sigorta}-${index}`} style={[styles.sliderPage, { width: insuranceCardWidth || CARD_WIDTH }]}>
+                      <XStack alignItems="center" gap={12}>
+                        <Stack style={[styles.iconWrapper, { backgroundColor: colors.blueTint }]}>
+                          <ShieldCheck size={20} color={colors.bluePrimary} />
+                        </Stack>
+                        <YStack gap={2} flex={1}>
+                          {item.bitisTarih ? (
+                            <FormattedDate value={item.bitisTarih} format="L" textProps={{ style: [styles.cardValue, { color: colors.textPrimary }] }} />
+                          ) : (
+                            <Text style={[styles.cardValue, { color: colors.textPrimary }]}>-</Text>
+                          )}
+                          <Text style={[styles.cardLabel, { color: colors.textSecondary }]} numberOfLines={1}>{item.sigorta}</Text>
+                        </YStack>
+                      </XStack>
+                    </View>
+                  ))}
+                </ScrollView>
+              </Stack>
             </XStack>
           </YStack>
 
