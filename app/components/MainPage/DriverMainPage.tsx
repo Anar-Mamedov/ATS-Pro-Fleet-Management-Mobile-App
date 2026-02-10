@@ -294,7 +294,7 @@ export default function DriverMainPage() {
                       </Stack>
                       <YStack gap={2} flex={1}>
                         <Text style={[styles.cardValue, { color: colors.textPrimary }]}>{formatNumber(firstVehicle?.hedefKm, i18n.language)} km</Text>
-                        <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>{t('bakimKm')}</Text>
+                        <Text style={[styles.cardLabel, { color: colors.textSecondary }]} numberOfLines={1}>{t('bakimKm')}</Text>
                       </YStack>
                     </XStack>
                   </View>
