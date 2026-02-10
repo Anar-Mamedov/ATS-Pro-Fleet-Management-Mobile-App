@@ -11,7 +11,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import type { LayoutChangeEvent } from 'react-native';
-import { Alert, Dimensions, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, Dimensions, Image, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { apiService } from '../../../services/apiService';
 import { formatNumber } from '../../../ui/components/formatNumber';
@@ -239,24 +239,29 @@ export default function DriverMainPage() {
         >
           {/* Header Section */}
           <Pressable onPress={openSheet}>
-            <YStack gap={4} marginTop={16}>
+            <Stack marginTop={16} position="relative">
               {firstVehicle && (
                 <>
-                  <Text style={[styles.plateNumber, { color: colors.textPrimary }]}>{firstVehicle.plaka}</Text>
-                  <XStack alignItems="center" gap={8}>
-                    <Text style={[styles.vehicleModel, { color: colors.textSecondary }]} numberOfLines={1}>
-                      {firstVehicle.model}
+                  <YStack gap={4} paddingRight={76}>
+                    <Text style={[styles.plateNumber, { color: colors.textPrimary }]} numberOfLines={1} ellipsizeMode="tail">
+                      {firstVehicle.plaka}
                     </Text>
-                    <Stack width={1} height={16} backgroundColor={colors.borderLight} />
-                    <Stack backgroundColor="#10B98114" paddingHorizontal={10} paddingVertical={4} borderRadius={6}>
-                      <Text style={{ color: colors.greenSuccess, fontSize: 12, fontWeight: '600' }}>
-                        {firstVehicle.aktif ? t('active') : t('passive')}
+                    <XStack alignItems="center" gap={8}>
+                      <Text style={[styles.vehicleModel, { color: colors.textSecondary }]} numberOfLines={1}>
+                        {firstVehicle.model}
                       </Text>
-                    </Stack>
-                  </XStack>
+                      <Stack width={1} height={16} backgroundColor={colors.borderLight} />
+                      <Stack backgroundColor="#10B98114" paddingHorizontal={10} paddingVertical={4} borderRadius={6}>
+                        <Text style={{ color: colors.greenSuccess, fontSize: 12, fontWeight: '600' }}>
+                          {firstVehicle.aktif ? t('active') : t('passive')}
+                        </Text>
+                      </Stack>
+                    </XStack>
+                  </YStack>
+                  <Image source={require('../../../assets/images/icon.png')} style={styles.atsLogo} resizeMode="contain" />
                 </>
               )}
-            </YStack>
+            </Stack>
           </Pressable>
 
           {/* Info Grid - 6 Cards (2x3) */}
@@ -923,6 +928,14 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '600',
     fontFamily: 'Inter',
+  },
+  atsLogo: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: 64,
+    height: 64,
+    borderRadius: 10,
   },
   actionButton: {
     borderRadius: 12,
