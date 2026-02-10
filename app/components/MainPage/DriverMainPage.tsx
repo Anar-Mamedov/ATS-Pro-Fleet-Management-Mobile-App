@@ -14,6 +14,7 @@ import type { LayoutChangeEvent } from 'react-native';
 import { Alert, Dimensions, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { apiService } from '../../../services/apiService';
+import { formatNumber } from '../../../ui/components/formatNumber';
 import DocumentUpload from '../../../ui/components/DocumentUpload';
 import { FormattedDate } from '../../../ui/components/FormattedDate';
 import ResimUpload from '../../../ui/components/ResimUpload';
@@ -38,7 +39,7 @@ const CARD_GAP = 12;
 const CARD_WIDTH = (SCREEN_WIDTH - HORIZONTAL_PADDING * 2 - CARD_GAP) / 2;
 
 export default function DriverMainPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const bottomPad = useBottomBarPadding();
   const { themeName } = useThemeController();
   const theme = useTheme();
@@ -192,8 +193,7 @@ export default function DriverMainPage() {
   }, [getUserInfo, getDriverDashboardCardSection, getDashboardReminder]);
 
   // Fuel limit display
-  const fuelLimitValue = firstVehicle?.yakitLimiti;
-  const fuelLimitDisplay = fuelLimitValue === null || fuelLimitValue === undefined ? '-' : String(fuelLimitValue);
+  const fuelLimitDisplay = formatNumber(firstVehicle?.yakitLimiti, i18n.language);
 
   // Colors from Tamagui theme config using standard keys
   const colors = {
@@ -270,7 +270,7 @@ export default function DriverMainPage() {
                       <Gauge size={20} color={colors.bluePrimary} />
                     </Stack>
                     <YStack gap={2} flex={1}>
-                      <Text style={[styles.cardValue, { color: colors.textPrimary }]}>{firstVehicle?.guncelKm ?? '-'} km</Text>
+                      <Text style={[styles.cardValue, { color: colors.textPrimary }]}>{formatNumber(firstVehicle?.guncelKm, i18n.language)} km</Text>
                       <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>{t('guncelKm')}</Text>
                     </YStack>
                   </XStack>
@@ -293,7 +293,7 @@ export default function DriverMainPage() {
                         <Wrench size={20} color={colors.bluePrimary} />
                       </Stack>
                       <YStack gap={2} flex={1}>
-                        <Text style={[styles.cardValue, { color: colors.textPrimary }]}>{firstVehicle?.hedefKm ?? '-'} km</Text>
+                        <Text style={[styles.cardValue, { color: colors.textPrimary }]}>{formatNumber(firstVehicle?.hedefKm, i18n.language)} km</Text>
                         <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>{t('bakimKm')}</Text>
                       </YStack>
                     </XStack>
@@ -728,7 +728,7 @@ function KmUpdateBottomSheet({
   userId: number;
   onSuccess: () => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const {
     control,
     handleSubmit,
@@ -800,7 +800,7 @@ function KmUpdateBottomSheet({
 
           <YStack gap="$2">
             <Text fontSize="$4" color="$color" opacity={0.7}>
-              {t('currentKm')}: {firstVehicle?.guncelKm} km
+              {t('currentKm')}: {formatNumber(firstVehicle?.guncelKm, i18n.language)} km
             </Text>
             <XStack alignItems="center" gap="$2">
               <Text fontSize="$4" color="$color" opacity={0.7}>
