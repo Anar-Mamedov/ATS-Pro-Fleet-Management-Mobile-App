@@ -410,6 +410,19 @@ export const apiService = {
     return response.data;
   },
 
+  // Accident endpoints
+  addAccidentItem: async (accidentData: {
+    aracId: number;
+    surucuId: number;
+    aciklama: string;
+    kazaTarih: string;
+    kazaSaat: string;
+    lokasyonId: number;
+  }) => {
+    const response = await axiosInstance.post('/Accident/AddAccidentItem', accidentData);
+    return response.data;
+  },
+
   // Location endpoints
   getChildLocationListByParentId: async (parentID: number, parameter: string = '') => {
     const response = await axiosInstance.get('/Location/GetChildLocationListByParentId', {

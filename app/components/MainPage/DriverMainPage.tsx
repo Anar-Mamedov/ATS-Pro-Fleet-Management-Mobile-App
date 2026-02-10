@@ -18,8 +18,9 @@ import DocumentUpload from '../../../ui/components/DocumentUpload';
 import { FormattedDate } from '../../../ui/components/FormattedDate';
 import ResimUpload from '../../../ui/components/ResimUpload';
 import FuelListBottomSheet from './components/FuelListBottomSheet';
+import ReportAccident from './components/ReportAccident';
 import ReportAProblem from './components/ReportAProblem';
-import { Gauge, Wrench, ShieldCheck, Fuel, CalendarCheck, Droplet, TriangleAlert, MapPin, FileText, Camera, ChevronRight, Calendar, FolderOpen } from '@tamagui/lucide-icons';
+import { Gauge, Wrench, ShieldCheck, Fuel, CalendarCheck, Droplet, TriangleAlert, MapPin, FileText, Camera, ChevronRight, Calendar, FolderOpen, CarFront } from '@tamagui/lucide-icons';
 
 function getDateStatus(dateValue: string | null | undefined, t: (key: string, options?: any) => string): { label: string; color: string } | null {
   if (!dateValue) return null;
@@ -50,6 +51,7 @@ export default function DriverMainPage() {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [userId, setUserId] = useState<number>(0);
   const [fuelReloadToken, setFuelReloadToken] = useState<number>(0);
+  const [userName, setUserName] = useState<string>('');
 
   // Slider card states
   const [maintenanceCardWidth, setMaintenanceCardWidth] = useState<number>(0);
@@ -79,6 +81,9 @@ export default function DriverMainPage() {
       setUserId(parseInt(id));
       const data = await apiService.getUserInfoById(id);
       setAracIds(Array.isArray(data?.aracIds) ? data.aracIds : []);
+      const isim = data?.isim || '';
+      const soyAd = data?.soyAd || '';
+      setUserName(`${isim} ${soyAd}`.trim());
     }
   }, []);
 
@@ -150,6 +155,7 @@ export default function DriverMainPage() {
   const [filesTab, setFilesTab] = useState<'docs' | 'photos'>('docs');
   const kmUpdateSheetRef = useRef<BottomSheetModal>(null);
   const fuelSheetRef = useRef<BottomSheetModal>(null);
+  const accidentSheetRef = useRef<BottomSheetModal>(null);
 
   const snapPoints = useMemo(() => ['30%', '50%'], []);
   const faultSnapPoints = useMemo(() => ['75%'], []);
@@ -163,6 +169,8 @@ export default function DriverMainPage() {
   const openDocsSheet = () => docsSheetRef.current?.present();
   const openKmUpdateSheet = () => kmUpdateSheetRef.current?.present();
   const closeKmUpdateSheet = () => kmUpdateSheetRef.current?.dismiss();
+  const openAccidentSheet = () => accidentSheetRef.current?.present();
+  const closeAccidentSheet = () => accidentSheetRef.current?.dismiss();
 
   const openFuelSheet = useCallback(() => {
     if (!firstVehicle?.aracId) {
@@ -428,12 +436,20 @@ export default function DriverMainPage() {
             </XStack>
 
             {/* Row 2 */}
-            <Pressable onPress={openDocsSheet}>
-              <Stack style={[styles.actionButton, { backgroundColor: '#8B5CF614' }]}>
-                <FolderOpen size={20} color={colors.purple} />
-                <Text style={[styles.actionText, { color: colors.purple }]}>{t('aracDosyalari')}</Text>
-              </Stack>
-            </Pressable>
+            <XStack gap={12}>
+              <Pressable style={{ width: CARD_WIDTH }} onPress={openAccidentSheet}>
+                <Stack style={[styles.actionButton, { backgroundColor: '#DC262614' }]}>
+                  <CarFront size={20} color="#DC2626" />
+                  <Text style={[styles.actionText, { color: '#DC2626' }]}>{t('kazaBildir')}</Text>
+                </Stack>
+              </Pressable>
+              <Pressable style={{ width: CARD_WIDTH }} onPress={openDocsSheet}>
+                <Stack style={[styles.actionButton, { backgroundColor: '#8B5CF614' }]}>
+                  <FolderOpen size={20} color={colors.purple} />
+                  <Text style={[styles.actionText, { color: colors.purple }]}>{t('aracDosyalari')}</Text>
+                </Stack>
+              </Pressable>
+            </XStack>
           </YStack>
 
           {/* Reminders Section */}
@@ -587,6 +603,30 @@ export default function DriverMainPage() {
             mode="talep"
             initialLocationId={firstVehicle?.lokasyonId}
             initialLocationName={firstVehicle?.lokasyon}
+          />
+        </BottomSheetModal>
+
+        {/* Kaza Bildir Bottom Sheet */}
+        <BottomSheetModal
+          ref={accidentSheetRef}
+          index={0}
+          snapPoints={faultSnapPoints}
+          enablePanDownToClose
+          enableDynamicSizing={false}
+          topInset={46}
+          handleIndicatorStyle={{ backgroundColor: isDark ? '#9BA1A6' : '#A1A1AA' }}
+          backdropComponent={(backdropProps) => (
+            <BottomSheetBackdrop {...backdropProps} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.4} pressBehavior="close" />
+          )}
+          backgroundStyle={{ backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }}
+        >
+          <ReportAccident
+            aracId={firstVehicle?.aracId || 0}
+            plaka={firstVehicle?.plaka || ''}
+            surucuId={userId}
+            surucuAd={userName}
+            lokasyonId={firstVehicle?.lokasyonId || 0}
+            onSuccess={closeAccidentSheet}
           />
         </BottomSheetModal>
 
