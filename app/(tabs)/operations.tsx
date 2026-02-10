@@ -1,7 +1,7 @@
 import { useThemeController } from '@/config/theme';
 import { useBottomBarPadding } from '@/ui/components/useBottomBarPadding';
 import { Stack, Text, useTheme } from '@tamagui/core';
-import { ChevronRight, ShieldAlert, Wrench } from '@tamagui/lucide-icons';
+import { ChevronRight, CreditCard, ShieldAlert, Wrench } from '@tamagui/lucide-icons';
 import { XStack, YStack } from '@tamagui/stacks';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -41,6 +41,14 @@ export default function OperationsTab() {
       icon: <Wrench size={24} color="#F59E0B" />,
       color: '#F59E0B',
       onPress: () => router.push('/operations/service-operations'),
+    },
+    {
+      id: 'hgs-operations',
+      title: t('hgsOperations'),
+      description: t('hgsOperationsDescription'),
+      icon: <CreditCard size={24} color="#0EA5E9" />,
+      color: '#0EA5E9',
+      onPress: () => router.push('/operations/hgs-operations'),
     },
   ];
 
