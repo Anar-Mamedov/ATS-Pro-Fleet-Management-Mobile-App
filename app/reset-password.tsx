@@ -111,7 +111,7 @@ export default function ResetPassword() {
                     width="100%"
                     minHeight={50}
                     paddingVertical="$3"
-                    maxFontSizeMultiplier={1.3}
+                    maxFontSizeMultiplier={1}
                   />
                   <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: 12, top: 12 }}>
                     <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={24} color="gray" />
@@ -138,7 +138,7 @@ export default function ResetPassword() {
                     width="100%"
                     minHeight={50}
                     paddingVertical="$3"
-                    maxFontSizeMultiplier={1.3}
+                    maxFontSizeMultiplier={1}
                   />
                   <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)} style={{ position: 'absolute', right: 12, top: 12 }}>
                     <Ionicons name={showConfirmPassword ? 'eye-off' : 'eye'} size={24} color="gray" />

@@ -290,7 +290,7 @@ export default function Login() {
                     width="100%"
                     minHeight={50}
                     paddingVertical="$3"
-                    maxFontSizeMultiplier={1.3}
+                    maxFontSizeMultiplier={1}
                   />
                 </YStack>
 
@@ -318,9 +318,8 @@ export default function Login() {
                   source={{ uri: companyLogo }}
                   style={{
                     width: 200,
-                    height: 100,
+                    height: 60,
                     resizeMode: 'contain',
-                    marginBottom: 1,
                   }}
                   onLoad={() => console.log('✅ Logo image loaded successfully')}
                   onError={(error) => console.error('❌ Logo image load error:', error.nativeEvent.error)}
@@ -328,8 +327,7 @@ export default function Login() {
               ) : (
                 <YStack
                   width={200}
-                  height={100}
-                  marginBottom={1}
+                  height={60}
                   borderWidth={2}
                   borderColor="$gray8"
                   borderStyle="dashed"
@@ -342,6 +340,9 @@ export default function Login() {
                   </Text>
                 </YStack>
               )}
+              <Text fontSize="$4" color="$gray10" fontWeight="500" marginBottom="$2">
+                {t('fleetManagementSystem')}
+              </Text>
               <Text fontSize="$8" color="$color" fontWeight="bold" marginBottom="$6" fontFamily="SF Pro Text">
                 {t('login')}
               </Text>
@@ -360,7 +361,7 @@ export default function Login() {
                   width="100%"
                   minHeight={50}
                   paddingVertical="$3"
-                  maxFontSizeMultiplier={1.3}
+                  maxFontSizeMultiplier={1}
                 />
               </YStack>
 
@@ -378,7 +379,7 @@ export default function Login() {
                   width="100%"
                   minHeight={50}
                   paddingVertical="$3"
-                  maxFontSizeMultiplier={1.3}
+                  maxFontSizeMultiplier={1}
                 />
               </YStack>
 

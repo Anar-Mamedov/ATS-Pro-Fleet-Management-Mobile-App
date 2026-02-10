@@ -14,12 +14,24 @@ import type { LayoutChangeEvent } from 'react-native';
 import { Alert, Dimensions, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { apiService } from '../../../services/apiService';
+import { formatNumber } from '../../../ui/components/formatNumber';
 import DocumentUpload from '../../../ui/components/DocumentUpload';
 import { FormattedDate } from '../../../ui/components/FormattedDate';
 import ResimUpload from '../../../ui/components/ResimUpload';
 import FuelListBottomSheet from './components/FuelListBottomSheet';
+import ReportAccident from './components/ReportAccident';
 import ReportAProblem from './components/ReportAProblem';
-import { Gauge, Wrench, ShieldCheck, Fuel, CalendarCheck, Droplet, TriangleAlert, MapPin, FileText, Camera, ChevronRight, Calendar } from '@tamagui/lucide-icons';
+import { Gauge, Wrench, ShieldCheck, Fuel, CalendarCheck, Droplet, TriangleAlert, MapPin, FileText, Camera, ChevronRight, Calendar, FolderOpen, CarFront } from '@tamagui/lucide-icons';
+
+function getDateStatus(dateValue: string | null | undefined, t: (key: string, options?: any) => string): { label: string; color: string } | null {
+  if (!dateValue) return null;
+  const target = dayjs(dateValue).startOf('day');
+  const now = dayjs().startOf('day');
+  const diff = target.diff(now, 'day');
+  if (diff < 0) return { label: t('expired'), color: '#EF4444' };
+  if (diff === 0) return { label: t('today'), color: '#F59E0B' };
+  return { label: t('daysLeft', { count: diff }), color: '#10B981' };
+}
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const HORIZONTAL_PADDING = 20;
@@ -27,7 +39,7 @@ const CARD_GAP = 12;
 const CARD_WIDTH = (SCREEN_WIDTH - HORIZONTAL_PADDING * 2 - CARD_GAP) / 2;
 
 export default function DriverMainPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const bottomPad = useBottomBarPadding();
   const { themeName } = useThemeController();
   const theme = useTheme();
@@ -40,6 +52,7 @@ export default function DriverMainPage() {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [userId, setUserId] = useState<number>(0);
   const [fuelReloadToken, setFuelReloadToken] = useState<number>(0);
+  const [userName, setUserName] = useState<string>('');
 
   // Slider card states
   const [maintenanceCardWidth, setMaintenanceCardWidth] = useState<number>(0);
@@ -69,6 +82,9 @@ export default function DriverMainPage() {
       setUserId(parseInt(id));
       const data = await apiService.getUserInfoById(id);
       setAracIds(Array.isArray(data?.aracIds) ? data.aracIds : []);
+      const isim = data?.isim || '';
+      const soyAd = data?.soyAd || '';
+      setUserName(`${isim} ${soyAd}`.trim());
     }
   }, []);
 
@@ -137,9 +153,10 @@ export default function DriverMainPage() {
   const faultSheetRef = useRef<BottomSheetModal>(null);
   const requestSheetRef = useRef<BottomSheetModal>(null);
   const docsSheetRef = useRef<BottomSheetModal>(null);
-  const photosSheetRef = useRef<BottomSheetModal>(null);
+  const [filesTab, setFilesTab] = useState<'docs' | 'photos'>('docs');
   const kmUpdateSheetRef = useRef<BottomSheetModal>(null);
   const fuelSheetRef = useRef<BottomSheetModal>(null);
+  const accidentSheetRef = useRef<BottomSheetModal>(null);
 
   const snapPoints = useMemo(() => ['30%', '50%'], []);
   const faultSnapPoints = useMemo(() => ['75%'], []);
@@ -151,9 +168,10 @@ export default function DriverMainPage() {
   const openRequestSheet = () => requestSheetRef.current?.present();
   const closeRequestSheet = () => requestSheetRef.current?.dismiss();
   const openDocsSheet = () => docsSheetRef.current?.present();
-  const openPhotosSheet = () => photosSheetRef.current?.present();
   const openKmUpdateSheet = () => kmUpdateSheetRef.current?.present();
   const closeKmUpdateSheet = () => kmUpdateSheetRef.current?.dismiss();
+  const openAccidentSheet = () => accidentSheetRef.current?.present();
+  const closeAccidentSheet = () => accidentSheetRef.current?.dismiss();
 
   const openFuelSheet = useCallback(() => {
     if (!firstVehicle?.aracId) {
@@ -175,8 +193,7 @@ export default function DriverMainPage() {
   }, [getUserInfo, getDriverDashboardCardSection, getDashboardReminder]);
 
   // Fuel limit display
-  const fuelLimitValue = firstVehicle?.yakitLimiti;
-  const fuelLimitDisplay = fuelLimitValue === null || fuelLimitValue === undefined ? '-' : String(fuelLimitValue);
+  const fuelLimitDisplay = formatNumber(firstVehicle?.yakitLimiti, i18n.language);
 
   // Colors from Tamagui theme config using standard keys
   const colors = {
@@ -253,7 +270,7 @@ export default function DriverMainPage() {
                       <Gauge size={20} color={colors.bluePrimary} />
                     </Stack>
                     <YStack gap={2} flex={1}>
-                      <Text style={[styles.cardValue, { color: colors.textPrimary }]}>{firstVehicle?.guncelKm ?? '-'} km</Text>
+                      <Text style={[styles.cardValue, { color: colors.textPrimary }]}>{formatNumber(firstVehicle?.guncelKm, i18n.language)} km</Text>
                       <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>{t('guncelKm')}</Text>
                     </YStack>
                   </XStack>
@@ -276,7 +293,7 @@ export default function DriverMainPage() {
                         <Wrench size={20} color={colors.bluePrimary} />
                       </Stack>
                       <YStack gap={2} flex={1}>
-                        <Text style={[styles.cardValue, { color: colors.textPrimary }]}>{firstVehicle?.hedefKm ?? '-'} km</Text>
+                        <Text style={[styles.cardValue, { color: colors.textPrimary }]}>{formatNumber(firstVehicle?.hedefKm, i18n.language)} km</Text>
                         <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>{t('bakimKm')}</Text>
                       </YStack>
                     </XStack>
@@ -303,35 +320,19 @@ export default function DriverMainPage() {
 
             {/* Row 2 */}
             <XStack gap={12}>
-              <Stack style={[styles.infoCard, { backgroundColor: colors.bgCard, width: CARD_WIDTH, padding: 0, overflow: 'hidden' }]}>
-                <ScrollView
-                  ref={insuranceScrollRef}
-                  horizontal
-                  pagingEnabled
-                  showsHorizontalScrollIndicator={false}
-                  scrollEventThrottle={16}
-                  style={{ width: '100%' }}
-                  onLayout={handleInsuranceLayout}
-                >
-                  {insuranceItems.map((item, index) => (
-                    <View key={item.siraNo ? String(item.siraNo) : `${item.sigorta}-${index}`} style={[styles.sliderPage, { width: insuranceCardWidth || CARD_WIDTH }]}>
-                      <XStack alignItems="center" gap={12}>
-                        <Stack style={[styles.iconWrapper, { backgroundColor: colors.blueTint }]}>
-                          <ShieldCheck size={20} color={colors.bluePrimary} />
-                        </Stack>
-                        <YStack gap={2} flex={1}>
-                          {item.bitisTarih ? (
-                            <FormattedDate value={item.bitisTarih} format="L" textProps={{ style: [styles.cardValue, { color: colors.textPrimary }] }} />
-                          ) : (
-                            <Text style={[styles.cardValue, { color: colors.textPrimary }]}>-</Text>
-                          )}
-                          <Text style={[styles.cardLabel, { color: colors.textSecondary }]} numberOfLines={1}>{item.sigorta}</Text>
-                        </YStack>
-                      </XStack>
-                    </View>
-                  ))}
-                </ScrollView>
-              </Stack>
+              <Pressable style={{ width: CARD_WIDTH }} onPress={openFuelSheet}>
+                <Stack style={[styles.infoCard, { backgroundColor: colors.bgCard }]}>
+                  <XStack alignItems="center" gap={12}>
+                    <Stack style={[styles.iconWrapper, { backgroundColor: colors.blueTint }]}>
+                      <Droplet size={20} color={colors.bluePrimary} />
+                    </Stack>
+                    <YStack gap={2} flex={1}>
+                      <Text style={[styles.cardValue, { color: colors.textPrimary }]}>{fuelLimitDisplay}</Text>
+                      <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>{t('yakitLimiti')}</Text>
+                    </YStack>
+                  </XStack>
+                </Stack>
+              </Pressable>
               <Stack style={[styles.infoCard, { backgroundColor: colors.bgCard, width: CARD_WIDTH }]}>
                 <XStack alignItems="center" gap={12}>
                   <Stack style={[styles.iconWrapper, { backgroundColor: colors.blueTint }]}>
@@ -370,25 +371,49 @@ export default function DriverMainPage() {
                             <Text style={[styles.cardValue, { color: colors.textPrimary }]}>-</Text>
                           )}
                           <Text style={[styles.cardLabel, { color: colors.textSecondary }]} numberOfLines={1}>{item.label}</Text>
+                          {(() => {
+                            const status = getDateStatus(item.value, t);
+                            return status ? <Text style={[styles.cardStatus, { color: status.color }]}>{status.label}</Text> : null;
+                          })()}
                         </YStack>
                       </XStack>
                     </View>
                   ))}
                 </ScrollView>
               </Stack>
-              <Pressable style={{ width: CARD_WIDTH }} onPress={openFuelSheet}>
-                <Stack style={[styles.infoCard, { backgroundColor: colors.bgCard }]}>
-                  <XStack alignItems="center" gap={12}>
-                    <Stack style={[styles.iconWrapper, { backgroundColor: colors.blueTint }]}>
-                      <Droplet size={20} color={colors.bluePrimary} />
-                    </Stack>
-                    <YStack gap={2} flex={1}>
-                      <Text style={[styles.cardValue, { color: colors.textPrimary }]}>{fuelLimitDisplay}</Text>
-                      <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>{t('yakitLimiti')}</Text>
-                    </YStack>
-                  </XStack>
-                </Stack>
-              </Pressable>
+              <Stack style={[styles.infoCard, { backgroundColor: colors.bgCard, width: CARD_WIDTH, padding: 0, overflow: 'hidden' }]}>
+                <ScrollView
+                  ref={insuranceScrollRef}
+                  horizontal
+                  pagingEnabled
+                  showsHorizontalScrollIndicator={false}
+                  scrollEventThrottle={16}
+                  style={{ width: '100%' }}
+                  onLayout={handleInsuranceLayout}
+                >
+                  {insuranceItems.map((item, index) => (
+                    <View key={item.siraNo ? String(item.siraNo) : `${item.sigorta}-${index}`} style={[styles.sliderPage, { width: insuranceCardWidth || CARD_WIDTH }]}>
+                      <XStack alignItems="center" gap={12}>
+                        <Stack style={[styles.iconWrapper, { backgroundColor: colors.blueTint }]}>
+                          <ShieldCheck size={20} color={colors.bluePrimary} />
+                        </Stack>
+                        <YStack gap={2} flex={1}>
+                          {item.bitisTarih ? (
+                            <FormattedDate value={item.bitisTarih} format="L" textProps={{ style: [styles.cardValue, { color: colors.textPrimary }] }} />
+                          ) : (
+                            <Text style={[styles.cardValue, { color: colors.textPrimary }]}>-</Text>
+                          )}
+                          <Text style={[styles.cardLabel, { color: colors.textSecondary }]} numberOfLines={1}>{item.sigorta}</Text>
+                          {(() => {
+                            const status = getDateStatus(item.bitisTarih, t);
+                            return status ? <Text style={[styles.cardStatus, { color: status.color }]}>{status.label}</Text> : null;
+                          })()}
+                        </YStack>
+                      </XStack>
+                    </View>
+                  ))}
+                </ScrollView>
+              </Stack>
             </XStack>
           </YStack>
 
@@ -412,16 +437,16 @@ export default function DriverMainPage() {
 
             {/* Row 2 */}
             <XStack gap={12}>
-              <Pressable style={{ width: CARD_WIDTH }} onPress={openDocsSheet}>
-                <Stack style={[styles.actionButton, { backgroundColor: '#8B5CF614' }]}>
-                  <FileText size={20} color={colors.purple} />
-                  <Text style={[styles.actionText, { color: colors.purple }]}>{t('aracBelgeleri')}</Text>
+              <Pressable style={{ width: CARD_WIDTH }} onPress={openAccidentSheet}>
+                <Stack style={[styles.actionButton, { backgroundColor: '#0284C714' }]}>
+                  <CarFront size={20} color="#0284C7" />
+                  <Text style={[styles.actionText, { color: '#0284C7' }]}>{t('kazaBildir')}</Text>
                 </Stack>
               </Pressable>
-              <Pressable style={{ width: CARD_WIDTH }} onPress={openPhotosSheet}>
-                <Stack style={[styles.actionButton, { backgroundColor: '#F9731614' }]}>
-                  <Camera size={20} color={colors.orange} />
-                  <Text style={[styles.actionText, { color: colors.orange }]}>{t('aracFotograflari')}</Text>
+              <Pressable style={{ width: CARD_WIDTH }} onPress={openDocsSheet}>
+                <Stack style={[styles.actionButton, { backgroundColor: '#8B5CF614' }]}>
+                  <FolderOpen size={20} color={colors.purple} />
+                  <Text style={[styles.actionText, { color: colors.purple }]}>{t('aracDosyalari')}</Text>
                 </Stack>
               </Pressable>
             </XStack>
@@ -581,7 +606,31 @@ export default function DriverMainPage() {
           />
         </BottomSheetModal>
 
-        {/* Araç Belgeleri Bottom Sheet */}
+        {/* Kaza Bildir Bottom Sheet */}
+        <BottomSheetModal
+          ref={accidentSheetRef}
+          index={0}
+          snapPoints={faultSnapPoints}
+          enablePanDownToClose
+          enableDynamicSizing={false}
+          topInset={46}
+          handleIndicatorStyle={{ backgroundColor: isDark ? '#9BA1A6' : '#A1A1AA' }}
+          backdropComponent={(backdropProps) => (
+            <BottomSheetBackdrop {...backdropProps} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.4} pressBehavior="close" />
+          )}
+          backgroundStyle={{ backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }}
+        >
+          <ReportAccident
+            aracId={firstVehicle?.aracId || 0}
+            plaka={firstVehicle?.plaka || ''}
+            surucuId={userId}
+            surucuAd={userName}
+            lokasyonId={firstVehicle?.lokasyonId || 0}
+            onSuccess={closeAccidentSheet}
+          />
+        </BottomSheetModal>
+
+        {/* Araç Dosyaları Bottom Sheet (Belgeler + Fotoğraflar) */}
         <BottomSheetModal
           ref={docsSheetRef}
           index={0}
@@ -596,43 +645,54 @@ export default function DriverMainPage() {
           backgroundStyle={{ backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }}
         >
           <BottomSheetView style={{ flex: 1 }}>
-            {firstVehicle ? (
-              <DocumentUpload refId={firstVehicle.aracId} refGroup="ARAC" editable={true} />
+            {/* Tab Switcher */}
+            <XStack marginHorizontal={16} marginTop={8} marginBottom={12} backgroundColor={isDark ? '#2C2C2E' : '#F2F2F7'} borderRadius={10} padding={3}>
+              <Pressable
+                style={[styles.tabButton, filesTab === 'docs' && { backgroundColor: isDark ? '#3A3A3C' : '#FFFFFF' }]}
+                onPress={() => setFilesTab('docs')}
+              >
+                <XStack alignItems="center" justifyContent="center" gap={6}>
+                  <FileText size={16} color={filesTab === 'docs' ? colors.purple : colors.textSecondary} />
+                  <Text style={[styles.tabText, { color: filesTab === 'docs' ? colors.textPrimary : colors.textSecondary, fontWeight: filesTab === 'docs' ? '600' : '400' }]}>
+                    {t('belgeler')}
+                  </Text>
+                </XStack>
+              </Pressable>
+              <Pressable
+                style={[styles.tabButton, filesTab === 'photos' && { backgroundColor: isDark ? '#3A3A3C' : '#FFFFFF' }]}
+                onPress={() => setFilesTab('photos')}
+              >
+                <XStack alignItems="center" justifyContent="center" gap={6}>
+                  <Camera size={16} color={filesTab === 'photos' ? colors.orange : colors.textSecondary} />
+                  <Text style={[styles.tabText, { color: filesTab === 'photos' ? colors.textPrimary : colors.textSecondary, fontWeight: filesTab === 'photos' ? '600' : '400' }]}>
+                    {t('fotograflar')}
+                  </Text>
+                </XStack>
+              </Pressable>
+            </XStack>
+
+            {/* Tab Content */}
+            {filesTab === 'docs' ? (
+              firstVehicle ? (
+                <DocumentUpload refId={firstVehicle.aracId} refGroup="ARAC" editable={true} />
+              ) : (
+                <YStack padding="$4" alignItems="center">
+                  <Text color="$color" opacity={0.7} textAlign="center">
+                    {t('pleaseSelectVehicle')}
+                  </Text>
+                </YStack>
+              )
             ) : (
-              <YStack padding="$4" alignItems="center">
-                <Text color="$color" opacity={0.7} textAlign="center">
-                  {t('pleaseSelectVehicle')}
-                </Text>
+              <YStack flex={1} paddingHorizontal="$4">
+                {firstVehicle ? (
+                  <ResimUpload refId={firstVehicle.aracId} refGroup="ARAC" isForDefault={false} />
+                ) : (
+                  <Text color="$color" opacity={0.7} textAlign="center">
+                    {t('pleaseSelectVehicle')}
+                  </Text>
+                )}
               </YStack>
             )}
-          </BottomSheetView>
-        </BottomSheetModal>
-
-        {/* Araç Fotoğrafları Bottom Sheet */}
-        <BottomSheetModal
-          ref={photosSheetRef}
-          index={1}
-          snapPoints={snapPoints}
-          enablePanDownToClose
-          handleIndicatorStyle={{ backgroundColor: isDark ? '#9BA1A6' : '#A1A1AA' }}
-          backdropComponent={(backdropProps) => (
-            <BottomSheetBackdrop {...backdropProps} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.4} pressBehavior="close" />
-          )}
-          backgroundStyle={{ backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }}
-        >
-          <BottomSheetView style={{ flex: 1, paddingTop: 20 }}>
-            <YStack space="$3" paddingHorizontal="$4">
-              <Text fontSize="$6" fontWeight="600" textAlign="center" marginBottom="$2" color="$color">
-                {t('aracFotograflari')}
-              </Text>
-              {firstVehicle ? (
-                <ResimUpload refId={firstVehicle.aracId} refGroup="ARAC" isForDefault={false} />
-              ) : (
-                <Text color="$color" opacity={0.7} textAlign="center">
-                  {t('pleaseSelectVehicle')}
-                </Text>
-              )}
-            </YStack>
           </BottomSheetView>
         </BottomSheetModal>
 
@@ -668,7 +728,7 @@ function KmUpdateBottomSheet({
   userId: number;
   onSuccess: () => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const {
     control,
     handleSubmit,
@@ -740,7 +800,7 @@ function KmUpdateBottomSheet({
 
           <YStack gap="$2">
             <Text fontSize="$4" color="$color" opacity={0.7}>
-              {t('currentKm')}: {firstVehicle?.guncelKm} km
+              {t('currentKm')}: {formatNumber(firstVehicle?.guncelKm, i18n.language)} km
             </Text>
             <XStack alignItems="center" gap="$2">
               <Text fontSize="$4" color="$color" opacity={0.7}>
@@ -857,6 +917,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: 'Inter',
   },
+  cardStatus: {
+    fontSize: 11,
+    fontWeight: '600',
+    fontFamily: 'Inter',
+  },
   actionButton: {
     borderRadius: 12,
     padding: 16,
@@ -890,6 +955,17 @@ const styles = StyleSheet.create({
   reminderTitle: {
     fontSize: 15,
     fontWeight: '600',
+    fontFamily: 'Inter',
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 8,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+  },
+  tabText: {
+    fontSize: 14,
     fontFamily: 'Inter',
   },
 });

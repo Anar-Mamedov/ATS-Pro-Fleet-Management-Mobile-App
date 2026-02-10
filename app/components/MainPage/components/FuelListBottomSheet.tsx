@@ -1,5 +1,6 @@
 import { apiService } from '@/services/apiService';
 import { FormattedDate } from '@/ui/components/FormattedDate';
+import { formatNumber } from '@/ui/components/formatNumber';
 import { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetModal } from '@gorhom/bottom-sheet';
 import { Text } from '@tamagui/core';
 import { XStack, YStack } from '@tamagui/stacks';
@@ -26,7 +27,7 @@ type FuelListBottomSheetProps = {
 };
 
 export default function FuelListBottomSheet({ sheetRef, themeName, vehicleId, reloadToken }: FuelListBottomSheetProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [fuelList, setFuelList] = useState<FuelListItem[]>([]);
   const [fuelLoading, setFuelLoading] = useState<boolean>(false);
   const [fuelHasMore, setFuelHasMore] = useState<boolean>(true);
@@ -42,7 +43,7 @@ export default function FuelListBottomSheet({ sheetRef, themeName, vehicleId, re
     fuelLoadingRef.current = fuelLoading;
   }, [fuelLoading]);
 
-  const renderFuelAmount = useCallback((value: number | null | undefined) => (value === null || value === undefined ? '-' : String(value)), []);
+  const renderFuelAmount = useCallback((value: number | null | undefined) => formatNumber(value, i18n.language), [i18n.language]);
 
   const fetchFuelList = useCallback(
     async (diff: number, reset: boolean = false) => {

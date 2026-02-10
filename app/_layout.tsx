@@ -17,12 +17,14 @@ import '../config/i18n';
 import { ThemeProvider, useThemeController } from '../config/theme';
 import config from '../tamagui.config';
 
-// Sistem font büyütme ayarını maksimum 1.2x ile sınırla
+// Sistem font büyütme ayarını tamamen devre dışı bırak
 (Text as any).defaultProps ??= {};
-(Text as any).defaultProps.maxFontSizeMultiplier = 1.2;
+(Text as any).defaultProps.maxFontSizeMultiplier = 1;
+(Text as any).defaultProps.allowFontScaling = false;
 
 (TextInput as any).defaultProps ??= {};
-(TextInput as any).defaultProps.maxFontSizeMultiplier = 1.2;
+(TextInput as any).defaultProps.maxFontSizeMultiplier = 1;
+(TextInput as any).defaultProps.allowFontScaling = false;
 
 function ThemeBars() {
   const { themeName } = useThemeController();

@@ -4,7 +4,7 @@ import { DatePicker } from '@/ui/components/DatePicker';
 import { NumaratorOnAdd } from '@/ui/components/NumaratorOnAdd';
 import TalepOncelik from '@/ui/components/TalepOncelik';
 import TalepTuru from '@/ui/components/TalepTuru';
-import { LocationPicker } from '@/ui/components/LocationPicker';
+
 import { PhotoUploadButton } from '@/ui/components/PhotoUploadButton';
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { Button } from '@tamagui/button';
@@ -231,20 +231,7 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess, mode = 'ariza'
           </YStack>
         )}
 
-        <LocationPicker
-          control={control}
-          name="lokasyon"
-          label={t('location') || 'Lokasyon'}
-          placeholder={t('selectLocation') || 'Lokasyon seçin'}
-          error={errors.lokasyon?.message}
-          required
-          selectedId={initialLocationId}
-          onSubmit={(data) => {
-            if (data && !Array.isArray(data)) {
-              setSelectedLocationId(data.locationId);
-            }
-          }}
-        />
+        {/* LocationPicker gizlendi - lokasyon verisi initialLocationId üzerinden backend'e gönderilmeye devam ediyor */}
 
         <Controller
           control={control}

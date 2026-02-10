@@ -410,6 +410,19 @@ export const apiService = {
     return response.data;
   },
 
+  // Accident endpoints
+  addAccidentItem: async (accidentData: {
+    aracId: number;
+    surucuId: number;
+    aciklama: string;
+    kazaTarih: string;
+    kazaSaat: string;
+    lokasyonId: number;
+  }) => {
+    const response = await axiosInstance.post('/Accident/AddAccidentItem', accidentData);
+    return response.data;
+  },
+
   // Location endpoints
   getChildLocationListByParentId: async (parentID: number, parameter: string = '') => {
     const response = await axiosInstance.get('/Location/GetChildLocationListByParentId', {
@@ -538,6 +551,13 @@ export const apiService = {
   },
 
   // Vehicle Fines endpoints
+  // HGS Operations endpoints
+  getHgsOperationsListByVehicleIds: async (vehicleIds: number[], diff: number, setPointId: number, parameter: string = '') => {
+    const encodedParameter = encodeURIComponent(parameter);
+    const response = await axiosInstance.post(`/HgsOperations/GetHgsOperationsListByVehicleIds?setPointId=${setPointId}&diff=${diff}&parameter=${encodedParameter}`, vehicleIds);
+    return response.data;
+  },
+
   getVehicleFinesListByVehicleId: async (vehicleIds: number[], diff: number, setPointId: number, parameter: string = '') => {
     const encodedParameter = encodeURIComponent(parameter);
     const response = await axiosInstance.post(`/VehicleFines/GetVehicleFinesListByVehicleId?diff=${diff}&setPointId=${setPointId}&parameter=${encodedParameter}`, vehicleIds);
