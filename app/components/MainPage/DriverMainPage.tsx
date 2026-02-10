@@ -328,7 +328,9 @@ export default function DriverMainPage() {
                     </Stack>
                     <YStack gap={2} flex={1}>
                       <Text style={[styles.cardValue, { color: colors.textPrimary }]}>{fuelLimitDisplay}</Text>
-                      <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>{t('yakitLimiti')}</Text>
+                      <Text style={[styles.cardLabel, { color: colors.textSecondary }]} numberOfLines={1} ellipsizeMode="tail">
+                        {t('yakitLimiti')}
+                      </Text>
                     </YStack>
                   </XStack>
                 </Stack>
