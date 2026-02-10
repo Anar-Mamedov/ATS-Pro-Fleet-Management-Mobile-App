@@ -1,5 +1,6 @@
 import dayjs from '@/config/dayjs';
 import { useThemeController } from '@/config/theme';
+import { formatNumber } from '@/ui/components/formatNumber';
 import { useVehicleContext } from '@/context/VehicleContext';
 import { apiService } from '@/services/apiService';
 import { useBottomBarPadding } from '@/ui/components/useBottomBarPadding';
@@ -30,7 +31,7 @@ interface ServiceOperation {
 }
 
 export default function ServiceOperationsScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const theme = useTheme();
   const { themeName } = useThemeController();
@@ -161,7 +162,7 @@ export default function ServiceOperationsScreen() {
           </YStack>
 
           <Text fontSize="$5" fontWeight="bold" color="$blue10">
-            {item.toplam} TL
+            {formatNumber(item.toplam, i18n.language)} TL
           </Text>
         </XStack>
       </YStack>
