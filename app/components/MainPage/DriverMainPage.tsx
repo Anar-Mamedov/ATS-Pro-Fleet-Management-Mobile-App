@@ -19,7 +19,7 @@ import { FormattedDate } from '../../../ui/components/FormattedDate';
 import ResimUpload from '../../../ui/components/ResimUpload';
 import FuelListBottomSheet from './components/FuelListBottomSheet';
 import ReportAProblem from './components/ReportAProblem';
-import { Gauge, Wrench, ShieldCheck, Fuel, CalendarCheck, Droplet, TriangleAlert, MapPin, FileText, Camera, ChevronRight, Calendar } from '@tamagui/lucide-icons';
+import { Gauge, Wrench, ShieldCheck, Fuel, CalendarCheck, Droplet, TriangleAlert, MapPin, FileText, Camera, ChevronRight, Calendar, FolderOpen } from '@tamagui/lucide-icons';
 
 function getDateStatus(dateValue: string | null | undefined, t: (key: string, options?: any) => string): { label: string; color: string } | null {
   if (!dateValue) return null;
@@ -147,7 +147,7 @@ export default function DriverMainPage() {
   const faultSheetRef = useRef<BottomSheetModal>(null);
   const requestSheetRef = useRef<BottomSheetModal>(null);
   const docsSheetRef = useRef<BottomSheetModal>(null);
-  const photosSheetRef = useRef<BottomSheetModal>(null);
+  const [filesTab, setFilesTab] = useState<'docs' | 'photos'>('docs');
   const kmUpdateSheetRef = useRef<BottomSheetModal>(null);
   const fuelSheetRef = useRef<BottomSheetModal>(null);
 
@@ -161,7 +161,6 @@ export default function DriverMainPage() {
   const openRequestSheet = () => requestSheetRef.current?.present();
   const closeRequestSheet = () => requestSheetRef.current?.dismiss();
   const openDocsSheet = () => docsSheetRef.current?.present();
-  const openPhotosSheet = () => photosSheetRef.current?.present();
   const openKmUpdateSheet = () => kmUpdateSheetRef.current?.present();
   const closeKmUpdateSheet = () => kmUpdateSheetRef.current?.dismiss();
 
@@ -429,20 +428,12 @@ export default function DriverMainPage() {
             </XStack>
 
             {/* Row 2 */}
-            <XStack gap={12}>
-              <Pressable style={{ width: CARD_WIDTH }} onPress={openDocsSheet}>
-                <Stack style={[styles.actionButton, { backgroundColor: '#8B5CF614' }]}>
-                  <FileText size={20} color={colors.purple} />
-                  <Text style={[styles.actionText, { color: colors.purple }]}>{t('aracBelgeleri')}</Text>
-                </Stack>
-              </Pressable>
-              <Pressable style={{ width: CARD_WIDTH }} onPress={openPhotosSheet}>
-                <Stack style={[styles.actionButton, { backgroundColor: '#F9731614' }]}>
-                  <Camera size={20} color={colors.orange} />
-                  <Text style={[styles.actionText, { color: colors.orange }]}>{t('aracFotograflari')}</Text>
-                </Stack>
-              </Pressable>
-            </XStack>
+            <Pressable onPress={openDocsSheet}>
+              <Stack style={[styles.actionButton, { backgroundColor: '#8B5CF614' }]}>
+                <FolderOpen size={20} color={colors.purple} />
+                <Text style={[styles.actionText, { color: colors.purple }]}>{t('aracDosyalari')}</Text>
+              </Stack>
+            </Pressable>
           </YStack>
 
           {/* Reminders Section */}
@@ -599,7 +590,7 @@ export default function DriverMainPage() {
           />
         </BottomSheetModal>
 
-        {/* Araç Belgeleri Bottom Sheet */}
+        {/* Araç Dosyaları Bottom Sheet (Belgeler + Fotoğraflar) */}
         <BottomSheetModal
           ref={docsSheetRef}
           index={0}
@@ -614,43 +605,54 @@ export default function DriverMainPage() {
           backgroundStyle={{ backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }}
         >
           <BottomSheetView style={{ flex: 1 }}>
-            {firstVehicle ? (
-              <DocumentUpload refId={firstVehicle.aracId} refGroup="ARAC" editable={true} />
+            {/* Tab Switcher */}
+            <XStack marginHorizontal={16} marginTop={8} marginBottom={12} backgroundColor={isDark ? '#2C2C2E' : '#F2F2F7'} borderRadius={10} padding={3}>
+              <Pressable
+                style={[styles.tabButton, filesTab === 'docs' && { backgroundColor: isDark ? '#3A3A3C' : '#FFFFFF' }]}
+                onPress={() => setFilesTab('docs')}
+              >
+                <XStack alignItems="center" justifyContent="center" gap={6}>
+                  <FileText size={16} color={filesTab === 'docs' ? colors.purple : colors.textSecondary} />
+                  <Text style={[styles.tabText, { color: filesTab === 'docs' ? colors.textPrimary : colors.textSecondary, fontWeight: filesTab === 'docs' ? '600' : '400' }]}>
+                    {t('belgeler')}
+                  </Text>
+                </XStack>
+              </Pressable>
+              <Pressable
+                style={[styles.tabButton, filesTab === 'photos' && { backgroundColor: isDark ? '#3A3A3C' : '#FFFFFF' }]}
+                onPress={() => setFilesTab('photos')}
+              >
+                <XStack alignItems="center" justifyContent="center" gap={6}>
+                  <Camera size={16} color={filesTab === 'photos' ? colors.orange : colors.textSecondary} />
+                  <Text style={[styles.tabText, { color: filesTab === 'photos' ? colors.textPrimary : colors.textSecondary, fontWeight: filesTab === 'photos' ? '600' : '400' }]}>
+                    {t('fotograflar')}
+                  </Text>
+                </XStack>
+              </Pressable>
+            </XStack>
+
+            {/* Tab Content */}
+            {filesTab === 'docs' ? (
+              firstVehicle ? (
+                <DocumentUpload refId={firstVehicle.aracId} refGroup="ARAC" editable={true} />
+              ) : (
+                <YStack padding="$4" alignItems="center">
+                  <Text color="$color" opacity={0.7} textAlign="center">
+                    {t('pleaseSelectVehicle')}
+                  </Text>
+                </YStack>
+              )
             ) : (
-              <YStack padding="$4" alignItems="center">
-                <Text color="$color" opacity={0.7} textAlign="center">
-                  {t('pleaseSelectVehicle')}
-                </Text>
+              <YStack flex={1} paddingHorizontal="$4">
+                {firstVehicle ? (
+                  <ResimUpload refId={firstVehicle.aracId} refGroup="ARAC" isForDefault={false} />
+                ) : (
+                  <Text color="$color" opacity={0.7} textAlign="center">
+                    {t('pleaseSelectVehicle')}
+                  </Text>
+                )}
               </YStack>
             )}
-          </BottomSheetView>
-        </BottomSheetModal>
-
-        {/* Araç Fotoğrafları Bottom Sheet */}
-        <BottomSheetModal
-          ref={photosSheetRef}
-          index={1}
-          snapPoints={snapPoints}
-          enablePanDownToClose
-          handleIndicatorStyle={{ backgroundColor: isDark ? '#9BA1A6' : '#A1A1AA' }}
-          backdropComponent={(backdropProps) => (
-            <BottomSheetBackdrop {...backdropProps} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.4} pressBehavior="close" />
-          )}
-          backgroundStyle={{ backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }}
-        >
-          <BottomSheetView style={{ flex: 1, paddingTop: 20 }}>
-            <YStack space="$3" paddingHorizontal="$4">
-              <Text fontSize="$6" fontWeight="600" textAlign="center" marginBottom="$2" color="$color">
-                {t('aracFotograflari')}
-              </Text>
-              {firstVehicle ? (
-                <ResimUpload refId={firstVehicle.aracId} refGroup="ARAC" isForDefault={false} />
-              ) : (
-                <Text color="$color" opacity={0.7} textAlign="center">
-                  {t('pleaseSelectVehicle')}
-                </Text>
-              )}
-            </YStack>
           </BottomSheetView>
         </BottomSheetModal>
 
@@ -913,6 +915,17 @@ const styles = StyleSheet.create({
   reminderTitle: {
     fontSize: 15,
     fontWeight: '600',
+    fontFamily: 'Inter',
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 8,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+  },
+  tabText: {
+    fontSize: 14,
     fontFamily: 'Inter',
   },
 });
