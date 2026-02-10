@@ -438,9 +438,9 @@ export default function DriverMainPage() {
             {/* Row 2 */}
             <XStack gap={12}>
               <Pressable style={{ width: CARD_WIDTH }} onPress={openAccidentSheet}>
-                <Stack style={[styles.actionButton, { backgroundColor: '#DC262614' }]}>
-                  <CarFront size={20} color="#DC2626" />
-                  <Text style={[styles.actionText, { color: '#DC2626' }]}>{t('kazaBildir')}</Text>
+                <Stack style={[styles.actionButton, { backgroundColor: '#0284C714' }]}>
+                  <CarFront size={20} color="#0284C7" />
+                  <Text style={[styles.actionText, { color: '#0284C7' }]}>{t('kazaBildir')}</Text>
                 </Stack>
               </Pressable>
               <Pressable style={{ width: CARD_WIDTH }} onPress={openDocsSheet}>
