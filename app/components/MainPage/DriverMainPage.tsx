@@ -275,8 +275,12 @@ export default function DriverMainPage() {
                       <Gauge size={20} color={colors.bluePrimary} />
                     </Stack>
                     <YStack gap={2} flex={1}>
-                      <Text style={[styles.cardValue, { color: colors.textPrimary }]}>{formatNumber(firstVehicle?.guncelKm, i18n.language)} km</Text>
-                      <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>{t('guncelKm')}</Text>
+                      <Text style={[styles.cardValue, { color: colors.textPrimary }]} numberOfLines={1} ellipsizeMode="tail">
+                        {formatNumber(firstVehicle?.guncelKm, i18n.language)} km
+                      </Text>
+                      <Text style={[styles.cardLabel, { color: colors.textSecondary }]} numberOfLines={1} ellipsizeMode="tail">
+                        {t('guncelKm')}
+                      </Text>
                     </YStack>
                   </XStack>
                 </Stack>
@@ -298,8 +302,12 @@ export default function DriverMainPage() {
                         <Wrench size={20} color={colors.bluePrimary} />
                       </Stack>
                       <YStack gap={2} flex={1}>
-                        <Text style={[styles.cardValue, { color: colors.textPrimary }]}>{formatNumber(firstVehicle?.hedefKm, i18n.language)} km</Text>
-                        <Text style={[styles.cardLabel, { color: colors.textSecondary }]} numberOfLines={1}>{t('bakimKm')}</Text>
+                        <Text style={[styles.cardValue, { color: colors.textPrimary }]} numberOfLines={1} ellipsizeMode="tail">
+                          {formatNumber(firstVehicle?.hedefKm, i18n.language)} km
+                        </Text>
+                        <Text style={[styles.cardLabel, { color: colors.textSecondary }]} numberOfLines={1} ellipsizeMode="tail">
+                          {t('bakimKm')}
+                        </Text>
                       </YStack>
                     </XStack>
                   </View>
@@ -311,11 +319,19 @@ export default function DriverMainPage() {
                       </Stack>
                       <YStack gap={2} flex={1}>
                         {firstVehicle?.hedefTarih ? (
-                          <FormattedDate value={firstVehicle.hedefTarih} format="L" textProps={{ style: [styles.cardValue, { color: colors.textPrimary }] }} />
+                          <FormattedDate
+                            value={firstVehicle.hedefTarih}
+                            format="L"
+                            textProps={{ style: [styles.cardValue, { color: colors.textPrimary }], numberOfLines: 1, ellipsizeMode: 'tail' }}
+                          />
                         ) : (
-                          <Text style={[styles.cardValue, { color: colors.textPrimary }]}>-</Text>
+                          <Text style={[styles.cardValue, { color: colors.textPrimary }]} numberOfLines={1} ellipsizeMode="tail">
+                            -
+                          </Text>
                         )}
-                        <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>{t('bakimZamani')}</Text>
+                        <Text style={[styles.cardLabel, { color: colors.textSecondary }]} numberOfLines={1} ellipsizeMode="tail">
+                          {t('bakimZamani')}
+                        </Text>
                       </YStack>
                     </XStack>
                   </View>
@@ -332,7 +348,9 @@ export default function DriverMainPage() {
                       <Droplet size={20} color={colors.bluePrimary} />
                     </Stack>
                     <YStack gap={2} flex={1}>
-                      <Text style={[styles.cardValue, { color: colors.textPrimary }]}>{fuelLimitDisplay}</Text>
+                      <Text style={[styles.cardValue, { color: colors.textPrimary }]} numberOfLines={1} ellipsizeMode="tail">
+                        {fuelLimitDisplay}
+                      </Text>
                       <Text style={[styles.cardLabel, { color: colors.textSecondary }]} numberOfLines={1} ellipsizeMode="tail">
                         {t('yakitLimiti')}
                       </Text>
@@ -346,8 +364,12 @@ export default function DriverMainPage() {
                     <Fuel size={20} color={colors.bluePrimary} />
                   </Stack>
                   <YStack gap={2} flex={1}>
-                    <Text style={[styles.cardValue, { color: colors.textPrimary }]}>{firstVehicle?.ortalamaTuketim ?? '-'}</Text>
-                    <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>{t('fuelConsumptionUnit')}</Text>
+                    <Text style={[styles.cardValue, { color: colors.textPrimary }]} numberOfLines={1} ellipsizeMode="tail">
+                      {firstVehicle?.ortalamaTuketim ?? '-'}
+                    </Text>
+                    <Text style={[styles.cardLabel, { color: colors.textSecondary }]} numberOfLines={1} ellipsizeMode="tail">
+                      {t('fuelConsumptionUnit')}
+                    </Text>
                   </YStack>
                 </XStack>
               </Stack>
@@ -373,14 +395,26 @@ export default function DriverMainPage() {
                         </Stack>
                         <YStack gap={2} flex={1}>
                           {item.value ? (
-                            <FormattedDate value={item.value} format="L" textProps={{ style: [styles.cardValue, { color: colors.textPrimary }] }} />
+                            <FormattedDate
+                              value={item.value}
+                              format="L"
+                              textProps={{ style: [styles.cardValue, { color: colors.textPrimary }], numberOfLines: 1, ellipsizeMode: 'tail' }}
+                            />
                           ) : (
-                            <Text style={[styles.cardValue, { color: colors.textPrimary }]}>-</Text>
+                            <Text style={[styles.cardValue, { color: colors.textPrimary }]} numberOfLines={1} ellipsizeMode="tail">
+                              -
+                            </Text>
                           )}
-                          <Text style={[styles.cardLabel, { color: colors.textSecondary }]} numberOfLines={1}>{item.label}</Text>
+                          <Text style={[styles.cardLabel, { color: colors.textSecondary }]} numberOfLines={1} ellipsizeMode="tail">
+                            {item.label}
+                          </Text>
                           {(() => {
                             const status = getDateStatus(item.value, t);
-                            return status ? <Text style={[styles.cardStatus, { color: status.color }]}>{status.label}</Text> : null;
+                            return status ? (
+                              <Text style={[styles.cardStatus, { color: status.color }]} numberOfLines={1} ellipsizeMode="tail">
+                                {status.label}
+                              </Text>
+                            ) : null;
                           })()}
                         </YStack>
                       </XStack>
@@ -406,14 +440,26 @@ export default function DriverMainPage() {
                         </Stack>
                         <YStack gap={2} flex={1}>
                           {item.bitisTarih ? (
-                            <FormattedDate value={item.bitisTarih} format="L" textProps={{ style: [styles.cardValue, { color: colors.textPrimary }] }} />
+                            <FormattedDate
+                              value={item.bitisTarih}
+                              format="L"
+                              textProps={{ style: [styles.cardValue, { color: colors.textPrimary }], numberOfLines: 1, ellipsizeMode: 'tail' }}
+                            />
                           ) : (
-                            <Text style={[styles.cardValue, { color: colors.textPrimary }]}>-</Text>
+                            <Text style={[styles.cardValue, { color: colors.textPrimary }]} numberOfLines={1} ellipsizeMode="tail">
+                              -
+                            </Text>
                           )}
-                          <Text style={[styles.cardLabel, { color: colors.textSecondary }]} numberOfLines={1}>{item.sigorta}</Text>
+                          <Text style={[styles.cardLabel, { color: colors.textSecondary }]} numberOfLines={1} ellipsizeMode="tail">
+                            {item.sigorta}
+                          </Text>
                           {(() => {
                             const status = getDateStatus(item.bitisTarih, t);
-                            return status ? <Text style={[styles.cardStatus, { color: status.color }]}>{status.label}</Text> : null;
+                            return status ? (
+                              <Text style={[styles.cardStatus, { color: status.color }]} numberOfLines={1} ellipsizeMode="tail">
+                                {status.label}
+                              </Text>
+                            ) : null;
                           })()}
                         </YStack>
                       </XStack>
@@ -431,13 +477,17 @@ export default function DriverMainPage() {
               <Pressable style={{ width: CARD_WIDTH }} onPress={openFaultSheet}>
                 <Stack style={[styles.actionButton, { backgroundColor: '#EF444414' }]}>
                   <TriangleAlert size={20} color={colors.redError} />
-                  <Text style={[styles.actionText, { color: colors.redError }]}>{t('arizaBildir')}</Text>
+                  <Text style={[styles.actionText, { color: colors.redError }]} numberOfLines={1} ellipsizeMode="tail">
+                    {t('arizaBildir')}
+                  </Text>
                 </Stack>
               </Pressable>
               <Pressable style={{ width: CARD_WIDTH }} onPress={openRequestSheet}>
                 <Stack style={[styles.actionButton, { backgroundColor: '#F59E0B14' }]}>
                   <MapPin size={20} color={colors.amberWarning} />
-                  <Text style={[styles.actionText, { color: colors.amberWarning }]}>{t('talepBildir')}</Text>
+                  <Text style={[styles.actionText, { color: colors.amberWarning }]} numberOfLines={1} ellipsizeMode="tail">
+                    {t('talepBildir')}
+                  </Text>
                 </Stack>
               </Pressable>
             </XStack>
@@ -447,13 +497,17 @@ export default function DriverMainPage() {
               <Pressable style={{ width: CARD_WIDTH }} onPress={openAccidentSheet}>
                 <Stack style={[styles.actionButton, { backgroundColor: '#0284C714' }]}>
                   <CarFront size={20} color="#0284C7" />
-                  <Text style={[styles.actionText, { color: '#0284C7' }]}>{t('kazaBildir')}</Text>
+                  <Text style={[styles.actionText, { color: '#0284C7' }]} numberOfLines={1} ellipsizeMode="tail">
+                    {t('kazaBildir')}
+                  </Text>
                 </Stack>
               </Pressable>
               <Pressable style={{ width: CARD_WIDTH }} onPress={openDocsSheet}>
                 <Stack style={[styles.actionButton, { backgroundColor: '#8B5CF614' }]}>
                   <FolderOpen size={20} color={colors.purple} />
-                  <Text style={[styles.actionText, { color: colors.purple }]}>{t('aracDosyalari')}</Text>
+                  <Text style={[styles.actionText, { color: colors.purple }]} numberOfLines={1} ellipsizeMode="tail">
+                    {t('aracDosyalari')}
+                  </Text>
                 </Stack>
               </Pressable>
             </XStack>
@@ -462,7 +516,9 @@ export default function DriverMainPage() {
           {/* Reminders Section */}
           {Array.isArray(reminderData) && reminderData.filter((i: any) => i.count > 0).length > 0 && (
             <Stack style={[styles.remindersSection, { backgroundColor: colors.bgCard }]} marginTop={24}>
-              <Text style={[styles.remindersHeader, { color: colors.textPrimary }]}>{t('reminder')}</Text>
+              <Text style={[styles.remindersHeader, { color: colors.textPrimary }]} numberOfLines={1} ellipsizeMode="tail">
+                {t('reminder')}
+              </Text>
               <YStack gap={12}>
                 {(reminderData as { category: string; count: number }[])
                   .filter((i) => i.count > 0)
@@ -482,7 +538,7 @@ export default function DriverMainPage() {
                             <IconComponent size={18} color={color} />
                           </Stack>
                           <YStack flex={1} gap={2}>
-                            <Text style={[styles.reminderTitle, { color: colors.textPrimary }]}>
+                            <Text style={[styles.reminderTitle, { color: colors.textPrimary }]} numberOfLines={1} ellipsizeMode="tail">
                               {item.count} {t(item.category)}
                             </Text>
                           </YStack>
