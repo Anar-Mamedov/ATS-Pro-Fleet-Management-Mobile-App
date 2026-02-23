@@ -112,7 +112,7 @@ export default function PenaltiesScreen() {
       <Pressable onPress={() => router.push({ pathname: '/operations/penalty-detail', params: { siraNo: item.siraNo, plaka: item.plaka, cezaTuru: item.cezaTuru } })}>
       <YStack backgroundColor="$backgroundStrong" borderRadius="$4" padding="$4" marginBottom="$3" borderWidth={1} borderColor="$borderColor" elevation={2}>
         <XStack justifyContent="space-between" alignItems="center" marginBottom="$2">
-          <Text fontSize="$5" fontWeight="bold" color="$color">
+          <Text fontSize="$5" fontWeight="bold" color="$color" flex={1} marginRight="$2" numberOfLines={1} ellipsizeMode="tail">
             {item.plaka}
           </Text>
           <Text fontSize="$3" color="$midGray">
@@ -120,21 +120,21 @@ export default function PenaltiesScreen() {
           </Text>
         </XStack>
 
-        <Text fontSize="$4" color="$color" marginBottom="$2" numberOfLines={2}>
+        <Text fontSize="$4" color="$color" marginBottom="$2" numberOfLines={1} ellipsizeMode="tail">
           {item.cezaTuru}
         </Text>
 
         <XStack justifyContent="space-between" alignItems="flex-end">
-          <YStack>
+          <YStack flex={1} marginRight="$2">
             <XStack alignItems="center" space="$2" marginBottom="$1">
               <Ionicons name="location-outline" size={16} color={theme.color?.get()} />
-              <Text fontSize="$3" color="$midGray">
+              <Text fontSize="$3" color="$midGray" flex={1} numberOfLines={1} ellipsizeMode="tail">
                 {item.lokasyon}
               </Text>
             </XStack>
             <XStack alignItems="center" space="$2">
               <Ionicons name="person-outline" size={16} color={theme.color?.get()} />
-              <Text fontSize="$3" color="$midGray">
+              <Text fontSize="$3" color="$midGray" flex={1} numberOfLines={1} ellipsizeMode="tail">
                 {item.surucuIsim}
               </Text>
             </XStack>

@@ -1,5 +1,6 @@
 import dayjs from '@/config/dayjs';
 import { useThemeController } from '@/config/theme';
+import { formatNumber } from '@/ui/components/formatNumber';
 import { useVehicleContext } from '@/context/VehicleContext';
 import { apiService } from '@/services/apiService';
 import { useBottomBarPadding } from '@/ui/components/useBottomBarPadding';
@@ -30,7 +31,7 @@ interface ServiceOperation {
 }
 
 export default function ServiceOperationsScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const theme = useTheme();
   const { themeName } = useThemeController();
@@ -125,7 +126,7 @@ export default function ServiceOperationsScreen() {
       <Pressable onPress={() => router.push({ pathname: '/operations/service-detail', params: { siraNo: item.siraNo, plaka: item.plaka, servisTanimi: item.servisTanimi || item.servisTipi } })}>
       <YStack backgroundColor="$backgroundStrong" borderRadius="$4" padding="$4" marginBottom="$3" borderWidth={1} borderColor="$borderColor" elevation={2}>
         <XStack justifyContent="space-between" alignItems="center" marginBottom="$2">
-          <Text fontSize="$5" fontWeight="bold" color="$color">
+          <Text fontSize="$5" fontWeight="bold" color="$color" flex={1} marginRight="$2" numberOfLines={1} ellipsizeMode="tail">
             {item.plaka}
           </Text>
           <Text fontSize="$3" color="$midGray">
@@ -133,35 +134,35 @@ export default function ServiceOperationsScreen() {
           </Text>
         </XStack>
 
-        <Text fontSize="$4" fontWeight="bold" color="$color" marginBottom="$1">
+        <Text fontSize="$4" fontWeight="bold" color="$color" marginBottom="$1" numberOfLines={1} ellipsizeMode="tail">
           {item.servisTanimi || item.servisTipi}
         </Text>
         {item.aciklama ? (
-          <Text fontSize="$3" color="$midGray" marginBottom="$2" numberOfLines={2}>
+          <Text fontSize="$3" color="$midGray" marginBottom="$2" numberOfLines={1} ellipsizeMode="tail">
             {item.aciklama}
           </Text>
         ) : null}
 
         <XStack justifyContent="space-between" alignItems="flex-end" marginTop="$2">
-          <YStack>
+          <YStack flex={1} marginRight="$2">
             {item.islemiYapanText ? (
               <XStack alignItems="center" space="$2" marginBottom="$1">
                 <Ionicons name="construct-outline" size={16} color={theme.color?.get()} />
-                <Text fontSize="$3" color="$midGray">
+                <Text fontSize="$3" color="$midGray" flex={1} numberOfLines={1} ellipsizeMode="tail">
                   {item.islemiYapanText}
                 </Text>
               </XStack>
             ) : null}
             <XStack alignItems="center" space="$2">
               <Ionicons name="speedometer-outline" size={16} color={theme.color?.get()} />
-              <Text fontSize="$3" color="$midGray">
-                {item.km} km
+              <Text fontSize="$3" color="$midGray" flex={1} numberOfLines={1} ellipsizeMode="tail">
+                {formatNumber(item.km, i18n.language)} km
               </Text>
             </XStack>
           </YStack>
 
           <Text fontSize="$5" fontWeight="bold" color="$blue10">
-            {item.toplam} TL
+            {formatNumber(item.toplam, i18n.language)} TL
           </Text>
         </XStack>
       </YStack>

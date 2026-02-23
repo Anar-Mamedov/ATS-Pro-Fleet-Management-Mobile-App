@@ -135,7 +135,7 @@ export default function HgsOperationsScreen() {
           elevation={2}
         >
           <XStack justifyContent="space-between" alignItems="center" marginBottom="$2">
-            <Text fontSize="$5" fontWeight="bold" color="$color">
+            <Text fontSize="$5" fontWeight="bold" color="$color" flex={1} marginRight="$2" numberOfLines={1} ellipsizeMode="tail">
               {item.plaka}
             </Text>
             <Text fontSize="$3" color="$midGray">
@@ -146,7 +146,7 @@ export default function HgsOperationsScreen() {
           {route ? (
             <XStack alignItems="center" gap="$2" marginBottom="$2">
               <Ionicons name="navigate-outline" size={16} color={theme.color?.get()} />
-              <Text fontSize="$3" color="$color" numberOfLines={2} flex={1}>
+              <Text fontSize="$3" color="$color" numberOfLines={1} ellipsizeMode="tail" flex={1}>
                 {route}
               </Text>
             </XStack>
@@ -155,24 +155,24 @@ export default function HgsOperationsScreen() {
           {item.guzergah ? (
             <XStack alignItems="center" gap="$2" marginBottom="$2">
               <Ionicons name="map-outline" size={16} color={theme.color?.get()} />
-              <Text fontSize="$3" color="$midGray" numberOfLines={1} flex={1}>
+              <Text fontSize="$3" color="$midGray" numberOfLines={1} ellipsizeMode="tail" flex={1}>
                 {item.guzergah}
               </Text>
             </XStack>
           ) : null}
 
           <XStack justifyContent="space-between" alignItems="flex-end">
-            <YStack gap="$1">
+            <YStack gap="$1" flex={1} marginRight="$2">
               <XStack alignItems="center" gap="$2">
                 <Ionicons name="person-outline" size={16} color={theme.color?.get()} />
-                <Text fontSize="$3" color="$midGray">
+                <Text fontSize="$3" color="$midGray" flex={1} numberOfLines={1} ellipsizeMode="tail">
                   {item.isim}
                 </Text>
               </XStack>
               {item.gecisKategorisi ? (
                 <XStack alignItems="center" gap="$2">
                   <Ionicons name="car-outline" size={16} color={theme.color?.get()} />
-                  <Text fontSize="$3" color="$midGray">
+                  <Text fontSize="$3" color="$midGray" flex={1} numberOfLines={1} ellipsizeMode="tail">
                     {item.gecisKategorisi}
                   </Text>
                 </XStack>
@@ -180,7 +180,7 @@ export default function HgsOperationsScreen() {
               {item.odemeTuru ? (
                 <XStack alignItems="center" gap="$2">
                   <Ionicons name="card-outline" size={16} color={theme.color?.get()} />
-                  <Text fontSize="$3" color="$midGray">
+                  <Text fontSize="$3" color="$midGray" flex={1} numberOfLines={1} ellipsizeMode="tail">
                     {item.odemeTuru}
                   </Text>
                 </XStack>
