@@ -552,9 +552,12 @@ export const apiService = {
 
   // Vehicle Fines endpoints
   // HGS Operations endpoints
-  getHgsOperationsListByVehicleIds: async (vehicleIds: number[], diff: number, setPointId: number, parameter: string = '') => {
+  getHgsOperationsList: async (vehicleIds: number[], pageNumber: number, pageSize: number = 10, parameter: string = '') => {
     const encodedParameter = encodeURIComponent(parameter);
-    const response = await axiosInstance.post(`/HgsOperations/GetHgsOperationsListByVehicleIds?setPointId=${setPointId}&diff=${diff}&parameter=${encodedParameter}`, vehicleIds);
+    const payload = {
+      vIds: vehicleIds
+    };
+    const response = await axiosInstance.post(`/HgsOperations/GetHgsOperationsList?pageSize=${pageSize}&pageNumber=${pageNumber}&parameter=${encodedParameter}`, payload);
     return response.data;
   },
 

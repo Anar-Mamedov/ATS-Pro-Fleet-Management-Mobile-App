@@ -50,6 +50,7 @@ export default function HgsOperationsScreen() {
   const [dataSource, setDataSource] = useState<HgsOperation[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     fetchData(true);
@@ -66,18 +67,12 @@ export default function HgsOperationsScreen() {
     }
 
     try {
-      let currentSetPointId = 0;
-      let diff = 0;
+      const currentPage = reset ? 1 : page + 1;
 
-      if (!reset) {
-        currentSetPointId = dataSource[dataSource.length - 1]?.siraNo || 0;
-        diff = 1;
-      }
-
-      const response = await apiService.getHgsOperationsListByVehicleIds(
+      const response = await apiService.getHgsOperationsList(
         selectedVehicleId ? [selectedVehicleId] : [],
-        diff,
-        currentSetPointId,
+        currentPage,
+        10,
         searchTerm
       );
 
@@ -85,7 +80,8 @@ export default function HgsOperationsScreen() {
 
       if (reset) {
         setDataSource(newData);
-        setHasMore(newData.length > 0);
+        setPage(1);
+        setHasMore(newData.length === 10);
       } else {
         const uniqueNewData = newData.filter(
           (newItem: HgsOperation) => !dataSource.some((existingItem) => existingItem.siraNo === newItem.siraNo)
@@ -93,13 +89,15 @@ export default function HgsOperationsScreen() {
 
         if (uniqueNewData.length > 0) {
           setDataSource((prev) => [...prev, ...uniqueNewData]);
-          setHasMore(true);
+          setPage(currentPage);
+          setHasMore(newData.length === 10);
         } else {
           setHasMore(false);
         }
       }
     } catch (error) {
       console.error('Error fetching HGS operations:', error);
+      setHasMore(false); // Hata durumunda loop'a girmemek için false yapıyoruz
     } finally {
       setLoading(false);
       setLoadingMore(false);
