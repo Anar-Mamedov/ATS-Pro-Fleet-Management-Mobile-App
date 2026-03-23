@@ -1,4 +1,5 @@
-import dayjs from '@/config/dayjs';
+import { FormattedDate } from '@/ui/components/FormattedDate';
+import { FormattedTime } from '@/ui/components/FormattedTime';
 import { useThemeController } from '@/config/theme';
 import { useVehicleContext } from '@/context/VehicleContext';
 import { apiService } from '@/services/apiService';
@@ -115,8 +116,6 @@ export default function HgsOperationsScreen() {
   };
 
   const renderItem: ListRenderItem<HgsOperation> = ({ item }) => {
-    const formattedDate = item.tarih ? dayjs(item.tarih).format('DD.MM.YYYY') : '';
-    const formattedTime = item.tarih ? dayjs(item.tarih).format('HH:mm') : '';
     const route = item.girisYeri || item.cikisYeri
       ? [item.girisYeri, item.cikisYeri].filter(Boolean).join(' → ')
       : '';
@@ -136,9 +135,23 @@ export default function HgsOperationsScreen() {
             <Text fontSize="$5" fontWeight="bold" color="$color" flex={1} marginRight="$2" numberOfLines={1} ellipsizeMode="tail">
               {item.plaka}
             </Text>
-            <Text fontSize="$3" color="$midGray">
-              {formattedDate} {formattedTime ? `- ${formattedTime}` : ''}
-            </Text>
+            <XStack>
+              <FormattedDate 
+                value={item.girisTarih ?? ''} 
+                format="L" 
+                textProps={{ fontSize: "$3", color: "$midGray" }} 
+              />
+              {item.girisSaat ? (
+                 <>
+                  <Text fontSize="$3" color="$midGray"> - </Text>
+                  <FormattedTime 
+                    value={item.girisSaat} 
+                    format="LT" 
+                    textProps={{ fontSize: "$3", color: "$midGray" }} 
+                  />
+                </>
+              ) : null}
+            </XStack>
           </XStack>
 
           {route ? (
