@@ -1,4 +1,5 @@
-import dayjs from '@/config/dayjs';
+import { FormattedDate } from '@/ui/components/FormattedDate';
+import { FormattedTime } from '@/ui/components/FormattedTime';
 import { useThemeController } from '@/config/theme';
 import { useVehicleContext } from '@/context/VehicleContext';
 import { apiService } from '@/services/apiService';
@@ -50,6 +51,7 @@ export default function HgsOperationsScreen() {
   const [dataSource, setDataSource] = useState<HgsOperation[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     fetchData(true);
@@ -66,18 +68,12 @@ export default function HgsOperationsScreen() {
     }
 
     try {
-      let currentSetPointId = 0;
-      let diff = 0;
+      const currentPage = reset ? 1 : page + 1;
 
-      if (!reset) {
-        currentSetPointId = dataSource[dataSource.length - 1]?.siraNo || 0;
-        diff = 1;
-      }
-
-      const response = await apiService.getHgsOperationsListByVehicleIds(
+      const response = await apiService.getHgsOperationsList(
         selectedVehicleId ? [selectedVehicleId] : [],
-        diff,
-        currentSetPointId,
+        currentPage,
+        10,
         searchTerm
       );
 
@@ -85,7 +81,8 @@ export default function HgsOperationsScreen() {
 
       if (reset) {
         setDataSource(newData);
-        setHasMore(newData.length > 0);
+        setPage(1);
+        setHasMore(newData.length === 10);
       } else {
         const uniqueNewData = newData.filter(
           (newItem: HgsOperation) => !dataSource.some((existingItem) => existingItem.siraNo === newItem.siraNo)
@@ -93,13 +90,15 @@ export default function HgsOperationsScreen() {
 
         if (uniqueNewData.length > 0) {
           setDataSource((prev) => [...prev, ...uniqueNewData]);
-          setHasMore(true);
+          setPage(currentPage);
+          setHasMore(newData.length === 10);
         } else {
           setHasMore(false);
         }
       }
     } catch (error) {
       console.error('Error fetching HGS operations:', error);
+      setHasMore(false); // Hata durumunda loop'a girmemek için false yapıyoruz
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -117,8 +116,6 @@ export default function HgsOperationsScreen() {
   };
 
   const renderItem: ListRenderItem<HgsOperation> = ({ item }) => {
-    const formattedDate = item.tarih ? dayjs(item.tarih).format('DD.MM.YYYY') : '';
-    const formattedTime = item.tarih ? dayjs(item.tarih).format('HH:mm') : '';
     const route = item.girisYeri || item.cikisYeri
       ? [item.girisYeri, item.cikisYeri].filter(Boolean).join(' → ')
       : '';
@@ -138,9 +135,23 @@ export default function HgsOperationsScreen() {
             <Text fontSize="$5" fontWeight="bold" color="$color" flex={1} marginRight="$2" numberOfLines={1} ellipsizeMode="tail">
               {item.plaka}
             </Text>
-            <Text fontSize="$3" color="$midGray">
-              {formattedDate} {formattedTime ? `- ${formattedTime}` : ''}
-            </Text>
+            <XStack>
+              <FormattedDate 
+                value={item.girisTarih ?? ''} 
+                format="L" 
+                textProps={{ fontSize: "$3", color: "$midGray" }} 
+              />
+              {item.girisSaat ? (
+                 <>
+                  <Text fontSize="$3" color="$midGray"> - </Text>
+                  <FormattedTime 
+                    value={item.girisSaat} 
+                    format="LT" 
+                    textProps={{ fontSize: "$3", color: "$midGray" }} 
+                  />
+                </>
+              ) : null}
+            </XStack>
           </XStack>
 
           {route ? (
