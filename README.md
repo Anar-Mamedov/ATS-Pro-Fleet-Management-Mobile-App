@@ -1,50 +1,38 @@
-# Welcome to your Expo app 👋
+# ATS Pro
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+ATS Pro is a mobile fleet management app designed for drivers and fleet managers who need fast, reliable day-to-day vehicle operations in one place.
 
-## Get started
+## Download
 
-1. Install dependencies
+- App Store: https://apps.apple.com/us/app/ats-pro/id6757866482
+- Google Play: https://play.google.com/store/apps/details?id=com.orjinyazilim.atspro
 
-   ```bash
-   npm install
-   ```
+## What ATS Pro Offers
 
-2. Start the app
+ATS Pro helps teams manage vehicle workflows from the field and from the office, with role-based experiences for both drivers and managers.
 
-   ```bash
-   npx expo start
-   ```
+## Core Capabilities
 
-In the output, you'll find options to open the app in a
+- Driver and manager dashboards tailored to daily responsibilities
+- Service, maintenance, penalty, and HGS operation tracking
+- Accident, issue, and request reporting workflows
+- Document and photo handling with camera/gallery support
+- Notification-driven follow-up for important tasks
+- Multi-language support: Turkish, English, Russian, Azerbaijani
+- Light and dark theme support
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Built for Real Fleet Operations
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- Faster communication between field teams and management
+- Better visibility into vehicle status and operational history
+- Streamlined reporting and follow-up processes
+- Practical mobile-first experience for iOS and Android users
 
-## Get a fresh project
+## Platforms
 
-When you're ready, run:
+- iOS
+- Android
 
-```bash
-npm run reset-project
-```
+## Product Focus
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+ATS Pro is focused on practical fleet execution: keeping operations organized, reducing manual follow-up, and helping teams act quickly when issues happen.
