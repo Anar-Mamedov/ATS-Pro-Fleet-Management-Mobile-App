@@ -284,7 +284,7 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess, mode = 'ariza'
           disabled={loading}
           label={t('photos') || 'Fotoğraflar'}
           isDarkMode={isDarkMode}
-          maxPhotos={5}
+          maxPhotos={10}
         />
 
         <Button onPress={handleSubmit(onSubmit)} disabled={loading} backgroundColor="$blue10" color="white" fontWeight="600" height={50} borderRadius="$2">

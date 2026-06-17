@@ -43,9 +43,30 @@ axiosInstance.interceptors.request.use(async (config) => {
   return config;
 });
 
+// Axios isteğin gövdesini JSON string'e çevirir; logda obje olarak görünmesi için geri parse et
+const parseRequestData = (data: any) => {
+  if (typeof data === 'string') {
+    try {
+      return JSON.parse(data);
+    } catch {
+      return data;
+    }
+  }
+  return data;
+};
+
 // Response interceptor - 401 durumunda logout
 axiosInstance.interceptors.response.use(
   (response) => {
+    // Geliştirme modunda istek + yanıtı TEK log'da birleştir
+    if (__DEV__) {
+      console.log(`🔵 API ${response.config.method?.toUpperCase()} ${response.config.url}`, {
+        status: response.status,
+        params: response.config.params,
+        request: parseRequestData(response.config.data),
+        response: response.data,
+      });
+    }
     return response;
   },
   async (error) => {
@@ -59,6 +80,16 @@ axiosInstance.interceptors.response.use(
           method: error.config?.method,
           baseURL: error.config?.baseURL,
         },
+      });
+    }
+
+    // Sunucudan dönen hata yanıtlarını (400 vb.) istek + yanıt birlikte TEK log'da göster
+    if (error.response && error.response.status !== 401) {
+      console.error(`🔴 API ${error.config?.method?.toUpperCase()} ${error.config?.url}`, {
+        status: error.response.status,
+        params: error.config?.params,
+        request: parseRequestData(error.config?.data),
+        response: error.response.data,
       });
     }
 

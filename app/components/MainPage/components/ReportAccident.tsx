@@ -373,7 +373,7 @@ function ReportAccident({ aracId, plaka, surucuId, surucuAd, lokasyonId, onSucce
           disabled={loading}
           label={t('photos') || 'Fotoğraflar'}
           isDarkMode={isDarkMode}
-          maxPhotos={5}
+          maxPhotos={10}
         />
 
         <Button

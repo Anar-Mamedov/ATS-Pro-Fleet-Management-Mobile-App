@@ -54,11 +54,27 @@ const buildDriverDashboardLimitType = (referenceDate = dayjs()) => {
   const yearStart = referenceDate.startOf('year');
   const yearEnd = referenceDate.endOf('year');
 
+  const currentMonth = referenceDate.month(); // 0-11
+
+  // Üç aylık: içinde bulunulan çeyrek (ör. Nis-Haz)
+  const quarterStartMonth = Math.floor(currentMonth / 3) * 3;
+  const quarterStart = referenceDate.startOf('month').month(quarterStartMonth);
+  const quarterEnd = referenceDate.startOf('month').month(quarterStartMonth + 2).endOf('month');
+
+  // Altı aylık: içinde bulunulan yarıyıl (Oca-Haz veya Tem-Ara)
+  const halfStartMonth = currentMonth < 6 ? 0 : 6;
+  const halfStart = referenceDate.startOf('month').month(halfStartMonth);
+  const halfEnd = referenceDate.startOf('month').month(halfStartMonth + 5).endOf('month');
+
   return {
     haftalikBaslangicTarih: weekStart.toISOString(),
     haftalikBitisTarih: weekEnd.toISOString(),
     aylikBaslangicTarih: monthStart.toISOString(),
     aylikBitisTarih: monthEnd.toISOString(),
+    ucAylikBaslangicTarih: quarterStart.toISOString(),
+    ucAylikBitisTarih: quarterEnd.toISOString(),
+    altiAylikBaslangicTarih: halfStart.toISOString(),
+    altiAylikBitisTarih: halfEnd.toISOString(),
     yillikBaslangicTarih: yearStart.toISOString(),
     yillikBitisTarih: yearEnd.toISOString(),
   };

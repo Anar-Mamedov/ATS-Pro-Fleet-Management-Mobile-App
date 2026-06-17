@@ -19,7 +19,7 @@
     <key>CFBundlePackageType</key>
     <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.1</string>
+    <string>1.0.2</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleURLTypes</key>
@@ -39,7 +39,7 @@
       </dict>
     </array>
     <key>CFBundleVersion</key>
-    <string>2</string>
+    <string>3</string>
     <key>ITSAppUsesNonExemptEncryption</key>
     <false/>
     <key>LSMinimumSystemVersion</key>
@@ -53,10 +53,16 @@
       <key>NSAllowsLocalNetworking</key>
       <true/>
     </dict>
+    <key>NSBonjourServices</key>
+    <array>
+      <string>_expo._tcp</string>
+    </array>
     <key>NSCameraUsageDescription</key>
     <string>Araç fotoğrafları çekmek ve hasar/evrak bildirimlerine eklemek için kamera erişimi gerekir (ör. araç hasarı fotoğrafı).</string>
     <key>NSFaceIDUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your Face ID biometric data.</string>
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>Expo Dev Launcher uses the local network to discover and connect to development servers running on your computer.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Uygulama araç konumu ve ilgili işlemler için konumunuza erişir.</string>
     <key>NSMicrophoneUsageDescription</key>
@@ -83,13 +89,6 @@
     <string>UIStatusBarStyleDefault</string>
     <key>UISupportedInterfaceOrientations</key>
     <array>
-      <string>UIInterfaceOrientationPortrait</string>
-      <string>UIInterfaceOrientationPortraitUpsideDown</string>
-    </array>
-    <key>UISupportedInterfaceOrientations~ipad</key>
-    <array>
-      <string>UIInterfaceOrientationLandscapeLeft</string>
-      <string>UIInterfaceOrientationLandscapeRight</string>
       <string>UIInterfaceOrientationPortrait</string>
       <string>UIInterfaceOrientationPortraitUpsideDown</string>
     </array>

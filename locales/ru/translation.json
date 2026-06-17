@@ -184,6 +184,7 @@
   "apply": "Применить",
   "required": "Это поле обязательно",
   "invalidNumber": "Неверное число",
+  "bakimKm": "Следующее ТО",
   "maintenanceServiceManagement": "Управление ТО и Сервисом",
   "serviceOperations": "Сервисные операции",
   "fleetManagement": "Управление автопарком",
