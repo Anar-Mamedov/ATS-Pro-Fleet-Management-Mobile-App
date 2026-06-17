@@ -44,3 +44,9 @@ knowledge-base.md
 project-structure.md
 google play storede yayınlama.md
 .vscode
+
+# Editor / OS junk
+*.swp
+*.swo
+._*
+.null.swp
