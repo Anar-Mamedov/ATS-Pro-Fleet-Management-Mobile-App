@@ -77,25 +77,39 @@ export default function DriverMainPage() {
   }, [firstVehicle, setSelectedVehicleId]);
 
   const getUserInfo = useCallback(async () => {
-    const id = await AsyncStorage.getItem('id');
-    if (id) {
-      setUserId(parseInt(id));
-      const data = await apiService.getUserInfoById(id);
-      setAracIds(Array.isArray(data?.aracIds) ? data.aracIds : []);
-      const isim = data?.isim || '';
-      const soyAd = data?.soyAd || '';
-      setUserName(`${isim} ${soyAd}`.trim());
+    try {
+      const id = await AsyncStorage.getItem('id');
+      if (id) {
+        setUserId(parseInt(id));
+        const data = await apiService.getUserInfoById(id);
+        setAracIds(Array.isArray(data?.aracIds) ? data.aracIds : []);
+        const isim = data?.isim || '';
+        const soyAd = data?.soyAd || '';
+        setUserName(`${isim} ${soyAd}`.trim());
+      }
+    } catch (error) {
+      console.error('getUserInfo error:', error);
     }
   }, []);
 
   const getDriverDashboardCardSection = useCallback(async () => {
-    const data = await apiService.getDriverDashboardCardSection(aracIds);
-    setVehicleData(data);
+    if (!aracIds.length) return;
+    try {
+      const data = await apiService.getDriverDashboardCardSection(aracIds);
+      setVehicleData(data);
+    } catch (error) {
+      console.error('getDriverDashboardCardSection error:', error);
+    }
   }, [aracIds]);
 
   const getDashboardReminder = useCallback(async () => {
-    const data = await apiService.getDashboardReminder(firstVehicle?.aracId);
-    setReminderData(data);
+    if (!firstVehicle?.aracId) return;
+    try {
+      const data = await apiService.getDashboardReminder(firstVehicle.aracId);
+      setReminderData(data);
+    } catch (error) {
+      console.error('getDashboardReminder error:', error);
+    }
   }, [firstVehicle?.aracId]);
 
   useEffect(() => {
@@ -158,7 +172,7 @@ export default function DriverMainPage() {
   const fuelSheetRef = useRef<BottomSheetModal>(null);
   const accidentSheetRef = useRef<BottomSheetModal>(null);
 
-  const snapPoints = useMemo(() => ['30%', '50%'], []);
+  const snapPoints = useMemo(() => ['50%', '80%'], []);
   const faultSnapPoints = useMemo(() => ['75%'], []);
 
   const openSheet = () => bottomSheetModalRef.current?.present();
@@ -557,6 +571,7 @@ export default function DriverMainPage() {
           ref={bottomSheetModalRef}
           index={1}
           snapPoints={snapPoints}
+          enableDynamicSizing={false}
           enablePanDownToClose
           handleIndicatorStyle={{ backgroundColor: isDark ? '#9BA1A6' : '#A1A1AA' }}
           backdropComponent={(backdropProps) => (
@@ -564,61 +579,60 @@ export default function DriverMainPage() {
           )}
           backgroundStyle={{ backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }}
         >
-          <BottomSheetView style={{ flex: 1, paddingTop: 20 }}>
-            <YStack space="$1">
-              <Text fontSize="$6" fontWeight="600" textAlign="center" marginBottom="$4" color="$color">
+          <BottomSheetFlatList
+            data={Array.isArray(vehicleData) ? vehicleData : []}
+            keyExtractor={(item: any) => String(item.aracId)}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8, paddingBottom: 24 }}
+            ListHeaderComponent={
+              <Text fontSize="$6" fontWeight="600" textAlign="center" marginTop="$5" marginBottom="$4" color="$color">
                 {t('araclar')}
               </Text>
-              <BottomSheetFlatList
-                data={Array.isArray(vehicleData) ? vehicleData : []}
-                keyExtractor={(item: any) => String(item.aracId)}
-                contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 8 }}
-                ItemSeparatorComponent={() => <YStack height={1} backgroundColor="$gray4" />}
-                renderItem={({ item, index }: { item: any; index: number }) => {
-                  const isSelected = index === selectedIndex;
-                  return (
-                    <Pressable
-                      onPress={() => {
-                        setSelectedIndex(index);
-                        closeSheet();
-                      }}
-                      style={{ width: '100%' }}
-                    >
-                      <YStack
-                        paddingVertical="$3"
-                        paddingHorizontal="$3"
-                        gap="$1"
-                        backgroundColor={isSelected ? '$blue2' : 'transparent'}
-                        borderRadius="$3"
-                        borderWidth={isSelected ? 1 : 0}
-                        borderColor={isSelected ? '$blue10' : 'transparent'}
-                        position="relative"
-                      >
-                        <XStack alignItems="center" justifyContent="space-between">
-                          <Text fontSize="$6" fontWeight="600" color="$color">
-                            {item.plaka}{' '}
-                            <Text color={item.aktif ? '$green10' : '$red10'}>
-                              {item.aktif ? `(${t('active')})` : `(${t('passive')})`}
-                            </Text>
-                          </Text>
-                        </XStack>
-                        <Text fontSize="$4" color="$gray11">
-                          {item.marka} | {item.model}
+            }
+            ItemSeparatorComponent={() => <YStack height={1} backgroundColor="$gray4" />}
+            renderItem={({ item, index }: { item: any; index: number }) => {
+              const isSelected = index === selectedIndex;
+              return (
+                <Pressable
+                  onPress={() => {
+                    setSelectedIndex(index);
+                    closeSheet();
+                  }}
+                  style={{ width: '100%' }}
+                >
+                  <YStack
+                    paddingVertical="$3"
+                    paddingHorizontal="$3"
+                    gap="$1"
+                    backgroundColor={isSelected ? '$blue2' : 'transparent'}
+                    borderRadius="$3"
+                    borderWidth={isSelected ? 1 : 0}
+                    borderColor={isSelected ? '$blue10' : 'transparent'}
+                    position="relative"
+                  >
+                    <XStack alignItems="center" justifyContent="space-between">
+                      <Text fontSize="$6" fontWeight="600" color="$color">
+                        {item.plaka}{' '}
+                        <Text color={item.aktif ? '$green10' : '$red10'}>
+                          {item.aktif ? `(${t('active')})` : `(${t('passive')})`}
                         </Text>
-                        {isSelected && (
-                          <Stack position="absolute" right="$3" top={0} bottom={0} justifyContent="center" alignItems="center">
-                            <Text fontSize="$4" color="$blue10">
-                              ✓
-                            </Text>
-                          </Stack>
-                        )}
-                      </YStack>
-                    </Pressable>
-                  );
-                }}
-              />
-            </YStack>
-          </BottomSheetView>
+                      </Text>
+                    </XStack>
+                    <Text fontSize="$4" color="$gray11">
+                      {item.marka} | {item.model}
+                    </Text>
+                    {isSelected && (
+                      <Stack position="absolute" right="$3" top={0} bottom={0} justifyContent="center" alignItems="center">
+                        <Text fontSize="$4" color="$blue10">
+                          ✓
+                        </Text>
+                      </Stack>
+                    )}
+                  </YStack>
+                </Pressable>
+              );
+            }}
+          />
         </BottomSheetModal>
 
         {/* Arıza Bildir Bottom Sheet */}

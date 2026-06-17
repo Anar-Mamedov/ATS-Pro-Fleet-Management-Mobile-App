@@ -184,6 +184,7 @@
   "apply": "Tətbiq Et",
   "required": "Bu sahə məcburidir",
   "invalidNumber": "Yanlış nömrə",
+  "bakimKm": "Növbəti Baxım",
   "maintenanceServiceManagement": "Baxım və Servis İdarəetməsi",
   "serviceOperations": "Servis Əməliyyatları",
   "fleetManagement": "Filo İdarəetməsi",

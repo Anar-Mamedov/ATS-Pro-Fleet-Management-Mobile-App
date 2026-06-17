@@ -2,7 +2,7 @@
   "expo": {
     "name": "ATS Pro",
     "slug": "ATS-Pro-Mobile-App",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "atspromobileapp",
@@ -15,11 +15,11 @@
     "updates": {
       "url": "https://u.expo.dev/a833e92e-525a-46e3-ac3d-199e55743a38"
     },
-    "runtimeVersion": "1.0.1",
+    "runtimeVersion": "1.0.2",
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.orjinyazilim.atspro",
-      "buildNumber": "2",
+      "buildNumber": "4",
       "config": {
         "usesNonExemptEncryption": false
       },
@@ -37,7 +37,7 @@
       },
       "edgeToEdgeEnabled": true,
       "package": "com.orjinyazilim.atspro",
-      "versionCode": 2,
+      "versionCode": 3,
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.READ_EXTERNAL_STORAGE",
@@ -90,7 +90,11 @@
         }
       ],
       "./plugins/disable-user-script-sandboxing.js",
-      "./plugins/copy-sectigo-cert.js"
+      "./plugins/copy-sectigo-cert.js",
+      "@react-native-community/datetimepicker",
+      "expo-image",
+      "expo-sharing",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true

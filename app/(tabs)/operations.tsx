@@ -1,7 +1,8 @@
 import { useThemeController } from '@/config/theme';
 import { useBottomBarPadding } from '@/ui/components/useBottomBarPadding';
 import { Stack, Text, useTheme } from '@tamagui/core';
-import { ChevronRight, CreditCard, ShieldAlert, Wrench } from '@tamagui/lucide-icons';
+// Ceza kartı geri açılınca 'ShieldAlert' ikonunu tekrar import et
+import { ChevronRight, CreditCard, Wrench } from '@tamagui/lucide-icons';
 import { XStack, YStack } from '@tamagui/stacks';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -26,14 +27,15 @@ export default function OperationsTab() {
   const mutedColor = theme.placeholderColor?.get() || '#6B7280';
 
   const menuItems: MenuItem[] = [
-    {
-      id: 'penalties',
-      title: t('penalty'),
-      description: t('penaltyDescription'),
-      icon: <ShieldAlert size={24} color="#EF4444" />,
-      color: '#EF4444',
-      onPress: () => router.push('/operations/penalties'),
-    },
+    // Ceza kartı geçici olarak gizlendi - sonra geri açılacak
+    // {
+    //   id: 'penalties',
+    //   title: t('penalty'),
+    //   description: t('penaltyDescription'),
+    //   icon: <ShieldAlert size={24} color="#EF4444" />,
+    //   color: '#EF4444',
+    //   onPress: () => router.push('/operations/penalties'),
+    // },
     {
       id: 'service-operations',
       title: t('serviceOperations'),
