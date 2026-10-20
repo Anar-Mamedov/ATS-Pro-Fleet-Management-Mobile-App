@@ -1,4 +1,5 @@
 {
+  "newArchEnabled": "true",
   "expo.jsEngine": "hermes",
   "EX_DEV_CLIENT_NETWORK_INSPECTOR": "true",
   "expo-image.disable-libdav1d": "false"

@@ -586,14 +586,10 @@ export const apiService = {
   // Vehicle Services endpoints
   getVehicleServicesByVehicleIds: async (vehicleIds: number[], diff: number, setPointId: number, parameter: string = '') => {
     const encodedParameter = encodeURIComponent(parameter);
-    const url = `/VehicleServices/GetVehicleServicesByVehicleIds?diff=${diff}&setPointId=${setPointId}&parameter=${encodedParameter}`;
+    // GetVehicleServicesByVehicleIds API'den kaldırıldı; web ile aynı şekilde GetVehicleServices kullanılır ve araçlar aracIds ile gönderilir
+    const url = `/VehicleServices/GetVehicleServices?diff=${diff}&setPointId=${setPointId}&parameter=${encodedParameter}&statusId=0`;
     const payload = {
-      vIds: vehicleIds,
-      filter: {
-        lokasyonIds: [],
-        servisNedeniIds: [],
-        servisTanimIds: [],
-      },
+      aracIds: vehicleIds,
     };
     const response = await axiosInstance.post(url, payload);
     return response.data;

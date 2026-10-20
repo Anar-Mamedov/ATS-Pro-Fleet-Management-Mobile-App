@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import { Alert } from 'react-native';
 
 // Environment variables için constants
-const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL || 'http://localhost:3000/api';
+const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL || 'https://api.atspro.net/api';
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: BASE_URL,

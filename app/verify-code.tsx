@@ -17,7 +17,6 @@ export default function VerifyCode() {
   const { themeName } = useThemeController();
   const params = useLocalSearchParams();
   const email = params.email as string;
-  const targetCode = params.code as string;
   const kullaniciId = params.kullaniciId as string;
   const userTypeId = params.userTypeId as string;
   const kullaniciKod = params.kullaniciKod as string;
@@ -59,7 +58,7 @@ export default function VerifyCode() {
         setTimer(300);
         setIsResendDisabled(true);
       }
-    } catch (_error) {
+    } catch {
       Alert.alert(t('error'), t('operationFailed'));
     } finally {
       setLoading(false);

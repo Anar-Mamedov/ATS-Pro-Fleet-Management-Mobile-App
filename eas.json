@@ -13,7 +13,7 @@
         "simulator": true
       },
       "env": {
-        "EXPO_PUBLIC_BASE_URL": "https://api.atspro.com.tr/api"
+        "EXPO_PUBLIC_BASE_URL": "https://api.atspro.net/api"
       }
     },
     "production": {
@@ -22,7 +22,7 @@
         "buildType": "app-bundle"
       },
       "env": {
-        "EXPO_PUBLIC_BASE_URL": "https://api.atspro.com.tr/api",
+        "EXPO_PUBLIC_BASE_URL": "https://api.atspro.net/api",
         "EXPO_NO_DOCTOR": "1"
       },
       "channel": "production"
@@ -33,7 +33,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_BASE_URL": "https://api.atspro.com.tr/api",
+        "EXPO_PUBLIC_BASE_URL": "https://api.atspro.net/api",
         "EXPO_NO_DOCTOR": "1"
       },
       "channel": "production"
