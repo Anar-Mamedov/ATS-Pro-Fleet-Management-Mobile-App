@@ -1,6 +1,7 @@
 import { useThemeController } from '@/config/theme';
 import { apiService } from '@/services/apiService';
 import { DatePicker } from '@/ui/components/DatePicker';
+import { KmInput } from '@/ui/components/KmInput';
 import { PhotoUploadButton } from '@/ui/components/PhotoUploadButton';
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
@@ -19,6 +20,7 @@ interface ReportAccidentForm {
   surucu: string;
   kazaTarihi: Date;
   saat: Date;
+  km: string;
   aciklama: string;
 }
 
@@ -53,6 +55,7 @@ function ReportAccident({ aracId, plaka, surucuId, surucuAd, lokasyonId, onSucce
       surucu: surucuAd || '',
       kazaTarihi: new Date(),
       saat: new Date(),
+      km: '',
       aciklama: '',
     },
   });
@@ -95,6 +98,7 @@ function ReportAccident({ aracId, plaka, surucuId, surucuAd, lokasyonId, onSucce
         kazaTarih: dayjs(data.kazaTarihi).format('YYYY-MM-DD'),
         kazaSaat: dayjs(data.saat).format('HH:mm'),
         lokasyonId: lokasyonId,
+        aracKm: Number(data.km), // web kaza formuyla aynı alan adı
       };
 
       const response = await apiService.addAccidentItem(requestData);
@@ -103,7 +107,8 @@ function ReportAccident({ aracId, plaka, surucuId, surucuAd, lokasyonId, onSucce
         try {
           const recordId = Number(response.data);
 
-          const uploadPromises = selectedPhotos.map(async (photo) => {
+          // Resimler sırayla yüklenir (paralel yükleme sunucuda aynı anda yazılan dosyaların bozulmasına yol açabiliyor)
+          for (const photo of selectedPhotos) {
             const ext = photo.fileName.split('.').pop() || 'jpg';
             const mimeType = getMimeTypeFromExtension(ext);
 
@@ -113,10 +118,8 @@ function ReportAccident({ aracId, plaka, surucuId, surucuAd, lokasyonId, onSucce
               type: mimeType,
             };
 
-            return apiService.uploadPhoto(fileDetails, recordId, 'KAZA', false);
-          });
-
-          await Promise.all(uploadPromises);
+            await apiService.uploadPhoto(fileDetails, recordId, 'KAZA', false);
+          }
         } catch (uploadError: unknown) {
           console.error('Photo upload error:', uploadError);
           Alert.alert(
@@ -132,6 +135,7 @@ function ReportAccident({ aracId, plaka, surucuId, surucuAd, lokasyonId, onSucce
         surucu: surucuAd || '',
         kazaTarihi: new Date(),
         saat: new Date(),
+        km: '',
         aciklama: '',
       });
       setSelectedPhotos([]);
@@ -319,6 +323,8 @@ function ReportAccident({ aracId, plaka, surucuId, surucuAd, lokasyonId, onSucce
             );
           }}
         />
+
+        <KmInput control={control} name="km" error={errors.km?.message} />
 
         {/* Açıklama */}
         <Controller

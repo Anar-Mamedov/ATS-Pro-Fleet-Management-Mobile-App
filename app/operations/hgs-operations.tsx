@@ -10,7 +10,7 @@ import { Stack, Text, useTheme } from '@tamagui/core';
 import { Input } from '@tamagui/input';
 import { XStack, YStack } from '@tamagui/stacks';
 import { Stack as ExpoStack, useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, ListRenderItem, Pressable, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -52,10 +52,6 @@ export default function HgsOperationsScreen() {
   const [hasMore, setHasMore] = useState(true);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
-
-  useEffect(() => {
-    fetchData(true);
-  }, [selectedVehicleId]);
 
   const fetchData = async (reset: boolean = false, searchTerm: string = search) => {
     if (loading || loadingMore) return;
@@ -104,6 +100,16 @@ export default function HgsOperationsScreen() {
       setLoadingMore(false);
     }
   };
+
+  const fetchDataRef = useRef(fetchData);
+
+  useEffect(() => {
+    fetchDataRef.current = fetchData;
+  });
+
+  useEffect(() => {
+    void fetchDataRef.current(true);
+  }, [selectedVehicleId]);
 
   const handleSearch = () => {
     fetchData(true, search);

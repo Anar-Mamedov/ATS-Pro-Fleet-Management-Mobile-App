@@ -2,24 +2,22 @@
   "expo": {
     "name": "ATS Pro",
     "slug": "ATS-Pro-Mobile-App",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "atspromobileapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "jsEngine": "hermes",
     "primaryColor": "#007AFF",
     "description": "ATS Pro - Fleet management application for drivers and managers. Track vehicles, manage maintenance, reports and documents.",
     "githubUrl": "https://github.com/Anar-Mamedov/ATS-Pro-Fleet-Management-Mobile-App.git",
     "updates": {
       "url": "https://u.expo.dev/a833e92e-525a-46e3-ac3d-199e55743a38"
     },
-    "runtimeVersion": "1.0.2",
+    "runtimeVersion": "1.0.3",
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.orjinyazilim.atspro",
-      "buildNumber": "4",
+      "buildNumber": "6",
       "config": {
         "usesNonExemptEncryption": false
       },
@@ -35,9 +33,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
       "package": "com.orjinyazilim.atspro",
-      "versionCode": 3,
+      "versionCode": 5,
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.READ_EXTERNAL_STORAGE",

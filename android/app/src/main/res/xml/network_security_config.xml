@@ -12,7 +12,7 @@
 
   <!-- Domain-specific configuration for production API -->
   <domain-config cleartextTrafficPermitted="false">
-    <domain includeSubdomains="true">api.atspro.com.tr</domain>
+    <domain includeSubdomains="true">api.atspro.net</domain>
     <trust-anchors>
       <certificates src="system" />
       <!-- Sectigo intermediate CA for Xiaomi/Oppo compatibility -->

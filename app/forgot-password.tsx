@@ -15,7 +15,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function ForgotPassword() {
   const { t } = useTranslation();
   const { themeName } = useThemeController();
-  const isDarkMode = themeName === 'dark';
   const [userCode, setUserCode] = useState('');
   const [loading, setLoading] = useState(false);
 

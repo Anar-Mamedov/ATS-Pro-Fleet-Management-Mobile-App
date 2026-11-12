@@ -1,6 +1,7 @@
 import { useThemeController } from '@/config/theme';
 import { apiService } from '@/services/apiService';
 import { DatePicker } from '@/ui/components/DatePicker';
+import { KmInput } from '@/ui/components/KmInput';
 import { NumaratorOnAdd } from '@/ui/components/NumaratorOnAdd';
 import TalepOncelik from '@/ui/components/TalepOncelik';
 import TalepTuru from '@/ui/components/TalepTuru';
@@ -18,6 +19,7 @@ import { Alert, StyleSheet, TextInput } from 'react-native';
 interface ReportAProblemForm {
   arizaNo: string;
   problemDate: Date;
+  km: string;
   oncelik: string;
   talepTuru?: string;
   lokasyon: string;
@@ -51,6 +53,7 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess, mode = 'ariza'
     defaultValues: {
       arizaNo: '',
       problemDate: new Date(),
+      km: '',
       oncelik: 'orta',
       talepTuru: '',
       lokasyon: initialLocationName || '',
@@ -72,6 +75,7 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess, mode = 'ariza'
         talepOncelik: data.oncelik,
         talepTur: isTalepMode ? (data.talepTuru || 'ariza') : 'ariza', // Talep modunda talepTuru kullan, arıza modunda 'ariza'
         talepEdenId: talepEdenId,
+        km: Number(data.km),
       };
 
       const response = await apiService.addRequestItem(requestData);
@@ -94,8 +98,9 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess, mode = 'ariza'
           const recordId = Number(response.data);
           console.log('Starting photos upload for refId:', recordId);
 
-          // Tüm resimleri sırayla yükle
-          const uploadPromises = selectedPhotos.map(async (photo, index) => {
+          // Tüm resimleri sırayla yükle (paralel yükleme sunucuda aynı anda yazılan dosyaların bozulmasına yol açabiliyor)
+          const uploadResults = [];
+          for (const [index, photo] of selectedPhotos.entries()) {
             const ext = photo.fileName.split('.').pop() || 'jpg';
             const mimeType = getMimeTypeFromExtension(ext);
 
@@ -106,10 +111,8 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess, mode = 'ariza'
             };
 
             console.log(`Uploading photo ${index + 1}/${selectedPhotos.length}:`, { refId: recordId, refGroup: 'TALEP_BILDIRIM', fileName: photo.fileName });
-            return apiService.uploadPhoto(fileDetails, recordId, 'TALEP_BILDIRIM', false);
-          });
-
-          const uploadResults = await Promise.all(uploadPromises);
+            uploadResults.push(await apiService.uploadPhoto(fileDetails, recordId, 'TALEP_BILDIRIM', false));
+          }
           console.log('All photos uploaded successfully:', uploadResults);
         } catch (uploadError: any) {
           console.error('Photo upload error:', uploadError);
@@ -184,6 +187,8 @@ function ReportAProblem({ aracId = 0, talepEdenId = 0, onSuccess, mode = 'ariza'
         />
 
         <DatePicker control={control} name="problemDate" label={dateLabel} placeholder={t('selectDate')} error={errors.problemDate?.message} required />
+
+        <KmInput control={control} name="km" error={errors.km?.message} />
 
         <YStack gap="$2">
           <Text fontSize="$3" fontWeight="600">

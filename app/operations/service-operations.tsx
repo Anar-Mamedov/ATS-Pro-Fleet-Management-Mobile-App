@@ -3,6 +3,7 @@ import { useThemeController } from '@/config/theme';
 import { formatNumber } from '@/ui/components/formatNumber';
 import { useVehicleContext } from '@/context/VehicleContext';
 import { apiService } from '@/services/apiService';
+import { getIsDriver } from '@/services/userRole';
 import { useBottomBarPadding } from '@/ui/components/useBottomBarPadding';
 import { Ionicons } from '@expo/vector-icons';
 import { Button } from '@tamagui/button';
@@ -43,6 +44,12 @@ export default function ServiceOperationsScreen() {
   const [dataSource, setDataSource] = useState<ServiceOperation[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [search, setSearch] = useState('');
+  // Drivers must not see service costs; hidden until the role is known.
+  const [canSeePrice, setCanSeePrice] = useState(false);
+
+  useEffect(() => {
+    getIsDriver().then((isDriver) => setCanSeePrice(!isDriver));
+  }, []);
 
   // Initial fetch
   useEffect(() => {
@@ -161,9 +168,11 @@ export default function ServiceOperationsScreen() {
             </XStack>
           </YStack>
 
-          <Text fontSize="$5" fontWeight="bold" color="$blue10">
-            {formatNumber(item.toplam, i18n.language)} TL
-          </Text>
+          {canSeePrice ? (
+            <Text fontSize="$5" fontWeight="bold" color="$blue10">
+              {formatNumber(item.toplam, i18n.language)} TL
+            </Text>
+          ) : null}
         </XStack>
       </YStack>
       </Pressable>
