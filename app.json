@@ -2,7 +2,7 @@
   "expo": {
     "name": "ATS Pro",
     "slug": "ATS-Pro-Mobile-App",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "atspromobileapp",
@@ -13,11 +13,11 @@
     "updates": {
       "url": "https://u.expo.dev/a833e92e-525a-46e3-ac3d-199e55743a38"
     },
-    "runtimeVersion": "1.0.3",
+    "runtimeVersion": "1.0.4",
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.orjinyazilim.atspro",
-      "buildNumber": "6",
+      "buildNumber": "7",
       "config": {
         "usesNonExemptEncryption": false
       },
@@ -34,7 +34,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.orjinyazilim.atspro",
-      "versionCode": 5,
+      "versionCode": 6,
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.READ_EXTERNAL_STORAGE",
