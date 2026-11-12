@@ -4,6 +4,7 @@ import { FileSystemUploadType } from 'expo-file-system/legacy';
 import { Platform } from 'react-native';
 import dayjs from '../config/dayjs';
 import { axiosInstance } from '../config/http';
+import { preparePhotoForUpload } from './preparePhotoForUpload';
 
 type UploadablePhoto =
   | FormData
@@ -327,24 +328,43 @@ export const apiService = {
       throw new Error('Yüklenecek dosya bulunamadı (geçersiz FormData).');
     }
 
+    // Orijinal yerine küçültülmüş kopya yüklenir; küçültme başarısız olursa orijinal dosyaya dönülür
+    let photo = { uri: filePart.uri, type: filePart.type || 'image/jpeg' };
+    let preparedUri: string | null = null;
+    try {
+      const prepared = await preparePhotoForUpload(filePart.uri);
+      photo = prepared;
+      preparedUri = prepared.uri;
+    } catch (error) {
+      console.warn('Fotoğraf küçültülemedi, orijinal dosya yükleniyor:', error);
+    }
+
     const token = await AsyncStorage.getItem('token');
     const uploadUrl = resolveUploadUrl(path);
 
-    const result = await FileSystem.uploadAsync(uploadUrl, filePart.uri, {
-      httpMethod: 'POST',
-      uploadType: FileSystemUploadType.MULTIPART,
-      fieldName: 'images',
-      parameters: {
-        refId: String(refId),
-        refGroup,
-        isForDefault: String(isForDefault),
-      },
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        Accept: 'application/json',
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    let result: FileSystem.FileSystemUploadResult;
+    try {
+      result = await FileSystem.uploadAsync(uploadUrl, photo.uri, {
+        httpMethod: 'POST',
+        uploadType: FileSystemUploadType.MULTIPART,
+        fieldName: 'images',
+        mimeType: photo.type,
+        parameters: {
+          refId: String(refId),
+          refGroup,
+          isForDefault: String(isForDefault),
+        },
+        // Content-Type elle verilmez; native katman boundary ile birlikte kendisi ekler
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          Accept: 'application/json',
+        },
+      });
+    } finally {
+      if (preparedUri) {
+        void FileSystem.deleteAsync(preparedUri, { idempotent: true }).catch(() => undefined);
+      }
+    }
 
     if (result.status >= 400) {
       let message = `Fotoğraf yüklenemedi (status ${result.status})`;
@@ -421,6 +441,7 @@ export const apiService = {
     talepOncelik: string;
     talepTur: string;
     talepEdenId: number;
+    km: number;
   }) => {
     const response = await axiosInstance.post('/RequestNotification/AddRequestItem', requestData);
     return response.data;
@@ -434,6 +455,7 @@ export const apiService = {
     kazaTarih: string;
     kazaSaat: string;
     lokasyonId: number;
+    aracKm: number;
   }) => {
     const response = await axiosInstance.post('/Accident/AddAccidentItem', accidentData);
     return response.data;
@@ -592,6 +614,21 @@ export const apiService = {
       aracIds: vehicleIds,
     };
     const response = await axiosInstance.post(url, payload);
+    return response.data;
+  },
+
+  // Talep / arıza bildirimleri: web Talep Yönetimi ve Arıza Bildirimleri listeleriyle aynı endpoint, araçlar aracIds ile gönderilir
+  getRequestNotificationsByVehicleIds: async (vehicleIds: number[], diff: number, setPointId: number, parameter: string = '', talepTur?: string) => {
+    const typeQuery = talepTur ? `&talepTur=${encodeURIComponent(talepTur)}` : '';
+    const url = `/RequestNotification/GetRequestList?diff=${diff}&setPointId=${setPointId}&parameter=${encodeURIComponent(parameter)}${typeQuery}`;
+    const response = await axiosInstance.post(url, { aracIds: vehicleIds });
+    return response.data;
+  },
+
+  // Kaza kayıtları: web araç kartındaki Kaza sekmesiyle aynı endpoint, gövde araç id dizisi
+  getAccidentsByVehicleIds: async (vehicleIds: number[], diff: number, setPointId: number, parameter: string = '') => {
+    const url = `/Accident/GetAccidentsListByVehicleId?diff=${diff}&setPointId=${setPointId}&parameter=${encodeURIComponent(parameter)}`;
+    const response = await axiosInstance.post(url, vehicleIds);
     return response.data;
   },
 };

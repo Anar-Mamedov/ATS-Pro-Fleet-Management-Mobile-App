@@ -2,7 +2,7 @@ import { useThemeController } from '@/config/theme';
 import { useBottomBarPadding } from '@/ui/components/useBottomBarPadding';
 import { Stack, Text, useTheme } from '@tamagui/core';
 // Ceza kartı geri açılınca 'ShieldAlert' ikonunu tekrar import et
-import { ChevronRight, CreditCard, Wrench } from '@tamagui/lucide-icons';
+import { AlertTriangle, Car, ChevronRight, CreditCard, MapPin, Wrench } from '@tamagui/lucide-icons';
 import { XStack, YStack } from '@tamagui/stacks';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -51,6 +51,30 @@ export default function OperationsTab() {
       icon: <CreditCard size={24} color="#0EA5E9" />,
       color: '#0EA5E9',
       onPress: () => router.push('/operations/hgs-operations'),
+    },
+    {
+      id: 'fault-reports',
+      title: t('faultReports'),
+      description: t('faultReportsDescription'),
+      icon: <AlertTriangle size={24} color="#EF4444" />,
+      color: '#EF4444',
+      onPress: () => router.push({ pathname: '/operations/request-notifications', params: { type: 'ariza' } }),
+    },
+    {
+      id: 'request-reports',
+      title: t('requestReports'),
+      description: t('requestReportsDescription'),
+      icon: <MapPin size={24} color="#F59E0B" />,
+      color: '#F59E0B',
+      onPress: () => router.push('/operations/request-notifications'),
+    },
+    {
+      id: 'accident-reports',
+      title: t('accidentReports'),
+      description: t('accidentReportsDescription'),
+      icon: <Car size={24} color="#0E7490" />,
+      color: '#0E7490',
+      onPress: () => router.push('/operations/accident-reports'),
     },
   ];
 

@@ -6,6 +6,7 @@ import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { useCameraPermissions } from 'expo-camera';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, Dimensions, FlatList, Modal, Pressable, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -20,6 +21,7 @@ type PhotoItem = {
 
 type LoadedPhoto = PhotoItem & {
   uri: string;
+  isIncomplete?: boolean;
 };
 
 export type ResimUploadProps = {
@@ -77,6 +79,45 @@ function getMimeTypeFromExtension(ext: string): string {
   }
 }
 
+// JPEG dosyası FF D9 (EOI), PNG dosyası IEND bloğu ile biter. Bu işaret yoksa dosya
+// eksik yazılmış demektir (ekranda resmin alt kısmı gri/boş görünür).
+function isImageDataComplete(bytes: Uint8Array): boolean {
+  const n = bytes.length;
+  if (n < 4) return false;
+  if (bytes[0] === 0xff && bytes[1] === 0xd8) {
+    // EOI'den sonra birkaç bayt dolgu olabilir, bu yüzden son 32 bayta bakılır
+    for (let i = n - 2; i >= Math.max(0, n - 32); i--) {
+      if (bytes[i] === 0xff && bytes[i + 1] === 0xd9) return true;
+    }
+    return false;
+  }
+  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) {
+    // Son 12 bayt: uzunluk(4) + 'IEND'(4) + CRC(4)
+    return n >= 12 && bytes[n - 8] === 0x49 && bytes[n - 7] === 0x45 && bytes[n - 6] === 0x4e && bytes[n - 5] === 0x44;
+  }
+  // Diğer formatlar (HEIC, WebP...) doğrulanmıyor
+  return true;
+}
+
+// Yeni yüklenen fotoğrafın sunucuda yazımı henüz bitmemiş olabilir; eksik gelirse bu aralıklarla tekrar indirilir
+const INCOMPLETE_PHOTO_RETRY_DELAYS_MS = [700, 1500, 3000];
+
+async function downloadPhotoBytes(photo: PhotoItem, verify: boolean): Promise<{ bytes: Uint8Array; complete: boolean }> {
+  const download = async () => new Uint8Array(await apiService.downloadPhotoById(photo.tbResimId, photo.rsmUzanti, photo.rsmAd));
+  let bytes = await download();
+  if (!verify) {
+    return { bytes, complete: true };
+  }
+  for (const delay of INCOMPLETE_PHOTO_RETRY_DELAYS_MS) {
+    if (isImageDataComplete(bytes)) {
+      return { bytes, complete: true };
+    }
+    await new Promise((resolve) => setTimeout(resolve, delay));
+    bytes = await download();
+  }
+  return { bytes, complete: isImageDataComplete(bytes) };
+}
+
 const SCREEN = Dimensions.get('window');
 const GRID_ITEM_SIZE = Math.min(140, Math.max(90, Math.floor((SCREEN.width - 64) / 3)));
 const GRID_SPACING = 12; // tamagui $3 approx.
@@ -109,6 +150,7 @@ const viewerStyles = StyleSheet.create({
 });
 
 export default function ResimUpload({ refId, refGroup, isForDefault = false, disabled = false, onUploaded, onDeleted }: ResimUploadProps) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState<boolean>(false);
   const [items, setItems] = useState<LoadedPhoto[]>([]);
@@ -127,14 +169,16 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
     itemsRef.current = items;
   }, [items]);
 
-  const hydratePhotoItems = useCallback(async (photoItems: PhotoItem[]): Promise<LoadedPhoto[]> => {
+  // knownIdsBeforeUpload verilirse, listede yeni beliren (az önce yüklenen) fotoğrafların bütünlüğü doğrulanır
+  const hydratePhotoItems = useCallback(async (photoItems: PhotoItem[], knownIdsBeforeUpload?: Set<number>): Promise<LoadedPhoto[]> => {
     const hydrated: LoadedPhoto[] = [];
     for (const photo of photoItems || []) {
       try {
-        const data: ArrayBuffer = await apiService.downloadPhotoById(photo.tbResimId, photo.rsmUzanti, photo.rsmAd);
-        const base64 = encodeBase64(new Uint8Array(data));
+        const verify = !!knownIdsBeforeUpload && !knownIdsBeforeUpload.has(photo.tbResimId);
+        const { bytes, complete } = await downloadPhotoBytes(photo, verify);
+        const base64 = encodeBase64(bytes);
         const mime = getMimeTypeFromExtension(photo.rsmUzanti);
-        hydrated.push({ ...photo, uri: `data:${mime};base64,${base64}` });
+        hydrated.push({ ...photo, uri: `data:${mime};base64,${base64}`, isIncomplete: !complete });
       } catch (error) {
         console.warn('Fotoğraf indirilemedi, öğe atlandı:', {
           photoId: photo.tbResimId,
@@ -145,7 +189,7 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
     return hydrated;
   }, []);
 
-  const fetchList = useCallback(async () => {
+  const fetchList = useCallback(async (knownIdsBeforeUpload?: Set<number>) => {
     if (!refId || !refGroup) {
       return itemsRef.current;
     }
@@ -153,7 +197,7 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
     setLoading(true);
     try {
       const list: PhotoItem[] = await apiService.getPhotosByRefGroup(refId, refGroup);
-      const loaded = await hydratePhotoItems(list);
+      const loaded = await hydratePhotoItems(list, knownIdsBeforeUpload);
       setItems(loaded);
       setSelectedIds((current) => current.filter((id) => loaded.some((it) => it.tbResimId === id)));
       return loaded;
@@ -193,10 +237,13 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
     return () => clearTimeout(timer);
   }, [viewerVisible, selectedIndex, items.length]);
 
-  const refresh = useCallback(async () => {
-    refreshKey.current += 1;
-    await fetchList();
-  }, [fetchList]);
+  const refresh = useCallback(
+    async (knownIdsBeforeUpload?: Set<number>) => {
+      refreshKey.current += 1;
+      return fetchList(knownIdsBeforeUpload);
+    },
+    [fetchList]
+  );
 
   const openViewer = useCallback(
     (index: number) => {
@@ -328,13 +375,21 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
           type,
         } as const;
         
+        const knownIdsBeforeUpload = new Set(itemsRef.current.map((it) => it.tbResimId));
+
         console.log('API çağrısı yapılıyor...');
         const result = await apiService.uploadPhoto(fileDetails, Number(refId), refGroup, isForDefault);
         console.log('Upload başarılı:', result);
 
         // Backend yeni fotoğrafı işleyene kadar çok kısa bir süre tanıyalım
         await new Promise((resolve) => setTimeout(resolve, 350));
-        await refresh();
+        const loaded = await refresh(knownIdsBeforeUpload);
+        const incompletePhotos = loaded.filter((it) => it.isIncomplete);
+        if (incompletePhotos.length) {
+          // Tekrar denemelere rağmen dosya eksik geliyorsa sunucudaki kayıt bozuktur (backend kaynaklı)
+          console.warn('Sunucuda eksik kaydedilmiş fotoğraf:', incompletePhotos.map((it) => it.tbResimId));
+          Alert.alert(t('warning'), t('photoSavedIncomplete'));
+        }
         onUploaded?.();
       } catch (error: any) {
         console.error('Upload hatası detayı:', {
@@ -348,7 +403,7 @@ export default function ResimUpload({ refId, refGroup, isForDefault = false, dis
         setLoading(false);
       }
     },
-    [refId, refGroup, isForDefault, refresh, onUploaded]
+    [refId, refGroup, isForDefault, refresh, onUploaded, t]
   );
 
   const pickFromLibrary = useCallback(async () => {
