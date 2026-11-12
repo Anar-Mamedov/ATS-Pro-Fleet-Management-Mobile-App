@@ -447,6 +447,30 @@ export const apiService = {
     return response.data;
   },
 
+  // Talep edenin bugün açtığı talep / arıza kayıtları (sayfalama yok, kayıt yoksa [])
+  getUserRequestNotificationsForToday: async (requesterId: number) => {
+    const response = await axiosInstance.get(`/RequestNotification/GetUserReqNotifsForToday?requesterId=${requesterId}`);
+    return Array.isArray(response.data) ? response.data : [];
+  },
+
+  // Mevcut talep / arıza kaydını günceller (web Talep Yönetimi düzenleme ekranıyla aynı alanlar)
+  updateRequestItem: async (requestData: {
+    siraNo: number;
+    talepNo: string;
+    aracId: number;
+    lokasyonId: number;
+    aciklama: string;
+    tarih: string;
+    talepDurum: string;
+    talepOncelik: string;
+    talepTur: string;
+    talepEdenId: number;
+    km: number;
+  }) => {
+    const response = await axiosInstance.post('/RequestNotification/UpdateRequestItem', requestData);
+    return response.data;
+  },
+
   // Accident endpoints
   addAccidentItem: async (accidentData: {
     aracId: number;

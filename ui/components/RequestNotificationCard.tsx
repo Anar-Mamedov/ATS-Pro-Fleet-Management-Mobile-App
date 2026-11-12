@@ -17,7 +17,7 @@ export interface RequestNotification {
 }
 
 // Backend kodları web ile aynı; arıza ekranı öncelikleri "Orta", "Yüksek" gibi yazdığı için karşılaştırma normalize edilir.
-const normalizeCode = (value?: string) =>
+export const normalizeCode = (value?: string) =>
   (value || '')
     .trim()
     .toLocaleLowerCase('tr')
